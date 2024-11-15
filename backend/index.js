@@ -16,7 +16,7 @@ const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-  res.send('Help!!!');
+  res.send('Backend Status: Active!');
 });
 
 app.listen(port, () => {
@@ -24,6 +24,19 @@ app.listen(port, () => {
 });
 
 
+//test code for accessing firestore and making a collection entry
+app.get('/test-firestore', async (req, res) => {
+  try {
+    const docRef = db.collection('testCollection').doc('testDoc');
+    await docRef.set({test: 'success'});
+    res.send('Firestore connection successful');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Firestore connection failed');
+  }
+});
 
 
+
+//export the initialized db
 module.exports = db;
