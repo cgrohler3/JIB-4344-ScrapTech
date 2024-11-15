@@ -19,3 +19,7 @@ yarn.lock
 # OS files
 .DS_Store
 Thumbs.db
+
+# Firebase acc key
+/backend/firebaseConfig.js
+/frontend/src/firebaseConfig.js
