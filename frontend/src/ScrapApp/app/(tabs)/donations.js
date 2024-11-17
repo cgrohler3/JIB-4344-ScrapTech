@@ -42,6 +42,18 @@ const HomeScreen = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Log Donation</Text>
+            <View style={styles.navButtons}>
+                <Button
+                    title="Log Donation"
+                    onPress={() => navigation.navigate("log_screen")}
+                    color='#376c3e'
+                />
+                <Button
+                    title="Back"
+                    onPress={() => navigation.navigate("home_screen")}
+                    color='#376c3e'
+                />
+            </View>
 
             <TextInput
                 style={styles.input}
@@ -112,6 +124,12 @@ const styles = StyleSheet.create({
     buttonContainer: {
         marginTop: 20,
         width: '100%',
+    },
+    navButtons: {
+        width: '100%', 
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingBottom: 20,
     },
 });
 

@@ -1,11 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
 const HomeScreen = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Scraplanta</Text>
+            <View style={styles.buttonContainer}>
+                <Button
+                    title="Donations"
+                    onPress={() => navigation.navigate("donations")}
+                    color='#376c3e'
+                />
+            </View>
         </View>
+
     );
 };
 
@@ -21,6 +29,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: '#376c3e',
+    },
+    buttonContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingBottom: 20,
     },
 });
 
