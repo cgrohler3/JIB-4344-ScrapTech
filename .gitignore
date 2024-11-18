@@ -23,4 +23,7 @@ Thumbs.db
 # Firebase acc key
 /backend/firebaseConfig
 /frontend/src/firebaseConfig.js
-backend/scraplanta-dashboard-firebase-adminsdk-fazlk-3a465b9a8a.json
+
+# Additional Files
+frontend/src/ScrapApp/expo-env.d.ts
+frontend/src/ScrapApp/config.js
