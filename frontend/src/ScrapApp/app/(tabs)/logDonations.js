@@ -1,7 +1,9 @@
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { push, ref } from 'firebase/database';
 
 import DropDownPicker from 'react-native-dropdown-picker';
+import { db } from '../../config';
 
 const HomeScreen = () => {
     const [name, setName] = useState('');
@@ -32,8 +34,19 @@ const HomeScreen = () => {
         );
     };
 
-    const finalSave = () => {
-        Alert.alert('Success', 'Donation saved successfully!');
+    const finalSave = () => {        
+        const res = push(ref(db, 'donations'), {
+            name: name,
+            quantity: quantity,
+            category: selectedCategory,
+        });
+
+        res.then(() => {
+            Alert.alert('Success', 'Donation saved successfully!');
+        }).catch((err) => {
+            Alert.alert('Fail', 'Error when logging donation: ', err);
+        });
+
         // Optionally, clear the fields after saving
         setName('');
         setQuantity('');
@@ -109,7 +122,7 @@ const styles = StyleSheet.create({
     },
     dropdownContainer: {
         backgroundColor: 'white',
-        borderColor: 'blue',
+        borderColor: "#ddd"
     },
     buttonContainer: {
         marginTop: 20,
