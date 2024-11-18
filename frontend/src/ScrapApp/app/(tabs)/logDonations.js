@@ -37,7 +37,7 @@ const HomeScreen = () => {
     const finalSave = () => {        
         const res = push(ref(db, 'donations'), {
             name: name,
-            quantity: quantity,
+            weight: quantity,
             category: selectedCategory,
         });
 
@@ -68,7 +68,7 @@ const HomeScreen = () => {
 
             <TextInput
                 style={styles.input}
-                placeholder="Item Quantity"
+                placeholder="Item Weight"
                 placeholderTextColor="gray"
                 value={quantity}
                 onChangeText={setQuantity}
