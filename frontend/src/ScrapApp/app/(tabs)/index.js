@@ -1,10 +1,11 @@
+import { StyleSheet, Text, View } from 'react-native';
+
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 
 const HomeScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Scraplanta</Text>
+            <Text style={styles.title}>Materials Collection Dashboard</Text>
         </View>
     );
 };

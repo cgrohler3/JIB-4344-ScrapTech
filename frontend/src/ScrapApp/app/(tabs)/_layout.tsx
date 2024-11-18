@@ -1,11 +1,12 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
+import { Colors } from '@/constants/Colors';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Fontisto from '@expo/vector-icons/Fontisto';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Platform } from 'react-native';
+import React from 'react';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
+import { Tabs } from 'expo-router';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
@@ -34,10 +35,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="logDonations"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Log Donations',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="box-open" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="viewDonations"
+        options={{
+          title: 'View Donations',
+          tabBarIcon: ({ color }) => <Fontisto name="preview" size={24} color={color} />,
         }}
       />
     </Tabs>

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native';
+import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { push, ref } from 'firebase/database';
+
 import DropDownPicker from 'react-native-dropdown-picker';
+import { db } from '../../config';
 
 const HomeScreen = () => {
     const [name, setName] = useState('');
@@ -31,8 +34,19 @@ const HomeScreen = () => {
         );
     };
 
-    const finalSave = () => {
-        Alert.alert('Success', 'Donation saved successfully!');
+    const finalSave = () => {        
+        const res = push(ref(db, 'donations'), {
+            name: name,
+            weight: quantity,
+            category: selectedCategory,
+        });
+
+        res.then(() => {
+            Alert.alert('Success', 'Donation saved successfully!');
+        }).catch((err) => {
+            Alert.alert('Fail', 'Error when logging donation: ', err);
+        });
+
         // Optionally, clear the fields after saving
         setName('');
         setQuantity('');
@@ -45,35 +59,36 @@ const HomeScreen = () => {
 
             <TextInput
                 style={styles.input}
-                placeholder="Name"
-                placeholderTextColor="black"
+                placeholder="Item Name"
+                placeholderTextColor="gray"
                 value={name}
                 onChangeText={setName}
+                returnKeyType="done"
             />
 
             <TextInput
                 style={styles.input}
-                placeholder="Quantity"
-                placeholderTextColor="black"
+                placeholder="Item Weight"
+                placeholderTextColor="gray"
                 value={quantity}
                 onChangeText={setQuantity}
                 keyboardType="numeric"
+                returnKeyType="done"
             />
 
-<DropDownPicker
+            <DropDownPicker
                 open={open}
                 value={selectedCategory}
                 items={items}
                 setOpen={setOpen}
                 setValue={setSelectedCategory}
                 setItems={setItems}
-                placeholder="Select a category"
-                style={styles.dropdown}
+                placeholder="Choose Item Category"
                 dropDownContainerStyle={styles.dropdownContainer}
             />
 
             <View style={styles.buttonContainer}>
-                <Button title="Save" onPress={handleSave} color="#376c3e" />
+                <Button title="Save" onPress={handleSave} color="white" />
             </View>
         </View>
     );
@@ -103,16 +118,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginBottom: 15,
         backgroundColor: '#fff',
+        color: 'gray'
     },
-    picker: {
-        width: '100%',
-        height: 40,
-        marginBottom: 15,
+    dropdownContainer: {
+        backgroundColor: 'white',
+        borderColor: "#ddd"
     },
     buttonContainer: {
         marginTop: 20,
         width: '100%',
-    },
+        backgroundColor: '#376c3e',
+        color: 'white'
+    }
 });
 
 export default HomeScreen;
