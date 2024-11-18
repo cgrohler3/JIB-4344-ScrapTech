@@ -21,6 +21,7 @@ Firestore meets the cost needs for the application while offering a powerful clo
 ### Known Issues
 - Becasue our application is being developed for mobile platforms, Expo's development server on the web is not optimized and has some broken UI. However, the application, for the purposes of the artifact demo, works on mobile.
 
+
 # ⚙️ Installation
 1. Clone the Repository
 2. Install required dependecies
