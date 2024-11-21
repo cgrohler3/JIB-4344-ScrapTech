@@ -1,5 +1,5 @@
-import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
 import { push, ref } from 'firebase/database';
 
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -100,11 +100,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
-        paddingTop: 60,
+        paddingTop: 80,
         paddingHorizontal: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 25,
         fontWeight: 'bold',
         color: '#376c3e',
         marginBottom: 20,
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
     },
     dropdownContainer: {
         backgroundColor: 'white',
-        borderColor: "#ddd"
+        borderColor: "#ddd",
+        borderWidth: 1
     },
     buttonContainer: {
         marginTop: 20,
