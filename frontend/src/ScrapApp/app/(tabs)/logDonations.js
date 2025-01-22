@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { push, ref } from 'firebase/database';
 
 import DropDownPicker from 'react-native-dropdown-picker';
-import { db } from '../../config';
+
 
 const HomeScreen = () => {
     const [name, setName] = useState('');
