@@ -1,32 +1,45 @@
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { useState } from 'react';
-import { push, ref } from 'firebase/database';
+import { collection, setDoc } from 'firebase/firestore';
 
-import DropDownPicker from 'react-native-dropdown-picker';
+import { Dropdown } from 'react-native-element-dropdown';
 import { db } from '../../config';
+import { useState } from 'react';
 
-const HomeScreen = () => {
-    const [name, setName] = useState('');
+// import DropDownPicker from 'react-native-dropdown-picker';
+
+const DLogScreen = () => {
+    const [email, setEmail] = useState('')
+    const [zipCode, setZipCode] = useState('')
+    const [itemName, setItemName] = useState('');
     const [quantity, setQuantity] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [weight, setWeight] = useState('');
+    const [category, setCategory] = useState('');
     const [open, setOpen] = useState(false);
-    const [items, setItems] = useState([
-        { label: 'Fiber', value: 'Fiber' },
+    // const [items, setItems] = useState([
+        // { label: 'Glass', value: 'Glass' },
+        // { label: 'Fabric', value: 'Fabric' },
+        // { label: 'Vinyl', value: 'Vinyl' },
+        // { label: 'Plastic', value: 'Plastic' },
+        // { label: 'Other', value: 'Other' },
+    // ]);
+
+    const data = [
         { label: 'Glass', value: 'Glass' },
         { label: 'Fabric', value: 'Fabric' },
         { label: 'Vinyl', value: 'Vinyl' },
+        { label: 'Plastic', value: 'Plastic' },
         { label: 'Other', value: 'Other' },
-    ]);
+    ];
 
     const handleSave = () => {
-        if (!name || !quantity || !selectedCategory) {
-            Alert.alert('Error', 'All fields are required!');
+        if (!zipCode || !itemName || !quantity || !weight || !category) {
+            Alert.alert('ERROR', 'All product information MUST be filled!');
             return;
         }
 
         Alert.alert(
-            'Confirm Save',
-            `You entered:\n\nName: ${name}\nQuantity: ${quantity}\nCategory: ${selectedCategory}\n\nDo you want to save?`,
+            'CONFIRM SAVE',
+            `You entered:\n\nEmail: ${email}\nZip Code: ${zipCode}\nItem Name: ${itemName}\nQuantity: ${quantity}\nWeight: ${weight}\nCategory: ${category}\n\nDo you want to save?`,
             [
                 { text: 'Cancel', style: 'cancel' },
                 { text: 'Save', onPress: () => finalSave() },
@@ -34,23 +47,17 @@ const HomeScreen = () => {
         );
     };
 
-    const finalSave = () => {        
-        const res = push(ref(db, 'donations'), {
-            name: name,
-            weight: quantity,
-            category: selectedCategory,
+    const saveDoc = async () => {
+        const curr = await setDoc(collection(db, "testing"), {
+            email: email,
+            zipCode: zipCode,
+            itemName: itemName,
+            quantity: quantity,
+            weight: weight,
+            category: category
         });
 
-        res.then(() => {
-            Alert.alert('Success', 'Donation saved successfully!');
-        }).catch((err) => {
-            Alert.alert('Fail', 'Error when logging donation: ', err);
-        });
-
-        // Optionally, clear the fields after saving
-        setName('');
-        setQuantity('');
-        setSelectedCategory('');
+        console.log(curr);
     };
 
     return (
@@ -59,10 +66,30 @@ const HomeScreen = () => {
 
             <TextInput
                 style={styles.input}
+                placeholder="Email - OPTIONAL"
+                placeholderTextColor="gray"
+                value={email}
+                onChangeText={setEmail}
+                returnKeyType="done"
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="Zip Code"
+                placeholderTextColor="gray"
+                value={zipCode}
+                onChangeText={setZipCode}
+                keyboardType="numeric"
+                autoCapitalize="off"
+                returnKeyType="done"
+            />
+
+            <TextInput
+                style={styles.input}
                 placeholder="Item Name"
                 placeholderTextColor="gray"
-                value={name}
-                onChangeText={setName}
+                value={itemName}
+                onChangeText={setItemName}
                 returnKeyType="done"
             />
 
@@ -76,16 +103,16 @@ const HomeScreen = () => {
                 returnKeyType="done"
             />
 
-            <DropDownPicker
+            {/* <DropDownPicker
                 open={open}
-                value={selectedCategory}
+                value={category}
                 items={items}
                 setOpen={setOpen}
-                setValue={setSelectedCategory}
+                setValue={setCategory}
                 setItems={setItems}
                 placeholder="Choose Item Category"
                 dropDownContainerStyle={styles.dropdownContainer}
-            />
+            /> */}
 
             <View style={styles.buttonContainer}>
                 <Button title="Save" onPress={handleSave} color="white" />
@@ -133,4 +160,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HomeScreen;
+export default DLogScreen;

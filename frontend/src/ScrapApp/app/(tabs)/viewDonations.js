@@ -1,26 +1,26 @@
-import { Alert, Button, Dimensions, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { onValue, ref } from 'firebase/database';
+import { Button, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { Text, View } from 'react-native';
+import { collection, getDocs } from 'firebase/firestore';
 
 import { db } from '../../config';
+import { useState } from 'react';
 
-const HomeScreen = () => {
+const DViewScreen = () => {
     const [donations, setDonations] = useState([])
-
-    const handleGET = () => {
-        const c_ref = ref(db, 'donations');
-        onValue(c_ref, (snapshot) => {
-            if (snapshot.exists()) {
-                setDonations(snapshot.val());
-            }
-        });
-    }
+    
+    const getAllDocs = async () => {
+        const snapshot = await getDocs(collection(db, "testing"));
+        const docs = [];
+        snapshot.forEach((doc) => {
+            docs.push({ id: doc.id, ...doc.data() });
+        })
+        setDonations(docs);
+    };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>View Donation</Text>
-            <Button title="Retrieve" onPress={handleGET}/>
+            <Button title="Retrieve" onPress={getAllDocs}/>
             <ScrollView style={styles.parentBox} persistentScrollbar={true}>
                 {donations && Object.keys(donations).map((key) => (
                     <View style={styles.childBox} key={key}>
@@ -69,4 +69,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HomeScreen;
+export default DViewScreen;
