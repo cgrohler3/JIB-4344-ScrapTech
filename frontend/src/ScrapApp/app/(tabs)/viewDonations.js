@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { onValue, ref } from 'firebase/database';
 
-import { db } from '../../config';
+
 
 const HomeScreen = () => {
     const [donations, setDonations] = useState([])
