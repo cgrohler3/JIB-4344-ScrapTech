@@ -1,11 +1,9 @@
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { collection, setDoc } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 
 import { Dropdown } from 'react-native-element-dropdown';
 import { db } from '../../config';
 import { useState } from 'react';
-
-// import DropDownPicker from 'react-native-dropdown-picker';
 
 const DLogScreen = () => {
     const [email, setEmail] = useState('')
@@ -15,20 +13,23 @@ const DLogScreen = () => {
     const [weight, setWeight] = useState('');
     const [category, setCategory] = useState('');
     const [open, setOpen] = useState(false);
-    // const [items, setItems] = useState([
-        // { label: 'Glass', value: 'Glass' },
-        // { label: 'Fabric', value: 'Fabric' },
-        // { label: 'Vinyl', value: 'Vinyl' },
-        // { label: 'Plastic', value: 'Plastic' },
-        // { label: 'Other', value: 'Other' },
-    // ]);
-
-    const data = [
+    const [items, setItems] = useState([
         { label: 'Glass', value: 'Glass' },
         { label: 'Fabric', value: 'Fabric' },
         { label: 'Vinyl', value: 'Vinyl' },
         { label: 'Plastic', value: 'Plastic' },
         { label: 'Other', value: 'Other' },
+    ]);
+
+    const data = [
+        { label: 'Item 1', value: '1' },
+        { label: 'Item 2', value: '2' },
+        { label: 'Item 3', value: '3' },
+        { label: 'Item 4', value: '4' },
+        { label: 'Item 5', value: '5' },
+        { label: 'Item 6', value: '6' },
+        { label: 'Item 7', value: '7' },
+        { label: 'Item 8', value: '8' },
     ];
 
     const handleSave = () => {
@@ -42,13 +43,13 @@ const DLogScreen = () => {
             `You entered:\n\nEmail: ${email}\nZip Code: ${zipCode}\nItem Name: ${itemName}\nQuantity: ${quantity}\nWeight: ${weight}\nCategory: ${category}\n\nDo you want to save?`,
             [
                 { text: 'Cancel', style: 'cancel' },
-                { text: 'Save', onPress: () => finalSave() },
+                { text: 'Save', onPress: () => saveDoc() },
             ]
         );
     };
 
     const saveDoc = async () => {
-        const curr = await setDoc(collection(db, "testing"), {
+        const snapshot = await addDoc(collection(db, "donations"), {
             email: email,
             zipCode: zipCode,
             itemName: itemName,
@@ -57,9 +58,20 @@ const DLogScreen = () => {
             category: category
         });
 
-        console.log(curr);
-    };
+        snapshot.then(() => {
+            Alert.alert('Success', 'Donation Saved Successfully!')
+        }).catch((err) => {
+            Alert.alert('Fail', 'Error when logging donation: ', err)
+        });
 
+        setEmail('');
+        setZipCode('');
+        setItemName('');
+        setQuantity('');
+        setWeight('');
+        setCategory('');
+    }
+    
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Log Donation</Text>
@@ -80,7 +92,7 @@ const DLogScreen = () => {
                 value={zipCode}
                 onChangeText={setZipCode}
                 keyboardType="numeric"
-                autoCapitalize="off"
+                autoComplete="off"
                 returnKeyType="done"
             />
 
@@ -95,7 +107,7 @@ const DLogScreen = () => {
 
             <TextInput
                 style={styles.input}
-                placeholder="Item Weight"
+                placeholder="Item Quantity"
                 placeholderTextColor="gray"
                 value={quantity}
                 onChangeText={setQuantity}
@@ -103,16 +115,31 @@ const DLogScreen = () => {
                 returnKeyType="done"
             />
 
-            {/* <DropDownPicker
-                open={open}
+            <TextInput
+                style={styles.input}
+                placeholder="Item Weight"
+                placeholderTextColor="gray"
+                value={weight}
+                onChangeText={setWeight}
+                keyboardType="numeric"
+                returnKeyType="done"
+            />
+
+            <Dropdown
+                style={styles.dropdown}
+                selectedTextStyle={styles.selectedTextStyle}
+                data={items}
+                labelField="label"
+                valueField="value"
+                placeholder="Select Category"
+                placeholderStyle={styles.placeholderStyle}
+                searchPlaceholder="Search..."
                 value={category}
-                items={items}
-                setOpen={setOpen}
-                setValue={setCategory}
-                setItems={setItems}
-                placeholder="Choose Item Category"
-                dropDownContainerStyle={styles.dropdownContainer}
-            /> */}
+                onChange={item => {
+                    setCategory(item.value);
+                }}
+                activeColor='lightgray'
+            />
 
             <View style={styles.buttonContainer}>
                 <Button title="Save" onPress={handleSave} color="white" />
@@ -130,6 +157,25 @@ const styles = StyleSheet.create({
         paddingTop: 80,
         paddingHorizontal: 20,
     },
+    dropdown: {
+        width: '100%',
+        height: 40,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        backgroundColor: '#fff',
+        color: 'gray',
+        fontSize: 14,
+    },
+    selectedTextStyle: {
+        color: 'black',
+        fontSize: 14
+    },
+    placeholderStyle: {
+        color: 'gray',
+        fontSize: 14
+    },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
@@ -145,7 +191,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginBottom: 15,
         backgroundColor: '#fff',
-        color: 'gray'
+        color: 'black'
     },
     dropdownContainer: {
         backgroundColor: 'white',
