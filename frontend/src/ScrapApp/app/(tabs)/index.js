@@ -5,7 +5,7 @@ import React from 'react';
 const HomeScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Materials Collection Dashboard</Text>
+            <Text style={styles.title}>Home</Text>
         </View>
     );
 };
@@ -16,10 +16,10 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
-        paddingTop: 50,
+        paddingTop: 80,
     },
     title: {
-        fontSize: 24,
+        fontSize: 25,
         fontWeight: 'bold',
         color: '#376c3e',
     },
