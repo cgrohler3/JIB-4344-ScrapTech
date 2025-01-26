@@ -1,4 +1,4 @@
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { addDoc, collection } from 'firebase/firestore';
 
 import { Dropdown } from 'react-native-element-dropdown';
@@ -131,7 +131,10 @@ const DLogScreen = () => {
             />
 
             <View style={styles.buttonContainer}>
-                <Button title="Save" onPress={handleSave} color="white" />
+                <Button title="Save" onPress={handleSave} color='transparent' />
+                <TouchableOpacity onPress={handleSave} style={styles.button}>
+                    <Text style={styles.buttonText}>Save Donation</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -143,8 +146,8 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
-        paddingTop: 80,
-        paddingHorizontal: 20,
+        paddingTop: 20,
+        paddingHorizontal: 567,
     },
     dropdown: {
         width: '100%',
@@ -172,8 +175,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     input: {
-        width: '100%',
-        height: 40,
+        width: 400,
+        height: 63,
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 5,
@@ -185,14 +188,27 @@ const styles = StyleSheet.create({
     dropdownContainer: {
         backgroundColor: 'white',
         borderColor: "#ddd",
+        width: 400,
         borderWidth: 1
     },
     buttonContainer: {
         marginTop: 20,
-        width: '100%',
-        backgroundColor: '#376c3e',
-        color: 'white'
-    }
+        width: 200,
+    },
+    button: {
+        borderColor: '#ddd',
+        backgroundColor: '#fff',
+        paddingVertical: 12,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        bottom: 40,
+    },
+    buttonText: {
+        color: '#376c3e',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
 });
 
 export default DLogScreen;

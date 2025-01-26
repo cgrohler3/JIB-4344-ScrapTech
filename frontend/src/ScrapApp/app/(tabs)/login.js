@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {Image, Button, TouchableOpacity, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
@@ -16,7 +16,14 @@ const LoginScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Log In</Text>
+            <Text style={styles.title}>Employee Login</Text>
+
+            <Image
+                source={require('../../assets/images/Scrap logo.jpeg')}  // Ensure this path is correct
+                style={styles.image}
+                resizeMode="contain"
+            />
+
 
             <TextInput
                 style={styles.input}
@@ -38,7 +45,10 @@ const LoginScreen = () => {
             />
 
             <View style={styles.buttonContainer}>
-                <Button title="Save" onPress={handleLogin} color="white" />
+                <Button title="Save" onPress={handleLogin} color={'transparent'} />
+                <TouchableOpacity onPress={handleLogin} style={styles.button}>
+                    <Text style={styles.buttonText}>Log In</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -50,7 +60,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
-        paddingTop: 60,
+        paddingTop: 20,
         paddingHorizontal: 20,
     },
     title: {
@@ -60,8 +70,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     input: {
-        width: '100%',
-        height: 40,
+        width: 400,
+        height: 63,
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 5,
@@ -72,9 +82,28 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         marginTop: 20,
-        width: '100%',
-        backgroundColor: '#376c3e',
-        color: 'white',
+        width: 200,
+    },
+    button: {
+        borderColor: '#ddd',
+        backgroundColor: '#fff',
+        paddingVertical: 12,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        bottom: 40,
+    },
+    buttonText: {
+        color: '#376c3e',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    //Scraplanta logo
+    image: {
+        position: 'absolute',
+        bottom: 20,
+        right: 50,
+        width: 200,
     },
 });
 
