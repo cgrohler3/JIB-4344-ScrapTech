@@ -1,5 +1,5 @@
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, Timestamp } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import { db } from '../../../lib/firebaseConfig'
@@ -48,6 +48,8 @@ const LogDonations = () => {
 	}
 
 	const saveDoc = async () => {
+		//get current timestamp for donation
+		const timestamp = Timestamp.now()
 		const snapshot = await addDoc(collection(db, 'donations'), {
 			email: email,
 			zipCode: zipCode,
@@ -55,6 +57,7 @@ const LogDonations = () => {
 			quantity: quantity,
 			weight: weight,
 			category: category,
+			timestamp: timestamp,
 		})
 
 		snapshot
