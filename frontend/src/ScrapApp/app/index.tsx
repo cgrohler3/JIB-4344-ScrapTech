@@ -1,67 +1,126 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
+import {
+	ActivityIndicator,
+	Button,
+	KeyboardAvoidingView,
+	StyleSheet,
+	TextInput,
+	View
+} from 'react-native'
 import React, { useState } from 'react'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+
+import { auth } from '../lib/firebaseConfig'
 
 export default function Index() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [loading, setLoading] = useState(false)
 
-	const handleLogin = () => {}
-	const handleRegister = () => {}
+	/*
+	Function to sign Up a user on ScrapApp. Email acts as username.
+	*/
+	const signUp = async () => {
+		setLoading(true);
+		await createUserWithEmailAndPassword(auth, email, password)
+		.then(userCredentials => {
+			const user = userCredentials.user;
+			console.log('Signed Up With: ', user.email)
+		})
+		//error message alerts
+		.catch(err => {
+			switch(err.code) {
+				case 'auth/invalid-email':
+					alert('Your entered email is invalid.')
+					break
+				case 'auth/email-already-in-use':
+					alert('This email has an account already. Try logging in.')
+					break
+				case 'auth/weak-password':
+					alert('Your password must be 6 characters or longer.')
+					break
+				default:
+					alert('Error signing up. Try later or contact Admin.')
+					console.error(err)
+			}
+		})
+		.finally(() => {
+			setLoading(false);
+		})
+	}
+
+	/*
+	Function to sign In a user on ScrapApp.
+	*/
+	const signIn = async () => {
+		setLoading(true);
+		await signInWithEmailAndPassword(auth, email, password)
+		.then(userCredentials => {
+			const user = userCredentials.user;
+			console.log('Signed In With: ', user.email)
+		})
+		//error message alerts
+		.catch(err => {
+			switch(err.code) {
+				case 'auth/user-not-found':
+					alert('No accounts exist with this email. Try signing up.')
+					break
+				case 'auth/user-disabled':
+					alert('User has been disabled.')
+					break
+				default:
+					alert('Error logging in. Try later or contact Admin.')
+					console.error(err)
+			}
+		})
+		.finally(() => {
+			setLoading(false);
+		})
+	}
 
 	return (
+		//Keyboard is prevented from obstructing input fields and buttons assigned to appropriate methods.
 		<View style={styles.container}>
-			<Text style={styles.title}>Log In</Text>
-			<TextInput
-				style={styles.input}
-				placeholder='Email'
-				value={email}
-				onChangeText={setEmail}
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder='Password'
-				value={password}
-				onChangeText={setPassword}
-				secureTextEntry
-			/>
-			<View style={styles.buttonContainer}>
-				<Button title='Login' onPress={handleLogin} />
-				<Button title='Register' onPress={handleRegister} />
-			</View>
+			<KeyboardAvoidingView behavior='padding'>
+				<TextInput
+					style={styles.input}
+					value={email}
+					onChangeText={setEmail}
+					autoCapitalize='none'
+					keyboardType='email-address'
+					placeholder='Email'
+				/>
+				<TextInput
+					style={styles.input}
+					value={password}
+					onChangeText={setPassword}
+					secureTextEntry
+					placeholder='Password'
+				/>
+        {loading ? (
+					<ActivityIndicator size={'small'} style={{ margin: 28 }} />
+				) : (
+					<>
+						<Button onPress={signIn} title="Login" />
+						<Button onPress={signUp} title="Create account" />
+					</>
+				)}
+			</KeyboardAvoidingView>
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
+		marginHorizontal: 20,
 		flex: 1,
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		backgroundColor: '#f5f5f5',
-		paddingTop: 60,
-		paddingHorizontal: 20,
-	},
-	title: {
-		fontSize: 24,
-		fontWeight: 'bold',
-		color: '#376c3e',
-		marginBottom: 20,
+		justifyContent: 'center',
 	},
 	input: {
-		width: '100%',
-		height: 40,
-		borderColor: '#ddd',
+		marginVertical: 4,
+		height: 50,
 		borderWidth: 1,
-		borderRadius: 5,
-		paddingHorizontal: 10,
-		marginBottom: 15,
+		borderRadius: 4,
+		padding: 10,
 		backgroundColor: '#fff',
-		color: 'gray',
-	},
-	buttonContainer: {
-		marginTop: 20,
-		width: '100%',
-		backgroundColor: '#376c3e',
-		color: 'white',
 	},
 })
