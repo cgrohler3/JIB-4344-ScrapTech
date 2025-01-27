@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from 'react-native'
+import { Button, Image, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 
 import { auth } from '../../../lib/firebaseConfig'
@@ -25,6 +25,11 @@ const HomeScreen = () => {
 
 	return (
 		<View style={styles.container}>
+			<Image
+				source={require("../../../assets/images/scraplanta-logo.jpeg")}
+				style={styles.image}
+				resizeMode="contain"
+			/>
 			<Text style={styles.title}>Welcome, {email}</Text>
 			<Button title='Sign Out' onPress={handleLogoff} />
 		</View>
@@ -44,6 +49,12 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: '#376c3e',
 	},
+	image: {
+        position: 'absolute',
+        bottom: 20,
+        right: 50,
+        width: 200,
+    }
 })
 
 export default HomeScreen

@@ -1,5 +1,5 @@
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native'
-import { addDoc, collection, Timestamp } from 'firebase/firestore'
+import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Timestamp, addDoc, collection } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import { db } from '../../../lib/firebaseConfig'
@@ -139,7 +139,10 @@ const LogDonations = () => {
 			/>
 
 			<View style={styles.buttonContainer}>
-				<Button title='Save' onPress={handleSave} color='white' />
+				<Button title='Save' onPress={handleSave} color='transparent' />
+				<TouchableOpacity onPress={handleSave} style={styles.button}>
+					<Text style={styles.buttonText}>Save Donation</Text>
+				</TouchableOpacity>
 			</View>
 		</View>
 	)
@@ -167,11 +170,11 @@ const styles = StyleSheet.create({
 	},
 	selectedTextStyle: {
 		color: 'black',
-		fontSize: 14,
+		fontSize: 14
 	},
 	placeholderStyle: {
 		color: 'gray',
-		fontSize: 14,
+		fontSize: 14
 	},
 	title: {
 		fontSize: 25,
@@ -188,19 +191,34 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		marginBottom: 15,
 		backgroundColor: '#fff',
-		color: 'black',
+		color: 'black'
 	},
 	dropdownContainer: {
 		backgroundColor: 'white',
 		borderColor: '#ddd',
-		borderWidth: 1,
+		width: 400,
+		borderWidth: 1
 	},
 	buttonContainer: {
 		marginTop: 20,
-		width: '100%',
+		width: 200,
 		backgroundColor: '#376c3e',
 		color: 'white',
 	},
+	button: {
+        borderColor: '#ddd',
+        backgroundColor: '#fff',
+        paddingVertical: 12,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        bottom: 40,
+    },
+    buttonText: {
+        color: '#376c3e',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
 })
 
 export default LogDonations

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c03e1309-e4c9-484d-a214-168322b3c852" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/.expo/types/router.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/.expo/types/router.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/logDonations.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/logDonations.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/login.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2rjhs6fb1UlIuvgLq3EMRxJylXA" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;login&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Hayden/Documents/Github/JIB-4344-ScrapTech&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Hayden\\Documents\\Github\\JIB-4344-ScrapTech\\frontend\\src\\ScrapApp\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Hayden\Documents\Github\JIB-4344-ScrapTech\frontend\src\ScrapApp" />
+      <recent name="C:\Users\Hayden\Documents\Github\JIB-4344-ScrapTech\frontend\src\ScrapApp\assets\images" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c03e1309-e4c9-484d-a214-168322b3c852" name="Changes" comment="" />
+      <created>1737078595736</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1737078595736</updated>
+      <workItem from="1737078596774" duration="119000" />
+      <workItem from="1737143643540" duration="3389000" />
+      <workItem from="1737502544176" duration="6089000" />
+      <workItem from="1737565510184" duration="605000" />
+      <workItem from="1737837531239" duration="4163000" />
+      <workItem from="1737870846530" duration="2236000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
