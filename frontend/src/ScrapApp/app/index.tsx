@@ -26,6 +26,7 @@ export default function Index() {
 			const user = userCredentials.user;
 			console.log('Signed Up With: ', user.email)
 		})
+		//error message alerts
 		.catch(err => {
 			switch(err.code) {
 				case 'auth/invalid-email':
@@ -57,11 +58,27 @@ export default function Index() {
 			const user = userCredentials.user;
 			console.log('Signed In With: ', user.email)
 		})
-		.catch(err => alert(err.message))
-		setLoading(false);
+		//error message alerts
+		.catch(err => {
+			switch(err.code) {
+				case 'auth/user-not-found':
+					alert('No accounts exist with this email. Try signing up.')
+					break
+				case 'auth/user-disabled':
+					alert('User has been disabled.')
+					break
+				default:
+					alert('Error logging in. Try later or contact Admin.')
+					console.error(err)
+			}
+		})
+		.finally(() => {
+			setLoading(false);
+		})
 	}
 
 	return (
+		//Keyboard is prevented from obstructing input fields and buttons assigned to appropriate methods.
 		<View style={styles.container}>
 			<KeyboardAvoidingView behavior='padding'>
 				<TextInput
