@@ -1,8 +1,10 @@
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import React from 'react'
 import { Tabs } from 'expo-router'
+import {verifyUser} from '../../../helpers/verifyUser'
 
 export default function TabLayout() {
+	const isEmployee = verifyUser();
 	return (
 		<Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
 			<Tabs.Screen
@@ -34,6 +36,7 @@ export default function TabLayout() {
 							color={color}
 						/>
 					),
+					...(isEmployee ? {} : {href: null})
 				}}
 			/>
 		</Tabs>
