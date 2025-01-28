@@ -28,7 +28,7 @@ const HomeScreen = () => {
 			<Image
 				source={require("../../../assets/images/scraplanta-logo.png")}
 				style={styles.image}
-				resizeMode="contain"
+				resizeMode="center"
 			/>
 			<Text style={styles.title}>Welcome, {email}</Text>
 			<Button title='Sign Out' onPress={handleLogoff} />
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 		backgroundColor: '#f5f5f5',
-		paddingTop: 80,
+		paddingTop: 50,
 	},
 	title: {
 		fontSize: 25,
@@ -50,10 +50,10 @@ const styles = StyleSheet.create({
 		color: '#376c3e',
 	},
 	image: {
-        position: 'absolute',
-        bottom: 20,
-        right: 50,
         width: 200,
+		height: 100,
+		padding: 0,
+		marginBottom: 15
     }
 })
 
