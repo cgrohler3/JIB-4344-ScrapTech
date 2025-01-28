@@ -26,7 +26,7 @@ const HomeScreen = () => {
 	return (
 		<View style={styles.container}>
 			<Image
-				source={require("../../../assets/images/scraplanta-logo.jpeg")}
+				source={require("../../../assets/images/scraplanta-logo.png")}
 				style={styles.image}
 				resizeMode="contain"
 			/>
