@@ -1,13 +1,12 @@
 import {
 	ActivityIndicator,
-	Button,
 	Image,
 	KeyboardAvoidingView,
 	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
-	View
+	View,
 } from 'react-native'
 import React, { useState } from 'react'
 import {
@@ -83,9 +82,9 @@ export default function Index() {
 		<View style={styles.container}>
 			<View style={styles.imageBox}>
 				<Image
-					source={require("../assets/images/scraplanta-logo.png")}
+					source={require('../assets/images/scraplanta-logo.png')}
 					style={styles.image}
-					resizeMode="center"
+					resizeMode='center'
 				/>
 			</View>
 			<KeyboardAvoidingView behavior='padding'>
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
 	imageBox: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 25
+		marginBottom: 25,
 	},
 	image: {
 		width: 200,
@@ -172,7 +171,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 90
+		marginBottom: 90,
 	},
 	buttonText: {
 		fontWeight: 'bold',

@@ -11,7 +11,6 @@ export default function RootLayout() {
 	const router = useRouter()
 	const segments = useSegments()
 
-	// Get the currently logged in User
 	useEffect(() => {
 		const subscriber = onAuthStateChanged(auth, (user) => {
 			if (user) {
@@ -21,7 +20,6 @@ export default function RootLayout() {
 		return subscriber
 	}, [])
 
-	// General Routing: If logged in, redirect to (auth), else to login
 	useEffect(() => {
 		const inAuthGroup = segments[0] === '(auth)'
 		if (user && !inAuthGroup) {
