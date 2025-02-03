@@ -1,4 +1,12 @@
-import { Alert, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+	Alert,
+	Button,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from 'react-native'
 import { Timestamp, addDoc, collection } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
@@ -9,8 +17,8 @@ const LogDonations = () => {
 	const [email, setEmail] = useState('')
 	const [zipCode, setZipCode] = useState('')
 	const [itemName, setItemName] = useState('')
-	const [quantity, setQuantity] = useState('')
-	const [weight, setWeight] = useState('')
+	const [quantity, setQuantity] = useState(0)
+	const [weight, setWeight] = useState(0)
 	const [category, setCategory] = useState('')
 	const [items, setItems] = useState([
 		{ label: 'Glass', value: 'Glass' },
@@ -48,14 +56,13 @@ const LogDonations = () => {
 	}
 
 	const saveDoc = async () => {
-		//get current timestamp for donation
 		const timestamp = Timestamp.now()
 		const snapshot = await addDoc(collection(db, 'donations'), {
 			email: email,
 			zipCode: zipCode,
 			itemName: itemName,
-			quantity: quantity,
-			weight: weight,
+			quantity: Number(quantity),
+			weight: Number(quantity),
 			category: category,
 			timestamp: timestamp,
 		})
@@ -92,7 +99,6 @@ const LogDonations = () => {
 				autoComplete='off'
 				returnKeyType='done'
 			/>
-
 			<TextInput
 				style={styles.input}
 				placeholder='Item Name'
@@ -170,11 +176,11 @@ const styles = StyleSheet.create({
 	},
 	selectedTextStyle: {
 		color: 'black',
-		fontSize: 14
+		fontSize: 14,
 	},
 	placeholderStyle: {
 		color: 'gray',
-		fontSize: 14
+		fontSize: 14,
 	},
 	title: {
 		fontSize: 25,
@@ -191,13 +197,13 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		marginBottom: 15,
 		backgroundColor: '#fff',
-		color: 'black'
+		color: 'black',
 	},
 	dropdownContainer: {
 		backgroundColor: 'white',
 		borderColor: '#ddd',
 		width: 400,
-		borderWidth: 1
+		borderWidth: 1,
 	},
 	buttonContainer: {
 		marginTop: 20,
@@ -206,19 +212,19 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	button: {
-        borderColor: '#ddd',
-        backgroundColor: '#fff',
-        paddingVertical: 12,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        bottom: 40,
-    },
-    buttonText: {
-        color: '#376c3e',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
+		borderColor: '#ddd',
+		backgroundColor: '#fff',
+		paddingVertical: 12,
+		borderRadius: 20,
+		alignItems: 'center',
+		justifyContent: 'center',
+		bottom: 40,
+	},
+	buttonText: {
+		color: '#376c3e',
+		fontSize: 18,
+		fontWeight: 'bold',
+	},
 })
 
 export default LogDonations
