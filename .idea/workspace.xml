@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c03e1309-e4c9-484d-a214-168322b3c852" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/.expo/types/router.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/.expo/types/router.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/logDonations.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/logDonations.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(tabs)/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/zipCodes.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/zipCodes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/helpers/verifyUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/helpers/verifyUser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +42,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;login&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;pieChart&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Hayden/Documents/Github/JIB-4344-ScrapTech&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -72,6 +73,10 @@
       <workItem from="1737565510184" duration="605000" />
       <workItem from="1737837531239" duration="4163000" />
       <workItem from="1737870846530" duration="2236000" />
+      <workItem from="1738727132375" duration="366000" />
+      <workItem from="1738781325533" duration="860000" />
+      <workItem from="1738874917763" duration="3058000" />
+      <workItem from="1738882177308" duration="4372000" />
     </task>
     <servers />
   </component>
