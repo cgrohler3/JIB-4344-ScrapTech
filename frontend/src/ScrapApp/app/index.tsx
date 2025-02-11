@@ -59,14 +59,15 @@ export default function Index() {
 				console.log('Signed In With: ', user.email)
 			})
 			.catch((err) => {
+				console.log('Email Input:', email);
 				switch (err.code) {
-					case 'auth/user-not-found':
+					case 'auth/invalid-email':
 						alert(
-							'No accounts exist with this email. Try signing up.'
+							'Please input a valid email address.'
 						)
 						break
-					case 'auth/user-disabled':
-						alert('User has been disabled.')
+					case 'auth/invalid-credential':
+						alert('Email or Password are incorrect. Please try again.')
 						break
 					default:
 						alert('Error logging in. Try later or contact Admin.')
