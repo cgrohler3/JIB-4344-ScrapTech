@@ -17,10 +17,17 @@ import {
 import { auth } from '../lib/firebaseConfig'
 
 export default function Index() {
+	const {logger} = require("firebase-functions");
+	const {onRequest} = require("firebase-functions/v2/https");
+	const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+	const {initializeApp} = require("firebase-admin/app");
+	const {getFirestore} = require("firebase-admin/firestore");
+
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [loading, setLoading] = useState(false)
 
+	initializeApp();
 	const signUp = async () => {
 		setLoading(true)
 		await createUserWithEmailAndPassword(auth, email, password)
