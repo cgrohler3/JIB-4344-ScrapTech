@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { PieChart } from "react-native-chart-kit";
-import {Dropdown} from "react-native-element-dropdown";
 
+import {Dropdown} from "react-native-element-dropdown";
+import { PieChart } from "react-native-chart-kit";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ZipCodes = () => {
-
     const [category, setCategory] = useState('')
     const [items, setItems] = useState([
         //dummy zip codes, will need to populate this
