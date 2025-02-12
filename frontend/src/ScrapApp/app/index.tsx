@@ -9,25 +9,67 @@ import {
 	View,
 } from 'react-native'
 import React, { useState } from 'react'
+import {query, where, getDocs, updateDoc, doc, increment} from "firebase/firestore"
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 } from 'firebase/auth'
 
 import { auth } from '../lib/firebaseConfig'
+import { db } from "../lib/firebaseConfig"
+import { collection } from 'firebase/firestore'
 
 export default function Index() {
-	const {logger} = require("firebase-functions");
-	const {onRequest} = require("firebase-functions/v2/https");
-	const {onDocumentCreated} = require("firebase-functions/v2/firestore");
-	const {initializeApp} = require("firebase-admin/app");
-	const {getFirestore} = require("firebase-admin/firestore");
+	const {functions} = require("firebase-functions")
+	const {initializeApp} = require("firebase-admin/app")
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [loading, setLoading] = useState(false)
 
-	initializeApp();
+	initializeApp()
+
+	exports.updateZipTot = functions.firestore
+		.document("donations/{documentId}")
+		.onCreate(async (snapshot: { data: () => any }, cotext: any) => {
+			const donation = snapshot.data()
+			const zip = donation.zipCode
+			const category = donation.category
+			const weight = donation.weight
+
+			if (!zip || !category || !weight) {
+				console.log("One or More Fields Absent, Total Not Updated.")
+				console.log("zip ", zip)
+				console.log("category ", category)
+				console.log("weight ", weight)
+				return null
+			}
+
+			try {
+				const zipCollection = query(collection(db, "zip_codes"), where("code", "==", zip))
+				const queryItem = await getDocs(zipCollection)
+
+				//Zip code does not yet exist. To be handled in logDonation.js
+				if (queryItem.empty) {
+					return null
+				}
+
+				const zipDoc = queryItem.docs[0]
+				const docRef = doc(db, "zip_codes", zipDoc.id);
+				await updateDoc(docRef, {
+					total_weight: increment(weight),
+					total_donos: increment(1),
+					
+				})
+				
+
+			} catch(error) {
+				console.log("Error Updating Zip ", error)
+			}
+
+		})
+
+
 	const signUp = async () => {
 		setLoading(true)
 		await createUserWithEmailAndPassword(auth, email, password)
