@@ -24,7 +24,7 @@ function verifyUser() {
             setEmployees(docs)
         }
 
-        return getEmployees;
+        getEmployees();
     }, []);
 
     console.log(employees)

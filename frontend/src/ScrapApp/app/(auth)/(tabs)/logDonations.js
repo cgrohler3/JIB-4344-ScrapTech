@@ -7,11 +7,12 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
-import { Timestamp, addDoc, collection } from 'firebase/firestore'
+import { FieldValue, Timestamp, addDoc, collection, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import { db } from '../../../lib/firebaseConfig'
 import { useState } from 'react'
+import { validateIndexedDBOpenable } from '@firebase/util'
 
 const LogDonations = () => {
 	const [email, setEmail] = useState('')
@@ -43,6 +44,7 @@ const LogDonations = () => {
 					text: 'Save',
 					onPress: () => {
 						saveDoc()
+						updateZipcode()
 						setEmail('')
 						setZipCode('')
 						setItemName('')
@@ -62,11 +64,11 @@ const LogDonations = () => {
 			zipCode: zipCode,
 			itemName: itemName,
 			quantity: Number(quantity),
-			weight: Number(quantity),
+			weight: Number(weight),
 			category: category,
 			timestamp: timestamp,
 		})
-
+	
 		snapshot
 			.then(() => {
 				Alert.alert('Success', 'Donation Saved Successfully!')
@@ -74,6 +76,31 @@ const LogDonations = () => {
 			.catch((err) => {
 				Alert.alert('Fail', 'Error when logging donation: ', err)
 			})
+	}
+
+	// Change this to cloud-function
+	const updateZipcode = async () => {
+		const docRef = doc(db, "zip_codes", zipCode)
+		const docSnap = await getDoc(docRef)
+
+		if (docSnap.exists()) {
+			await updateDoc(docRef, {
+				[`categories.${category}`]: increment(Number(weight)),
+				total_donations: increment(1),
+				total_weight: increment(Number(weight))
+			})
+			
+		} else {
+			const snapshot = await setDoc(doc(db, "zip_codes", zipCode), {
+				categories: {
+					[category]: Number(weight),
+				},
+				total_donations: 1,
+				total_weight: Number(weight),
+			}, { merge: true })
+
+			snapshot.then(() => console.log("Added new zip code"))
+		}
 	}
 
 	return (
