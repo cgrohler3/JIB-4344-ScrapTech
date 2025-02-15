@@ -172,9 +172,8 @@ const LogDonations = () => {
 			/>
 
 			<View style={styles.buttonContainer}>
-				<Button title='Save' onPress={handleSave} color='transparent' />
 				<TouchableOpacity onPress={handleSave} style={styles.button}>
-					<Text style={styles.buttonText}>Save Donation</Text>
+					<Text style={styles.buttonText}>     Save Donation     </Text>
 				</TouchableOpacity>
 			</View>
 		</View>
@@ -235,17 +234,22 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		marginTop: 20,
 		width: 200,
+		borderBottomEndRadius: 50,
+		borderBottomLeftRadius: 50,
+		borderTopLeftRadius: 50,
+		borderTopEndRadius: 50,
 		backgroundColor: '#376c3e',
 		color: 'white',
+		alignItems: 'center',
+		paddingVertical: 5,
 	},
 	button: {
 		borderColor: '#ddd',
 		backgroundColor: '#fff',
 		paddingVertical: 12,
-		borderRadius: 20,
+		borderRadius: 50,
 		alignItems: 'center',
 		justifyContent: 'center',
-		bottom: 40,
 	},
 	buttonText: {
 		color: '#376c3e',
