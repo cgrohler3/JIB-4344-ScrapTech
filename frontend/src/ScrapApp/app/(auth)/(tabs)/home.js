@@ -25,13 +25,19 @@ const HomeScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			<Image
-				source={require("../../../assets/images/scraplanta-logo.png")}
-				style={styles.image}
-				resizeMode="center"
-			/>
+			<View style={styles.img}>
+				<Image
+					source={require("../../../assets/images/scraplanta-logo.png")}
+					style={styles.image}
+					resizeMode="contain"
+				/>
+			</View>
+			<View style={styles.button}>
+				<Button title='Sign Out' onPress={handleLogoff} />
+			</View>
+
+
 			<Text style={styles.title}>Welcome, {email}</Text>
-			<Button title='Sign Out' onPress={handleLogoff} />
 		</View>
 	)
 }
@@ -43,6 +49,11 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: '#f5f5f5',
 		paddingTop: 50,
+	},
+	button: {
+		position: 'absolute',
+		top: 20,
+		right: 20,
 	},
 	title: {
 		fontSize: 25,
