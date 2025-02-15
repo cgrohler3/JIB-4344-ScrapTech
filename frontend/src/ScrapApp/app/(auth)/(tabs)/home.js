@@ -1,9 +1,10 @@
-import { Button, Image, StyleSheet, Text, View } from 'react-native'
+import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { auth } from '../../../lib/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'expo-router'
+import {verifyUser} from '../../../helpers/verifyUser'
 
 const HomeScreen = () => {
 	const router = useRouter()
@@ -22,6 +23,7 @@ const HomeScreen = () => {
 			})
 			.catch((err) => alert(err.message))
 	}
+	const isEmployee = verifyUser();
 
 	return (
 		<View style={styles.container}>
@@ -38,6 +40,27 @@ const HomeScreen = () => {
 
 
 			<Text style={styles.title}>Welcome, {email}</Text>
+			<View style={styles.navigation}>
+				<TouchableOpacity>
+					<FontAwesome6 name='house' size={48} color='black' />
+				</TouchableOpacity>
+
+				<TouchableOpacity>
+					<FontAwesome6 name='box-open' size={48} color='black' />
+				</TouchableOpacity>
+
+				{isEmployee && (
+					<>
+						<TouchableOpacity>
+							<FontAwesome6 name='file-text' size={48} color='black' />
+						</TouchableOpacity>
+
+						<TouchableOpacity>
+							<FontAwesome6 name='chart-pie' size={48} color='black' />
+						</TouchableOpacity>
+					</>
+				)}
+			</View>
 		</View>
 	)
 }
@@ -65,7 +88,14 @@ const styles = StyleSheet.create({
 		height: 100,
 		padding: 0,
 		marginBottom: 15
-    }
+    },
+	navigation: {
+		flex: 1,
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		gap: 32,
+		paddingTop: 64
+	},
 })
 
 export default HomeScreen
