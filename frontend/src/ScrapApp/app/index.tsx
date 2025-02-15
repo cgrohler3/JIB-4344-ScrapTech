@@ -85,7 +85,7 @@ export default function Index() {
 				<Image
 					source={require('../assets/images/scraplanta-logo.png')}
 					style={styles.image}
-					resizeMode='center'
+					resizeMode='contain'
 				/>
 			</View>
 			<KeyboardAvoidingView behavior='padding'>
