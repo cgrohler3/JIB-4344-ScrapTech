@@ -5,6 +5,7 @@ import { auth } from '../../../lib/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'expo-router'
 import {verifyUser} from '../../../helpers/verifyUser'
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
 	const router = useRouter()
@@ -23,7 +24,8 @@ const HomeScreen = () => {
 			})
 			.catch((err) => alert(err.message))
 	}
-	const isEmployee = verifyUser();
+	const isEmployee = verifyUser()
+	const navigation = useNavigation()
 
 	return (
 		<View style={styles.container}>
@@ -41,21 +43,17 @@ const HomeScreen = () => {
 
 			<Text style={styles.title}>Welcome, {email}</Text>
 			<View style={styles.navigation}>
-				<TouchableOpacity>
-					<FontAwesome6 name='house' size={48} color='black' />
-				</TouchableOpacity>
-
-				<TouchableOpacity>
+				<TouchableOpacity onPress={() => navigation.navigate('logDonations')}>
 					<FontAwesome6 name='box-open' size={48} color='black' />
 				</TouchableOpacity>
 
 				{isEmployee && (
 					<>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={() => navigation.navigate('viewDonations')}>
 							<FontAwesome6 name='file-text' size={48} color='black' />
 						</TouchableOpacity>
-
-						<TouchableOpacity>
+					
+						<TouchableOpacity onPress={() => navigation.navigate('zipCodes')}>
 							<FontAwesome6 name='chart-pie' size={48} color='black' />
 						</TouchableOpacity>
 					</>
