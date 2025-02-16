@@ -24,7 +24,7 @@ const ViewDonations = () => {
 				<ScrollView persistentScrollbar={true}>
 					{donations &&
 						Object.keys(donations).map(key => (
-							<View style={styles.childBox}>
+							<View key={key} style={styles.childBox}>
 								<Text><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t\t\t\t\t\t\t\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
 								<Text><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t\t\t\t\t"}{donations[key].zipCode}</Text>
 								<Text><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t\t\t"}{donations[key].itemName}</Text>

@@ -163,7 +163,6 @@ const LogDonations = () => {
 				valueField='value'
 				placeholder='Select Category'
 				placeholderStyle={styles.placeholderStyle}
-				searchPlaceholder='Search...'
 				value={category}
 				onChange={(item) => {
 					setCategory(item.value)
