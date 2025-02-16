@@ -1,18 +1,16 @@
 import {
 	Alert,
-	Button,
 	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
 	View,
 } from 'react-native'
-import { FieldValue, Timestamp, addDoc, collection, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import { db } from '../../../lib/firebaseConfig'
 import { useState } from 'react'
-import { validateIndexedDBOpenable } from '@firebase/util'
 
 const LogDonations = () => {
 	const [email, setEmail] = useState('')
@@ -21,6 +19,8 @@ const LogDonations = () => {
 	const [quantity, setQuantity] = useState(0)
 	const [weight, setWeight] = useState(0)
 	const [category, setCategory] = useState('')
+
+	// Update This Dynamically From DB
 	const [items, setItems] = useState([
 		{ label: 'Glass', value: 'Glass' },
 		{ label: 'Fabric', value: 'Fabric' },
@@ -31,12 +31,12 @@ const LogDonations = () => {
 
 	const handleSave = () => {
 		if (!zipCode || !itemName || !quantity || !weight || !category) {
-			Alert.alert('ERROR', 'All product information MUST be filled!')
+			Alert.alert('Missing Fields', 'All product information must be filled!')
 			return
 		}
 
 		Alert.alert(
-			'CONFIRM SAVE',
+			'Confirm Save?',
 			`You entered:\n\nEmail: ${email}\nZip Code: ${zipCode}\nItem Name: ${itemName}\nQuantity: ${quantity}\nWeight: ${weight}\nCategory: ${category}\n\nDo you want to save?`,
 			[
 				{ text: 'Cancel', style: 'cancel' },
@@ -171,11 +171,12 @@ const LogDonations = () => {
 				activeColor='lightgray'
 			/>
 
-			<View style={styles.buttonContainer}>
-				<TouchableOpacity onPress={handleSave} style={styles.button}>
-					<Text style={styles.buttonText}>     Save Donation     </Text>
-				</TouchableOpacity>
-			</View>
+			<TouchableOpacity
+				style={styles.buttonBox}
+				onPress={handleSave}
+			>
+				<Text style={styles.buttonText}>Save Donation</Text>
+			</TouchableOpacity>
 		</View>
 	)
 }
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		color: 'gray',
 		fontSize: 14,
+		borderColor: 'darkgray'
 	},
 	selectedTextStyle: {
 		color: 'black',
@@ -224,37 +226,26 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 		backgroundColor: '#fff',
 		color: 'black',
+		borderColor: 'darkgray'
 	},
 	dropdownContainer: {
 		backgroundColor: 'white',
-		borderColor: '#ddd',
 		width: 400,
 		borderWidth: 1,
 	},
-	buttonContainer: {
-		marginTop: 20,
-		width: 200,
-		borderBottomEndRadius: 50,
-		borderBottomLeftRadius: 50,
-		borderTopLeftRadius: 50,
-		borderTopEndRadius: 50,
-		backgroundColor: '#376c3e',
-		color: 'white',
-		alignItems: 'center',
-		paddingVertical: 5,
-	},
-	button: {
-		borderColor: '#ddd',
-		backgroundColor: '#fff',
-		paddingVertical: 12,
-		borderRadius: 50,
-		alignItems: 'center',
+	buttonBox: {
+		height: 40,
+		width: '100%',
+		borderRadius: 3,
 		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#376c3e',
+		marginTop: 25
 	},
 	buttonText: {
-		color: '#376c3e',
 		fontSize: 18,
 		fontWeight: 'bold',
+		color: 'white',
 	},
 })
 

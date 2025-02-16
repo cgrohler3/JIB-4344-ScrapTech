@@ -1,14 +1,10 @@
-import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
+
 import { auth } from '../../../lib/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
-import { useRouter } from 'expo-router'
-import {verifyUser} from '../../../helpers/verifyUser'
-import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
-	const router = useRouter()
 	const [email, setEmail] = useState('')
 
 	onAuthStateChanged(auth, (user) => {
@@ -17,48 +13,16 @@ const HomeScreen = () => {
 		}
 	})
 
-	const handleLogoff = () => {
-		auth.signOut()
-			.then(() => {
-				router.replace('/')
-			})
-			.catch((err) => alert(err.message))
-	}
-	const isEmployee = verifyUser()
-	const navigation = useNavigation()
-
 	return (
 		<View style={styles.container}>
-			<View style={styles.img}>
+			<View>
 				<Image
 					source={require("../../../assets/images/scraplanta-logo.png")}
 					style={styles.image}
 					resizeMode="contain"
 				/>
 			</View>
-			<View style={styles.button}>
-				<Button title='Sign Out' onPress={handleLogoff} />
-			</View>
-
-
 			<Text style={styles.title}>Welcome, {email}</Text>
-			<View style={styles.navigation}>
-				<TouchableOpacity onPress={() => navigation.navigate('logDonations')}>
-					<FontAwesome6 name='box-open' size={48} color='black' />
-				</TouchableOpacity>
-
-				{isEmployee && (
-					<>
-						<TouchableOpacity onPress={() => navigation.navigate('viewDonations')}>
-							<FontAwesome6 name='file-text' size={48} color='black' />
-						</TouchableOpacity>
-					
-						<TouchableOpacity onPress={() => navigation.navigate('zipCodes')}>
-							<FontAwesome6 name='chart-pie' size={48} color='black' />
-						</TouchableOpacity>
-					</>
-				)}
-			</View>
 		</View>
 	)
 }

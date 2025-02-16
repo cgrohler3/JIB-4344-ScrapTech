@@ -1,12 +1,13 @@
 import {
 	ActivityIndicator,
+	Alert,
 	Image,
 	KeyboardAvoidingView,
 	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
-	View,
+	View
 } from 'react-native'
 import React, { useState } from 'react'
 import {
@@ -31,19 +32,20 @@ export default function Index() {
 			.catch((err) => {
 				switch (err.code) {
 					case 'auth/invalid-email':
-						alert('Your entered email is invalid.')
+						Alert.alert('Invalid Email', 'Please enter a valid email!')
 						break
-					case 'auth/email-already-in-use':
-						alert(
-							'This email has an account already. Try logging in.'
-						)
+					case 'auth/missing-password':
+						Alert.alert('Missing Password', 'Please enter a valid password!')
 						break
 					case 'auth/weak-password':
-						alert('Your password must be 6 characters or longer.')
+						Alert.alert('Weak Password', 'Password must be at least 6 characters.')
+						break
+					case 'auth/email-already-in-use':
+						Alert.alert('Email Already In Use', 'Please try logging in instead!')
 						break
 					default:
-						alert('Error signing up. Try later or contact Admin.')
-						console.error(err)
+						console.log(err)
+						Alert.alert('Register Failed', 'Try Again Later or Contact Admin.')
 				}
 			})
 			.finally(() => {
@@ -59,19 +61,19 @@ export default function Index() {
 				console.log('Signed In With: ', user.email)
 			})
 			.catch((err) => {
-				console.log('Email Input:', email);
 				switch (err.code) {
 					case 'auth/invalid-email':
-						alert(
-							'Please input a valid email address.'
-						)
+						Alert.alert('Invalid Email', 'Please enter a valid email!')
+						break
+					case 'auth/missing-password':
+						Alert.alert('Missing Password', 'Please enter a valid password!')
 						break
 					case 'auth/invalid-credential':
-						alert('Email or Password are incorrect. Please try again.')
+						Alert.alert('Invalid Credential', 'Please enter the correct email/password!')
 						break
 					default:
-						alert('Error logging in. Try later or contact Admin.')
-						console.error(err)
+						console.log(err)
+						Alert.alert('Login Failed', 'Try Again Later or Contact Admin.')
 				}
 			})
 			.finally(() => {
