@@ -10,6 +10,8 @@ const ZipCodes = () => {
     const [zipCodes, setZipCodes] = useState([])
     const [zipCode, setZipCode] = useState('')
     const [chartData, setChartData] = useState([])
+
+    const [donations, setDonations] = useState(0)
     const [weight, setWeight] = useState(0)
 
     const getZipCodes = async () => {
@@ -43,6 +45,8 @@ const ZipCodes = () => {
             }
         })
         setChartData(formattedData)
+        setDonations(data.total_donations)
+        setWeight(data.total_weight)
     }
 
     useEffect(() => {
@@ -53,8 +57,6 @@ const ZipCodes = () => {
         const colors = ["#6C63FF", "#5551A2", "#F1A7B1", "#FFBB33", "#4CAF50", "#FF5722", "#8BC34A", "#FFC107"];
         return colors[index % colors.length];
     };
-
-    console.log(chartData)
 
     return (
         <View style={styles.container}>
@@ -72,6 +74,13 @@ const ZipCodes = () => {
                     backgroundColor={"transparent"}
                     paddingLeft={20}
                 />
+                <Text style={styles.weightBox}>
+                    Total Donations:
+                    <Text style={{ fontWeight: 'bold' }}> {donations}</Text>
+                    {'\t\t\t\&\t\t\t'}
+                    Total Weight:
+                    <Text style={{ fontWeight: 'bold' }}> {weight}</Text>
+                </Text>
             </View>
             <Dropdown
                 style={styles.dropdown}
@@ -128,6 +137,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         marginBottom: 20,
+    },
+    weightBox: {
+        fontSize: 15,
+        justifyContent: 'center',
+        alignSelf: 'center',
+        paddingHorizontal: 20,
+        paddingBottom: 15
     }
 })
 
