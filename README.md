@@ -12,6 +12,28 @@ Firebase brings simplicity to the management of backend functionality and commun
 Firestore meets the cost needs for the application while offering a powerful cloud database that can be scaled as needed. It also requires very little maintenance, and provides built-in security and authentication/authorization features that help make it secure and powerful.
 
 # 📄 Release Notes
+## v0.2.0 Release
+### Features
+#### Zip Code Pi Charts
++ Pi charts are displayed according to selected zip codes, detailing the category breakdown of donations from that location.
++ Added taskbar navigation for zip code data visualization.
+#### Zip Code Totals
++ Selected zip codes display total donations (quantity and weight) made from that location.
+#### Global Logout
++ Logout option is available on all pages, allowing users to end their session from any page, rather than only the home screen.
+#### User Permissions
++ Users are shown application pages according to their permission.
++ Employees can view zip code data, while standard users cannot.
+### Bug Fixes
+-Login error messages capture error states. <br/>
+-Scraplanta logo now displays fully.
+### Known Issues
+-No process for recovery of forgotten passwords. <br/>
+-Page headers differ from Scraplanta font. <br/>
+-View donations task queries entire "donations" collection instead of a recent subset leading to a higher number of reads from Firestore. <br/>
+-Home page does not include directions/guidance for new users.
+
+
 ## v0.1.0 Release
 ### Features
 #### Account Creation / Sign In
