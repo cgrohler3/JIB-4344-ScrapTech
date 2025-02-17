@@ -1,12 +1,10 @@
-import { Button, Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 
 import { auth } from '../../../lib/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
-import { useRouter } from 'expo-router'
 
 const HomeScreen = () => {
-	const router = useRouter()
 	const [email, setEmail] = useState('')
 
 	onAuthStateChanged(auth, (user) => {
@@ -15,23 +13,16 @@ const HomeScreen = () => {
 		}
 	})
 
-	const handleLogoff = () => {
-		auth.signOut()
-			.then(() => {
-				router.replace('/')
-			})
-			.catch((err) => alert(err.message))
-	}
-
 	return (
 		<View style={styles.container}>
-			<Image
-				source={require("../../../assets/images/scraplanta-logo.png")}
-				style={styles.image}
-				resizeMode="center"
-			/>
+			<View>
+				<Image
+					source={require("../../../assets/images/scraplanta-logo.png")}
+					style={styles.image}
+					resizeMode="contain"
+				/>
+			</View>
 			<Text style={styles.title}>Welcome, {email}</Text>
-			<Button title='Sign Out' onPress={handleLogoff} />
 		</View>
 	)
 }
@@ -44,6 +35,11 @@ const styles = StyleSheet.create({
 		backgroundColor: '#f5f5f5',
 		paddingTop: 50,
 	},
+	button: {
+		position: 'absolute',
+		top: 20,
+		right: 20,
+	},
 	title: {
 		fontSize: 25,
 		fontWeight: 'bold',
@@ -54,7 +50,14 @@ const styles = StyleSheet.create({
 		height: 100,
 		padding: 0,
 		marginBottom: 15
-    }
+    },
+	navigation: {
+		flex: 1,
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		gap: 32,
+		paddingTop: 64
+	},
 })
 
 export default HomeScreen

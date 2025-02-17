@@ -1,4 +1,4 @@
-import { Button, Dimensions, ScrollView, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, View } from 'react-native'
 import { collection, getDocs } from 'firebase/firestore'
 
@@ -20,47 +20,28 @@ const ViewDonations = () => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>View Donations</Text>
-			<View style={styles.buttonContainer}>
-				<Button title='Retrieve' onPress={getAllDocs} color='white' />
+			<View style={styles.parentBox}>
+				<ScrollView persistentScrollbar={true}>
+					{donations &&
+						Object.keys(donations).map(key => (
+							<View key={key} style={styles.childBox}>
+								<Text><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t\t\t\t\t\t\t\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
+								<Text><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t\t\t\t\t"}{donations[key].zipCode}</Text>
+								<Text><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t\t\t"}{donations[key].itemName}</Text>
+								<Text><Text style={{fontWeight: "bold"}}>Quantity: </Text>{"\t\t\t\t\t"}{donations[key].quantity}</Text>
+								<Text><Text style={{fontWeight: "bold"}}>Weight: </Text>{"\t\t\t\t\t\t"}{donations[key].weight}</Text>
+								<Text><Text style={{fontWeight: "bold"}}>Category: </Text>{"\t\t\t\t"}{donations[key].category}</Text>
+							</View>
+						))
+					}
+				</ScrollView>
 			</View>
-			<ScrollView style={styles.parentBox} persistentScrollbar={true}>
-				{donations &&
-					Object.keys(donations).map((key) => (
-						<View style={styles.childBox} key={key}>
-							<Text style={styles.boxItem}>
-								<Text style={{ fontWeight: 'bold' }}>
-									Email:{' '}
-								</Text>
-								{donations[key].email}
-								{'\n'}
-								<Text style={{ fontWeight: 'bold' }}>
-									Zip Code:{' '}
-								</Text>
-								{donations[key].zipCode}
-								{'\n'}
-								<Text style={{ fontWeight: 'bold' }}>
-									Item Name:{' '}
-								</Text>
-								{donations[key].itemName}
-								{'\n'}
-								<Text style={{ fontWeight: 'bold' }}>
-									Quantity:{' '}
-								</Text>
-								{donations[key].quantity}
-								{'\n'}
-								<Text style={{ fontWeight: 'bold' }}>
-									Weight:{' '}
-								</Text>
-								{donations[key].weight}
-								{'\n'}
-								<Text style={{ fontWeight: 'bold' }}>
-									Category:{' '}
-								</Text>
-								{donations[key].category}
-							</Text>
-						</View>
-					))}
-			</ScrollView>
+			<TouchableOpacity
+				style={styles.buttonBox}
+				onPress={getAllDocs}
+			>
+				<Text style={styles.buttonText}>Retrieve Donations</Text>
+			</TouchableOpacity>
 		</View>
 	)
 }
@@ -72,39 +53,41 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: '#f5f5f5',
 		paddingTop: 80,
-		flex: 1,
+		paddingHorizontal: 20,
 	},
 	title: {
 		fontSize: 25,
 		fontWeight: 'bold',
 		color: '#376c3e',
-	},
-	buttonContainer: {
-		marginTop: 20,
-		backgroundColor: '#376c3e',
-		color: 'white',
-		borderRadius: 5,
+		marginBottom: 20,
 	},
 	parentBox: {
-		width: Dimensions.get('window').width,
-		flex: 1,
-		marginBottom: 100,
-		marginTop: 25,
+		height: '315',
+		width: '100%',
+		borderColor: 'darkgray',
 		borderWidth: 1,
-		width: '90%',
-		borderColor: 'gray',
-		borderRadius: 5,
-		padding: 10,
+		borderRadius: 5
 	},
 	childBox: {
-		borderColor: '#ddd',
-		borderRadius: 10,
+		margin: 10,
+		padding: 10,
+		borderColor: 'darkgray',
 		borderWidth: 1,
-		padding: 5,
-		marginBottom: 10,
+		borderRadius: 5,
 	},
-	boxItem: {
-		padding: 5,
+	buttonBox: {
+		height: 40,
+		width: '100%',
+		borderRadius: 3,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#376c3e',
+		marginTop: 25
+	},
+	buttonText: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: 'white',
 	},
 })
 

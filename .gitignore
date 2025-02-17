@@ -23,4 +23,3 @@ Thumbs.db
 # Additional files
 frontend/src/ScrapApp/expo-env.d.ts
 frontend/src/ScrapApp/lib
-/frontend/src/ScrapApp/.expo

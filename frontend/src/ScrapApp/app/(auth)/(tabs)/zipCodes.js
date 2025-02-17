@@ -1,126 +1,56 @@
-import { Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from "react";
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from "react"
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 
-import {Dropdown} from "react-native-element-dropdown";
+import { Dropdown } from "react-native-element-dropdown";
 import { PieChart } from "react-native-chart-kit";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { collection, getDocs,getDoc,getColor, query, doc, where } from 'firebase/firestore';
-import { db } from '../../../lib/firebaseConfig';
-import { onSnapshot } from "firebase/firestore";
-
-
+import { db } from '../../../lib/firebaseConfig'
 
 const ZipCodes = () => {
-    const [category, setCategory] = useState('')
-    const [items, setItems] = useState([
-        //dummy zip codes, will need to populate this
-        { label: '30313', value: '30313' },
-        { label: '30033', value: '30033' },
-        { label: '30328', value: '30328' },
-        { label: '30327', value: '30327' },
-        { label: '30340', value: 'Other' },
-    ])
+    const [zipCodes, setZipCodes] = useState([])
+    const [zipCode, setZipCode] = useState('')
+    const [chartData, setChartData] = useState([])
 
-    const [chartData, setChartData] = useState([]);
-    const [zipCode, setZipCode] = useState('');
-    const [zipCodes, setZipCodes] = useState([]);
-    const [totalWeight, setWeight] = useState(10);
+    const [donations, setDonations] = useState(0)
+    const [weight, setWeight] = useState(0)
 
-
-// code for retrieving zip code data from firetstore. Optimized to be a real time listener
-    const fetchZipCodes = () => {
-        console.log("Listening for zip code updates...");
-
-
-        const unsubscribe = onSnapshot(collection(db, "zip_codes"), (snapshot) => {
-            const zipList = snapshot.docs.map(doc => ({
+    const getZipCodes = async () => {
+        const snapshot = await getDocs(collection(db, "zip_codes"))
+        const docs = []
+        snapshot.forEach((doc) => {
+            docs.push({
                 label: doc.id,
-                value: doc.id,
-            }));
-
-            console.log("Updated Zip Codes:", zipList);
-            setZipCodes(zipList);
-
-
-            if (zipList.length > 0 && !zipCode) {
-                setZipCode(zipList[zipList.length - 1].value);
-            }
-        });
-
-        return unsubscribe;
-    };
+                value: doc.id
+            })
+        })
+        setZipCodes(docs)
+    }
 
     useEffect(() => {
-        fetchZipCodes();
-    }, []);
-
-
-
-    const fetchCategoriesByZip = async (selectedZip) => {
-        console.log(`fetchCategoriesByZip triggered with zip: ${selectedZip}`);
-        try {
-            console.log(`Fetching data for zip code: ${selectedZip}`);
-
-            const docRef = doc(db, 'zip_codes', selectedZip);
-            const docSnap = await getDoc(docRef);
-
-            if (!docSnap.exists()) {
-                console.warn(`No data found for zip code: ${selectedZip}`);
-                setChartData([]);
-                return;
+        getZipCodes()
+    }, [])
+    
+    const getDataByZipCode = async () => {
+        const docSnap = await getDoc(doc(db, "zip_codes", zipCode))
+        const data = docSnap.data()
+        
+        const formattedData = Object.entries(data.categories).map(([category, weight], index) => {
+            const percentage = parseInt(parseFloat(weight / data.total_weight).toFixed(2) * 100)
+            return {
+                name: category,
+                amount: percentage,
+                color: getColor(index),
+                legendFontColor: "#3D3E44",
+                legendFontSize: 15,
             }
-
-            const data = docSnap.data();
-            console.log("Raw Firestore Data:", data);
-
-            const { categories, total_weight } = data;
-
-            if (total_weight === undefined) {
-                console.error(`🚨 Error: total_weight is undefined for zip code: ${selectedZip}`);
-            } else if (total_weight === 0) {
-                console.warn(`⚠️ Warning: total_weight is 0 for zip code: ${selectedZip}`);
-            }
-
-
-
-            console.log("Categories Found:", categories);
-            console.log("Total Weight Found:", total_weight);
-
-            if (!categories || !total_weight || isNaN(total_weight) === 0) {
-                console.warn(`Invalid category data for zip code: ${selectedZip}`);
-                setChartData([]);
-                return;
-            }
-
-
-            const formattedData = Object.keys(categories).map((category, index) => {
-                const weight = categories[category] || 0;
-                const percentage = total_weight > 0 ? ((weight / total_weight) * 100).toFixed(2) : 0;
-                console.log(`Category: ${category}, Weight: ${categories[category]}, Percentage: ${percentage}%`);
-
-                return {
-                    name: `% ${category}`,
-                    amount: parseFloat(percentage),
-                    label: `${percentage}%`,
-                    color: getColor(index),
-                    legendFontColor: "#3D3E44",
-                    legendFontSize: 15,
-                };
-            });
-
-            console.log("Final Pie Chart Data:", formattedData);
-
-            setChartData(formattedData);
-        } catch (error) {
-            console.error("Error fetching categories by zip code:", error);
-        }
-    };
+        })
+        setChartData(formattedData)
+        setDonations(data.total_donations)
+        setWeight(data.total_weight)
+    }
 
     useEffect(() => {
-        console.log("Zip Code selected:", zipCode);
-        if (zipCode) {
-            fetchCategoriesByZip(zipCode);
-        }
+        getDataByZipCode()
     }, [zipCode]);
 
     const getColor = (index) => {
@@ -128,126 +58,93 @@ const ZipCodes = () => {
         return colors[index % colors.length];
     };
 
-    //Dummy function to change weight
-    const handleSetWeight = () => {
-        setWeight(prevWeight => prevWeight + 5);
-    };
-
-
-    // Placeholder data for now, will need to hardcode labels and then pull from donation data
-    /* const chartData1 = [
-         {
-             name: "Glass",
-             amount: 400,
-             color: "#6C63FF",
-             legendFontColor: "#3D3E44",
-             legendFontSize: 15,
-         },
-         {
-             name: "Fabric",
-             amount: 300,
-             color: "#5551A2",
-             legendFontColor: "#3D3E44",
-             legendFontSize: 15,
-         },
-         {
-             name: "Vinyl",
-             amount: 200,
-             color: "#F1A7B1",
-             legendFontColor: "#3D3E44",
-             legendFontSize: 15,
-         },
-         {
-             name: "Plastic",
-             amount: 100,
-             color: "#FFBB33",
-             legendFontColor: "#3D3E44",
-             legendFontSize: 15,
-         },
-     ]; */
-
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.chartContainer}>
-                <Text style={styles.sectionTitle}>Donation Data</Text>
+        <View style={styles.container}>
+            <Text style={styles.title}>Donations (By Zip Code)</Text>
+            <View style={styles.chartBox}>
                 <PieChart
                     data={chartData}
-                    width={400}
+                    width={Dimensions.get('window').width - 40}
                     height={200}
                     chartConfig={{
-                        backgroundColor: "#FCFCFC",
-                        backgroundGradientFrom: "#FCFCFC",
-                        backgroundGradientTo: "#FCFCFC",
                         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                         labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                     }}
-                    accessor="amount"
-                    backgroundColor="#D7D7D7"
-                    paddingLeft="15"
-                    absolute
+                    accessor={"amount"}
+                    backgroundColor={"transparent"}
+                    paddingLeft={20}
                 />
-                <Text style={styles.textBox}>Total donation weight: {totalWeight}</Text>
-                <Dropdown
-                    style={styles.dropdown}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    data={zipCodes}
-                    labelField='label'
-                    valueField='value'
-                    placeholder='Select Zip Code'
-                    placeholderStyle={styles.placeholderStyle}
-                    value={category}
-                    onChange={(item) => {
-                        setZipCode(item.value)
-                    }}
-                    activeColor='lightgray'
-                />
+                <Text style={styles.weightBox}>
+                    Total Donations:
+                    <Text style={{ fontWeight: 'bold' }}> {donations}</Text>
+                    {'\t\t\t\&\t\t\t'}
+                    Total Weight:
+                    <Text style={{ fontWeight: 'bold' }}> {weight}</Text>
+                </Text>
             </View>
-        </SafeAreaView>
-    );
-};
-
-export default ZipCodes;
+            <Dropdown
+                style={styles.dropdown}
+                selectedTextStyle={styles.selectedTextStyle}
+                data={zipCodes}
+                labelField='label'
+                valueField='value'
+                placeholder='Select Zip Code'
+                placeholderStyle={styles.placeholderStyle}
+                value={zipCode}
+                onChange={(item) => {
+                    setZipCode(item.value)
+                }}
+                activeColor='lightgray'
+            />
+        </View>
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingTop: 80,
-        paddingHorizontal: 16,
-    },
-    chartContainer: {
-        marginVertical: 16,
-        alignItems: "center",
-    },
-    sectionTitle: {
-        color: '#376c3e',
-        fontSize: 25,
-        fontWeight: "bold",
-        marginBottom: 10,
-    },
-    textBox: {
-        padding: 10,
-        borderRadius: 5,
-        width: '110%',
-        backgroundColor: '#d7d7d7',
-        fontSize: 16,
-        color: '#3D3E44',
-        textAlign: "center"
-    },
+		flex: 1,
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		backgroundColor: '#f5f5f5',
+		paddingTop: 80,
+		paddingHorizontal: 20,
+	},
+    title: {
+		fontSize: 25,
+		fontWeight: 'bold',
+		color: '#376c3e',
+		marginBottom: 20,
+	},
     dropdown: {
+		width: '100%',
+		height: 40,
+		borderColor: '#ddd',
+		borderWidth: 1,
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		backgroundColor: '#fff',
+		color: 'gray',
+		fontSize: 14,
+		borderColor: 'darkgray'
+	},
+    selectedTextStyle: {
+		color: 'black',
+		fontSize: 14,
+	},
+    chartBox: {
         width: '100%',
-        height: 40,
-        borderColor: '#ddd',
+        borderColor: 'darkgray',
         borderWidth: 1,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        marginVertical: 15,
-        backgroundColor: '#fff',
-        color: 'gray',
-        fontSize: 14,
+        marginBottom: 20,
     },
-    placeholderStyle: {
-        color: 'gray',
-        fontSize: 14,
-    },
+    weightBox: {
+        fontSize: 15,
+        justifyContent: 'center',
+        alignSelf: 'center',
+        paddingHorizontal: 20,
+        paddingBottom: 15
+    }
+})
 
-});
+export default ZipCodes;
