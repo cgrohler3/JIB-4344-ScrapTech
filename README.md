@@ -12,6 +12,28 @@ Firebase brings simplicity to the management of backend functionality and commun
 Firestore meets the cost needs for the application while offering a powerful cloud database that can be scaled as needed. It also requires very little maintenance, and provides built-in security and authentication/authorization features that help make it secure and powerful.
 
 # 📄 Release Notes
+## v0.2.0 Release
+### Features
+#### Donation Visualization By Zip Code
++ Added taskbar navigation to show new screen for Zip Codes.
++ Dyanmic Pie Chart that's updated based on selected zip code, which details the category breakdown of donations received from that zip code.
++ Visualization also shows total quantity and weight for selected zip code.
+#### Global Logout
++ Logout option is available on all screens, allowing users to end their session from any screen, rather than limiting to only the home screen.
+#### Protected/User-Specific Routes
++ Users are shown application screens based on user type: Volunteer or Employee.
++ Employees can view employee-specific screens, like Zip Codes, while Volunteers cannot.
+### Bug Fixes
+-Login error messages are more informative and capture more error states. <br/>
+-UI changes to allow Scraplanta logo to be displayed fully.
+### Known Issues
+-No built-in process for recovery/renewal of forgotten passwords. <br/>
+-Inconsisent font/UI styling between screen header and content. <br/>
+-Empty Home Screen, needs to be updated to be more informative for User/Employee. <br>
+-Pie Chart is not automatically refreshed after new donation logging for selected zip code. <br>
+-User-Specific Routes for Employee load after a slight delay, will need to optimize. <br>
+-Application doesn't allow for two Users, regardless of type, to have the same Email. <br>
+-View Donations screen queries entire "donations" collection, leading to higher # of reads, needs to be updated. <br/>
 ## v0.1.0 Release
 ### Features
 #### Account Creation / Sign In
