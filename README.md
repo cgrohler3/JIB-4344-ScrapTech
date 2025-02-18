@@ -34,6 +34,8 @@ Firestore meets the cost needs for the application while offering a powerful clo
 -User-Specific Routes for Employee load after a slight delay, will need to optimize. <br>
 -Application doesn't allow for two Users, regardless of type, to have the same Email. <br>
 -View Donations screen queries entire "donations" collection, leading to higher # of reads, needs to be updated. <br/>
+
+
 ## v0.1.0 Release
 ### Features
 #### Account Creation / Sign In
