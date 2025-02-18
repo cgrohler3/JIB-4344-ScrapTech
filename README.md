@@ -14,24 +14,26 @@ Firestore meets the cost needs for the application while offering a powerful clo
 # 📄 Release Notes
 ## v0.2.0 Release
 ### Features
-#### Zip Code Pi Charts
-+ Pi charts are displayed according to selected zip codes, detailing the category breakdown of donations from that location.
-+ Added taskbar navigation for zip code data visualization.
-#### Zip Code Totals
-+ Selected zip codes display total donations (quantity and weight) made from that location.
+#### Donation Visualization By Zip Code
++ Added taskbar navigation to show new screen for Zip Codes.
++ Dyanmic Pie Chart that's updated based on selected zip code, which details the category breakdown of donations received from that zip code.
++ Visualization also shows total quantity and weight for selected zip code.
 #### Global Logout
-+ Logout option is available on all pages, allowing users to end their session from any page, rather than only the home screen.
-#### User Permissions
-+ Users are shown application pages according to their permission.
-+ Employees can view zip code data, while standard users cannot.
++ Logout option is available on all screens, allowing users to end their session from any screen, rather than limiting to only the home screen.
+#### Protected/User-Specific Routes
++ Users are shown application screens based on user type: Volunteer or Employee.
++ Employees can view employee-specific screens, like Zip Codes, while Volunteers cannot.
 ### Bug Fixes
--Login error messages capture error states. <br/>
--Scraplanta logo now displays fully.
+-Login error messages are more informative and capture more error states. <br/>
+-UI changes to allow Scraplanta logo to be displayed fully.
 ### Known Issues
--No process for recovery of forgotten passwords. <br/>
--Page headers differ from Scraplanta font. <br/>
--View donations task queries entire "donations" collection instead of a recent subset leading to a higher number of reads from Firestore. <br/>
--Home page does not include directions/guidance for new users.
+-No built-in process for recovery/renewal of forgotten passwords. <br/>
+-Inconsisent font/UI styling between screen header and content. <br/>
+-Empty Home Screen, needs to be updated to be more informative for User/Employee. <br>
+-Pie Chart is not automatically refreshed after new donation logging for selected zip code. <br>
+-User-Specific Routes for Employee load after a slight delay, will need to optimize. <br>
+-Application doesn't allow for two Users, regardless of type, to have the same Email. <br>
+-View Donations screen queries entire "donations" collection, leading to higher # of reads, needs to be updated. <br/>
 
 
 ## v0.1.0 Release
