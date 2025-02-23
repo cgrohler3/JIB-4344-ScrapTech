@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, View } from 'react-native'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, orderBy, startAt, query } from 'firebase/firestore'
 
 import { db } from '../../../lib/firebaseConfig'
 import { useState } from 'react'
@@ -9,7 +9,16 @@ const ViewDonations = () => {
 	const [donations, setDonations] = useState([])
 
 	const getAllDocs = async () => {
-		const snapshot = await getDocs(collection(db, 'donations'))
+		
+		const now = new Date()
+		const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000)
+		const docQuery = query(
+			collection(db, 'donations'),
+			orderBy('timestamp'),
+			startAt(twoDaysAgo)
+		)
+		
+		const snapshot = await getDocs(docQuery)
 		const docs = []
 		snapshot.forEach((doc) => {
 			docs.push({ id: doc.id, ...doc.data() })
