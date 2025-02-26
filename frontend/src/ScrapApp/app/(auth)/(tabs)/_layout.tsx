@@ -84,6 +84,16 @@ export default function TabLayout() {
 					...(isEmployee ? {} : {href: null})
 				}}
 			/>
+			<Tabs.Screen
+				name='heatMap'
+				options={{
+					title: 'Heat Map',
+					tabBarIcon: ({ color }) => (
+						<FontAwesome6 name='map-location-dot' size={24} color={color} />
+					),
+					...(isEmployee ? {} : {href: null})
+				}}
+			/>
 		</Tabs>
 	)
 }
