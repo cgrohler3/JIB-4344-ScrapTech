@@ -85,7 +85,7 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name='heatMap'
+				name='dataMap'
 				options={{
 					title: 'Heat Map',
 					tabBarIcon: ({ color }) => (
