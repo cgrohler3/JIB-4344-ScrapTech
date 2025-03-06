@@ -64,12 +64,19 @@ const dataMap = () => {
 			  <Text>Loading Map...</Text>
 			)}
 		  </View>
+		  <View style={styles.lowerView}>
 		  <TouchableOpacity
 		  	style={styles.reloadButton}
 			onPress={getmapData}
 		  >
 			<View><Text style={styles.reloadText}>Reload</Text></View>
 		  </TouchableOpacity>
+		  <TouchableOpacity
+		  	style={styles.toggleButton}
+		  >
+			<View><Text style={styles.toggleText}>Toggle Zoom</Text></View>
+		  </TouchableOpacity>
+		  </View>
 		</View>
 	  );
 	};
@@ -110,5 +117,20 @@ const dataMap = () => {
 		fontSize: 16,
 		textAlign: 'center',
 		color: 'white'
+	  },
+	  toggleButton: {
+		paddingTop: 20,
+		paddingBottom: 20,
+		backgroundColor: 'black',
+		width: 120
+	  },
+	  toggleText: {
+		fontSize: 16,
+		textAlign: 'center',
+		color: 'white'
+	  },
+	  lowerView: {
+		flexDirection: 'row',
+		gap: 10,
 	  }
 	});
