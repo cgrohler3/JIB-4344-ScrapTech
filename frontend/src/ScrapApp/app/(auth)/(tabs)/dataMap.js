@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import MapView, {Heatmap, PROVIDER_GOOGLE} from 'react-native-maps'
 import {collection, getDocs} from "firebase/firestore";
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import { db } from '../../../lib/firebaseConfig'
 
 const getZipPos = async () => {
@@ -28,13 +28,15 @@ const dataMap = () => {
 
 	const [heatmapData, setHeatmapData] = useState([])
 
-	useEffect(() => {
-		const getmapData = async() => {
-			const data = await getZipPos()
-			setHeatmapData(data)
-		}
-		getmapData()
+	const getmapData = useCallback(async () => {
+		console.log("Get Map Data")
+		const data = await getZipPos()
+		setHeatmapData(data)
 	}, [])
+
+	useEffect(() => {
+		getmapData()
+	}, [getmapData])
 
 	return (
 		<View style={styles.container}>
@@ -64,9 +66,9 @@ const dataMap = () => {
 		  </View>
 		  <TouchableOpacity
 		  	style={styles.reloadButton}
-			onPressIn={console.log("Pressed Reload")}
+			onPress={getmapData}
 		  >
-			<Text style={styles.reloadText}>Reload</Text>
+			<View><Text style={styles.reloadText}>Reload</Text></View>
 		  </TouchableOpacity>
 		</View>
 	  );
