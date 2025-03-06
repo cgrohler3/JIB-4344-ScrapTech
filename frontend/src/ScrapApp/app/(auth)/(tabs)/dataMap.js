@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import MapView, {Heatmap, PROVIDER_GOOGLE} from 'react-native-maps'
 import {collection, getDocs} from "firebase/firestore";
 import React, {useState, useEffect} from 'react'
@@ -62,6 +62,12 @@ const dataMap = () => {
 			  <Text>Loading Map...</Text>
 			)}
 		  </View>
+		  <TouchableOpacity
+		  	style={styles.reloadButton}
+			onPressIn={console.log("Pressed Reload")}
+		  >
+			<Text style={styles.reloadText}>Reload</Text>
+		  </TouchableOpacity>
 		</View>
 	  );
 	};
@@ -92,4 +98,15 @@ const dataMap = () => {
 		fontWeight: 'bold',
 		color: '#376c3e',
 	  },
+	  reloadButton: {
+		paddingTop: 20,
+		paddingBottom: 20,
+		backgroundColor: 'black',
+		width: 100
+	  },
+	  reloadText: {
+		fontSize: 16,
+		textAlign: 'center',
+		color: 'white'
+	  }
 	});
