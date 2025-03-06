@@ -22,11 +22,12 @@ const dataMap = () => {
 	const [region, setRegion] = useState({
 		latitude: 33.750,
 		longitude: -84.3885,
-		latitudeDelta: 0.05,
-		longitudeDelta: 0.05,  //this is the region and zoom, coords are set for ATL, GA
+		latitudeDelta: 0.1,
+		longitudeDelta: 0.1,  //this is the region and zoom, coords are set for ATL, GA
 	})
 
 	const [heatmapData, setHeatmapData] = useState([])
+	const [isZoomedOut, setIsZoomedOut] = useState(false)
 
 	const getmapData = useCallback(async () => {
 		console.log("Get Map Data")
@@ -37,6 +38,23 @@ const dataMap = () => {
 	useEffect(() => {
 		getmapData()
 	}, [getmapData])
+
+	const changePos = () => {
+		setRegion({
+			latitude: isZoomedOut ? 37.998 : 33.750,
+			longitude: isZoomedOut ? -96.998 : -84.3885,
+			latitudeDelta: isZoomedOut ? 55 : 0.1,
+			longitudeDelta: isZoomedOut ? 55 : 0.1, 
+		})
+	}
+
+	const toggleZoom = useCallback(() => {
+		setIsZoomedOut((prev) => {
+			const newZoom = !prev
+			changePos()
+			return newZoom
+		})
+	}, [isZoomedOut])
 
 	return (
 		<View style={styles.container}>
@@ -73,6 +91,7 @@ const dataMap = () => {
 		  </TouchableOpacity>
 		  <TouchableOpacity
 		  	style={styles.toggleButton}
+			onPress={toggleZoom}
 		  >
 			<View><Text style={styles.toggleText}>Toggle Zoom</Text></View>
 		  </TouchableOpacity>
