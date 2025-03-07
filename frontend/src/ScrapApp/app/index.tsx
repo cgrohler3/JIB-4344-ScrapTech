@@ -10,23 +10,33 @@ import {
 	View
 } from 'react-native'
 import React, { useState } from 'react'
+import { Timestamp, addDoc, collection, getDocs, query, where } from 'firebase/firestore'
+import { auth, db } from '../lib/firebaseConfig'
 import {
 	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
+	sendPasswordResetEmail,
+	signInWithEmailAndPassword
 } from 'firebase/auth'
-
-import { auth } from '../lib/firebaseConfig'
 
 export default function Index() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [loading, setLoading] = useState(false)
 
+	const addUser = async () => {
+		const timestamp = Timestamp.now()
+		const snapshot = await addDoc(collection(db, "users"), {
+			email: email,
+			timestamp: timestamp
+		})
+	}
+
 	const signUp = async () => {
 		setLoading(true)
 		await createUserWithEmailAndPassword(auth, email, password)
 			.then((userCredentials) => {
 				const user = userCredentials.user
+				addUser()
 				console.log('Signed Up With: ', user.email)
 			})
 			.catch((err) => {
@@ -81,6 +91,34 @@ export default function Index() {
 			})
 	}
 
+	const forgotPassword = async() => {
+		if (email.length == 0) {
+			Alert.alert('Missing Email', 'Please enter your email first!')
+		} else {
+			const qryRef = query(collection(db, "users"), where("email", "==", email))
+			const qrySnap = await getDocs(qryRef)
+
+			var isValid = false
+			qrySnap.forEach((doc) => {
+				if (email == doc.data().email) {
+					isValid = true
+				}
+			})
+
+			if (isValid) {
+				await sendPasswordResetEmail(auth, email)
+				.then(() => {
+					Alert.alert('Email Sent', 'An email to reset your password has been sent to your email!')
+				})
+				.catch((err) => {
+					Alert.alert('Error', 'An error occured when sending email: ', err)
+				})
+			} else {
+				Alert.alert('Invalid Email', 'Email not found! Please enter a valid email!')
+			}
+		}
+	}
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.imageBox}>
@@ -121,6 +159,12 @@ export default function Index() {
 							onPress={signUp}
 						>
 							<Text style={styles.buttonTextAlt}>REGISTER</Text>
+						</TouchableOpacity>
+						<TouchableOpacity 
+							style={styles.forgotButton}
+							onPress={forgotPassword}
+						>
+							<Text style={{ color: '#2196F3', textDecorationLine: 'underline' }}>Forgot Password?</Text>
 						</TouchableOpacity>
 					</View>
 				)}
@@ -174,7 +218,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 90,
+		// marginBottom: 90,
 	},
 	buttonText: {
 		fontWeight: 'bold',
@@ -184,4 +228,9 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: '#376c3e',
 	},
+	forgotButton: {
+		alignSelf: 'center',
+		marginTop: 15,
+		marginBottom: 90,
+	}
 })
