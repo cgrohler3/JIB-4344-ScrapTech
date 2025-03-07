@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import MapView, {Heatmap, PROVIDER_GOOGLE} from 'react-native-maps'
 import {collection, getDocs} from "firebase/firestore";
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import { db } from '../../../lib/firebaseConfig'
 
 const getZipPos = async () => {
@@ -22,19 +22,39 @@ const dataMap = () => {
 	const [region, setRegion] = useState({
 		latitude: 33.750,
 		longitude: -84.3885,
-		latitudeDelta: 0.05,
-		longitudeDelta: 0.05,  //this is the region and zoom, coords are set for ATL, GA
+		latitudeDelta: 0.1,
+		longitudeDelta: 0.1,  //this is the region and zoom, coords are set for ATL, GA
 	})
 
 	const [heatmapData, setHeatmapData] = useState([])
+	const [isZoomedOut, setIsZoomedOut] = useState(false)
+
+	const getmapData = useCallback(async () => {
+		console.log("Get Map Data")
+		const data = await getZipPos()
+		setHeatmapData(data)
+	}, [])
 
 	useEffect(() => {
-		const getmapData = async() => {
-			const data = await getZipPos()
-			setHeatmapData(data)
-		}
 		getmapData()
-	}, [])
+	}, [getmapData])
+
+	const changePos = () => {
+		setRegion({
+			latitude: isZoomedOut ? 37.998 : 33.750,
+			longitude: isZoomedOut ? -96.998 : -84.3885,
+			latitudeDelta: isZoomedOut ? 55 : 0.1,
+			longitudeDelta: isZoomedOut ? 55 : 0.1, 
+		})
+	}
+
+	const toggleZoom = useCallback(() => {
+		setIsZoomedOut((prev) => {
+			const newZoom = !prev
+			changePos()
+			return newZoom
+		})
+	}, [isZoomedOut])
 
 	return (
 		<View style={styles.container}>
@@ -61,6 +81,20 @@ const dataMap = () => {
 			) : (
 			  <Text>Loading Map...</Text>
 			)}
+		  </View>
+		  <View style={styles.lowerView}>
+		  <TouchableOpacity
+		  	style={styles.reloadButton}
+			onPress={getmapData}
+		  >
+			<View><Text style={styles.reloadText}>Reload</Text></View>
+		  </TouchableOpacity>
+		  <TouchableOpacity
+		  	style={styles.toggleButton}
+			onPress={toggleZoom}
+		  >
+			<View><Text style={styles.toggleText}>Toggle Zoom</Text></View>
+		  </TouchableOpacity>
 		  </View>
 		</View>
 	  );
@@ -92,4 +126,30 @@ const dataMap = () => {
 		fontWeight: 'bold',
 		color: '#376c3e',
 	  },
+	  reloadButton: {
+		paddingTop: 20,
+		paddingBottom: 20,
+		backgroundColor: 'black',
+		width: 100
+	  },
+	  reloadText: {
+		fontSize: 16,
+		textAlign: 'center',
+		color: 'white'
+	  },
+	  toggleButton: {
+		paddingTop: 20,
+		paddingBottom: 20,
+		backgroundColor: 'black',
+		width: 120
+	  },
+	  toggleText: {
+		fontSize: 16,
+		textAlign: 'center',
+		color: 'white'
+	  },
+	  lowerView: {
+		flexDirection: 'row',
+		gap: 10,
+	  }
 	});
