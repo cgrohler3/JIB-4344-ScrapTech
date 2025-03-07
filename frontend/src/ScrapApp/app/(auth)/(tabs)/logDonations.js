@@ -11,6 +11,7 @@ import { Timestamp, addDoc, collection, doc, getDoc, increment, setDoc, updateDo
 import { Dropdown } from 'react-native-element-dropdown'
 import { db } from '../../../lib/firebaseConfig'
 import { useState } from 'react'
+import axios from "axios"
 
 const LogDonations = () => {
 	const [email, setEmail] = useState('')
@@ -45,6 +46,7 @@ const LogDonations = () => {
 					onPress: () => {
 						saveDoc()
 						updateZipcode()
+						updateHeatmap()
 						setEmail('')
 						setZipCode('')
 						setItemName('')
@@ -100,6 +102,40 @@ const LogDonations = () => {
 			}, { merge: true })
 
 			snapshot.then(() => console.log("Added new zip code"))
+		}
+	}
+
+	const updateHeatmap = async () => {
+		const docRef = doc(db, "zip_positions", zipCode)
+		const docSnap = await getDoc(docRef)
+
+
+		if (!docSnap.exists()) {
+
+			try {
+				const url = "https://nominatim.openstreetmap.org/search?postalcode=" + zipCode + "&country=US&format=json"
+				const response = await axios.get(url)
+	
+				if (response.data.length > 0) {
+					console.log(response.data[0])
+					const {lat, lon} = response.data[0]
+
+					const snapshot = await setDoc(doc(db, "zip_positions", zipCode), {
+						total_weight: Number(weight),
+						lat: parseFloat(lat),
+						long: parseFloat(lon),
+					}, { merge: true })
+
+				} else {
+					console.log("No coordinate data for request")
+				}
+			} catch (error) {
+				console.error(error)
+			}
+		} else {
+			await updateDoc(docRef, {
+				total_weight: increment(Number(weight))
+			})
 		}
 	}
 
