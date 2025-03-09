@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		color: 'gray',
 		fontSize: 14,
-		borderColor: 'darkgray'
 	},
 	selectedTextStyle: {
 		color: 'black',
@@ -261,7 +260,6 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 		backgroundColor: '#fff',
 		color: 'black',
-		borderColor: 'darkgray'
 	},
 	dropdownContainer: {
 		backgroundColor: 'white',

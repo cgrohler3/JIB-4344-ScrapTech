@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		color: 'gray',
 		fontSize: 14,
-		borderColor: 'darkgray'
 	},
     selectedTextStyle: {
 		color: 'black',
