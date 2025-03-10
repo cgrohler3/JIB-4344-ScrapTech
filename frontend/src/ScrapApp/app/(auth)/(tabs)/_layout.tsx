@@ -1,13 +1,24 @@
-import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Tabs, router } from 'expo-router'
+import { useEffect, useState } from 'react'
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
-import React from 'react'
 import { auth } from '@/lib/firebaseConfig';
-import {verifyUser} from '../../../helpers/verifyUser'
+import { verifyUser } from '../../../helpers/verifyUser'
 
 export default function TabLayout() {
-	const isEmployee = verifyUser();
+	const [loading, setLoading] = useState(true)
+	const isEmployee = verifyUser()
+
+	useEffect(() => {
+		setTimeout(() => {
+			setLoading(false)
+		}, 3000)
+	}, [])
+
+	if (loading && !isEmployee) {
+		return <ActivityIndicator size='large' style={{ height: '100%', justifyContent: 'center' }} />
+	}
 
 	const handleLogout = () => {
 		Alert.alert(
@@ -85,7 +96,7 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name='dataMap'
+				name='heatMap'
 				options={{
 					title: 'Heat Map',
 					tabBarIcon: ({ color }) => (
