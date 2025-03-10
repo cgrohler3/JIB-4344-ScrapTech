@@ -1,182 +1,98 @@
-import MapView, {
-	Callout,
-	Heatmap,
-	Marker,
-	PROVIDER_GOOGLE,
-	Polygon,
-} from 'react-native-maps'
-import { React, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { collection, getDocs } from 'firebase/firestore'
-import { useCallback, useEffect, useState } from 'react'
+import { ActivityIndicator, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import MapView, { Heatmap } from 'react-native-maps'
+import React, { useEffect, useRef, useState } from 'react'
+import { collection, count, getDocs } from 'firebase/firestore'
 
-import { db } from '../../../lib/firebaseConfig'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
+import { db } from "../../../lib/firebaseConfig"
 
 const HeatMap = () => {
-	const [region, setRegion] = useState({
-		latitude: 33.75,
-		longitude: -84.3885,
-		latitudeDelta: 0.1,
-		longitudeDelta: 0.1, //this is the region and zoom, coords are set for ATL, GA
-	})
+	const city = { latitude: 33.75, longitude: -84.39, latitudeDelta: 0.1, longitudeDelta: 0.1 }
+	const state = { latitude: 33, longitude: -83.3, latitudeDelta: 6, longitudeDelta: 6 }
+	const country = { latitude: 37.09, longitude: -95, latitudeDelta: 70, longitudeDelta: 70 }
 
-	const [heatmapData, setHeatmapData] = useState([])
-	const [isZoomedOut, setIsZoomedOut] = useState(false)
+	const [region, setRegion] = useState(city)
+	const [zoomLevel, setZoomLevel] = useState(0)
+	const [data, setData] = useState([])
 
-	const getmapData = useCallback(async () => {
-		console.log('Get Map Data')
-		const data = await getZipPos()
-		setHeatmapData(data)
-	}, [])
-
-	useEffect(() => {
-		getmapData()
-	}, [getmapData])
-
-	const getZipPos = async () => {
-		const zipPos = collection(db, 'zip_positions')
-		const snapshot = await getDocs(zipPos)
+	const mapRef = useRef(null)
+	const toggleZoom = () => {
+		setZoomLevel((zoomLevel + 1) % 3)
+		const newRegion = (zoomLevel == 0 ? city : zoomLevel == 1 ? state : country)
+		mapRef.current.animateToRegion(newRegion, 1000)
+	}
+	
+	const getData = async () => {
+		const snapshot = await getDocs(collection(db, 'zip_positions'))
 		const data = snapshot.docs.map((doc) => {
 			const docData = doc.data()
 			return {
 				latitude: docData.lat,
 				longitude: docData.long,
-				weight: docData.total_weight,
+				weight: docData.total_weight
 			}
 		})
-		return data
+		setData(data)
 	}
 
-	const changePos = () => {
-		setRegion({
-			latitude: isZoomedOut ? 37.998 : 33.75,
-			longitude: isZoomedOut ? -96.998 : -84.3885,
-			latitudeDelta: isZoomedOut ? 55 : 0.1,
-			longitudeDelta: isZoomedOut ? 55 : 0.1,
-		})
-	}
-
-	const toggleZoom = useCallback(() => {
-		setIsZoomedOut((prev) => {
-			const newZoom = !prev
-			changePos()
-			return newZoom
-		})
-	}, [isZoomedOut])
+	useEffect(() => {
+		getData()
+	}, [])
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Heat Map</Text>
-			<View style={styles.mapContainer}>
-				{heatmapData.length > 0 ? (
-					<MapView
-						style={styles.map}
-						region={region}
-						onRegionChangeComplete={setRegion}
-						provider={PROVIDER_GOOGLE} //sets where map comes from, google right now
-					>
-						<Marker
-							coordinate={{
-								latitude: 33.749,
-								longitude: -84.388,
-							}}
-						>
-							<Callout>
-								<View>
-									<Text>Atlanta</Text>
-								</View>
-							</Callout>{' '}
-							{/*We could use markers for store locations/cities in future*/}
-						</Marker>
-						<Heatmap
-							points={heatmapData}
-							opacity={0.75}
-							radius={50}
-							gradient={{
-								colors: ['green', 'blue', 'red'],
-								startPoints: [0.05, 0.25, 0.5],
-								colorMapSize: 50,
-							}}
-						/>
-						<Polygon
-							coordinates={[
-								//Changing lat goes up/down, changing long goes left/right
-								{ latitude: 33.65, longitude: -84.5 }, // Bottom-left
-								{ latitude: 33.65, longitude: -84.25 }, // Bottom-right
-								{ latitude: 33.825, longitude: -84.25 }, // Top-right
-								{ latitude: 33.825, longitude: -84.5 }, // Top-left
-							]}
-							strokeColor='#376c3e' //Polygon lets us potentially highlight specific zip codes in future.
-							fillColor='rgba(144, 238, 144, 0.4)' //For now I just have it highlighting ATL.
-							strokeWidth={1}
-						/>
-					</MapView>
-				) : (
-					<Text>Loading Map...</Text>
-				)}
-			</View>
-			<View style={styles.buttonBox}>
-				<TouchableOpacity
-					style={styles.button}
-					onPress={getmapData}
+			{data.length == 0 ? (
+				<ActivityIndicator size={'large'} style={{ margin: 28 }} />
+			) : (
+				<MapView
+					ref={mapRef}
+					style={styles.map}
+					initialRegion={region}
 				>
-					<Text style={styles.buttonText}>Reload</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.button}
-					onPress={toggleZoom}
-				>
-					<Text style={styles.buttonText}>Toggle Zoom</Text>
-				</TouchableOpacity>
-			</View>
+					<Heatmap
+						points={data}
+						opacity={0.75}
+						radius={50}
+					/>
+				</MapView>
+			)}
+			<TouchableOpacity
+				style={styles.zoomButton}
+				onPress={toggleZoom}
+			>
+				<FontAwesome6 name='magnifying-glass' size={20} color='white' />
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.refreshButton}
+				onPress={getData}
+			>
+				<FontAwesome name='refresh' size={22} color='white' />
+			</TouchableOpacity>
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		height: '100%',
-		justifyContent: 'center',
-		alignItems: 'center',
-		paddingHorizontal: 10,
-	},
-	title: {
-		paddingBottom: 10,
-		fontSize: 25,
-		fontWeight: 'bold',
-		color: '#376c3e',
-	},
-	mapContainer: {
-		height: '70%',
-		width: '100%',
-		borderWidth: 2,
-		borderRadius: 2,
-		borderColor: '#376c3e',
-		marginBottom: 10
-	},
 	map: {
 		height: '100%',
 	},
-	buttonBox: {
-		width: '100%',
-		height: '50',
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		gap: 50,
-	},
-	button: {
-		height: '100%',
-		width: '120',
-		borderRadius: 3,
-		justifyContent: 'center',
-		alignItems: 'center',
+	zoomButton: {
+		position: 'absolute',
+		bottom: '15',
+		right: '15',
+		padding: 9,
 		backgroundColor: '#376c3e',
+		borderRadius: 100,
 	},
-	buttonText: {
-		fontWeight: 'bold',
-		color: 'white',
-		fontSize: 16,
-	},
+	refreshButton: {
+		position: 'absolute',
+		bottom: '65',
+		right: '15',
+		padding: 9,
+		backgroundColor: '#376c3e',
+		borderRadius: 100,
+	}
 })
 
 export default HeatMap
