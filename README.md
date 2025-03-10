@@ -12,6 +12,24 @@ Firebase brings simplicity to the management of backend functionality and commun
 Firestore meets the cost needs for the application while offering a powerful cloud database that can be scaled as needed. It also requires very little maintenance, and provides built-in security and authentication/authorization features that help make it secure and powerful.
 
 # 📄 Release Notes
+## v0.3.0 Release
+### Features
+#### Donation Density (Heat) Map
++ Added routing to heat map.
++ Implemented logic to generate map from logged donations.
++ Added Map Refresh option.
++ Added Zoom for Local (ATL) and National (USA) viewing options.
+#### Password Recovery
++ Added 'Forgot Password' option to login screen.
++ Set up email sending for password recovery.
+### Bug Fixes
+-Setup 2 day donation retrieval to reduce document reads <br/>
+-UI Consistency <br/>
+-Routing optimizations
+### Known Issues
+-Heat Map is incompatible with iOS devices
+
+
 ## v0.2.0 Release
 ### Features
 #### Donation Visualization By Zip Code
@@ -71,3 +89,5 @@ Firestore meets the cost needs for the application while offering a powerful clo
 + Navigate to frontend/src/ScrapApp from powershell or any CLI.
 + From the same CLI, run "npx expo start"
 2. Acces the app on Expo Go (Mobile) by scanning provided QR code or press 'w' key to view web version.
+
+
