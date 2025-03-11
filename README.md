@@ -15,19 +15,19 @@ Firestore meets the cost needs for the application while offering a powerful clo
 ## v0.3.0 Release
 ### Features
 #### Donation Density (Heat) Map
-+ Added routing to heat map.
-+ Implemented logic to generate map from logged donations.
-+ Added Map Refresh option.
-+ Added Zoom for Local (ATL) and National (USA) viewing options.
++ Added protected routing to allow only employees to access Heat Map.
++ Utilized React Maps to create a Heat Map of logged donations per zipcode, where intensities represent weight of all donations.
++ Added Refresh option to allow users to refresh the map by pulling new data.
++ Added Zoom option to allow users to toggle between Local (ATL), State (GA), and Country (USA) views for better overview of donations in the Heat Map.
 #### Password Recovery
-+ Added 'Forgot Password' option to login screen.
-+ Set up email sending for password recovery.
++ Created "Forgot Password" option to allow registered users to reset their password.
++ Configured Firebase to send emails to users for password recovery.
 ### Bug Fixes
--Setup 2 day donation retrieval to reduce document reads <br/>
--UI Consistency <br/>
--Routing optimizations
+-Setup 2-day donation retrieval to reduce excessive reads from database <br/>
+-Updated UI for screens to be more visually consistent and pleasing. <br/>
+-Added Loading activity to items/screen to allow them to load gracefully.
 ### Known Issues
--Heat Map is incompatible with iOS devices
+-Application is volatile on iOS devices in both UI and functionality, specifically Heat Maps.
 
 
 ## v0.2.0 Release
