@@ -25,12 +25,12 @@ const ViewDonations = () => {
 					{donations &&
 						Object.keys(donations).map(key => (
 							<View key={key} style={styles.childBox}>
-								<Text><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t\t\t\t\t\t\t\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
-								<Text><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t\t\t\t\t"}{donations[key].zipCode}</Text>
-								<Text><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t\t\t"}{donations[key].itemName}</Text>
-								<Text><Text style={{fontWeight: "bold"}}>Quantity: </Text>{"\t\t\t\t\t"}{donations[key].quantity}</Text>
-								<Text><Text style={{fontWeight: "bold"}}>Weight: </Text>{"\t\t\t\t\t\t"}{donations[key].weight}</Text>
-								<Text><Text style={{fontWeight: "bold"}}>Category: </Text>{"\t\t\t\t"}{donations[key].category}</Text>
+								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
+								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t"}{donations[key].zipCode}</Text>
+								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t"}{donations[key].itemName}</Text>
+								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{"\t"}{donations[key].quantity}</Text>
+								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Weight: </Text>{"\t"}{donations[key].weight}</Text>
+								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Category: </Text>{"\t"}{donations[key].category}</Text>
 							</View>
 						))
 					}
@@ -64,15 +64,15 @@ const styles = StyleSheet.create({
 	parentBox: {
 		height: '315',
 		width: '100%',
-		borderColor: 'darkgray',
-		borderWidth: 1,
+		borderColor: 'darkgreen',
+		borderWidth: 5,
 		borderRadius: 5
 	},
 	childBox: {
 		margin: 10,
 		padding: 10,
-		borderColor: 'darkgray',
-		borderWidth: 1,
+		borderColor: 'black',
+		borderWidth: 3,
 		borderRadius: 5,
 	},
 	buttonBox: {
@@ -88,6 +88,12 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: 'bold',
 		color: 'white',
+	},
+
+	dataText: {
+		paddingVertical: 5,  
+		borderBottomWidth: 1,  
+		borderBottomColor: 'black',  
 	},
 })
 
