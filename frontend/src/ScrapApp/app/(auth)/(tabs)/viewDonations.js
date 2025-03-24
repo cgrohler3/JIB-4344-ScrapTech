@@ -19,29 +19,31 @@ const ViewDonations = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>View Donations</Text>
-			<View style={styles.parentBox}>
-				<ScrollView persistentScrollbar={true}>
-					{donations &&
-						Object.keys(donations).map(key => (
-							<View key={key} style={styles.childBox}>
-								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
-								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t"}{donations[key].zipCode}</Text>
-								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t"}{donations[key].itemName}</Text>
-								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{"\t"}{donations[key].quantity}</Text>
-								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Weight: </Text>{"\t"}{donations[key].weight}</Text>
-								<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Category: </Text>{"\t"}{donations[key].category}</Text>
-							</View>
-						))
-					}
-				</ScrollView>
-			</View>
-			<TouchableOpacity
-				style={styles.buttonBox}
-				onPress={getAllDocs}
-			>
-				<Text style={styles.buttonText}>Retrieve Donations</Text>
-			</TouchableOpacity>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
+				<Text style={styles.title}>View Donations</Text>
+				<View style={styles.parentBox}>
+					<ScrollView persistentScrollbar={true} nestedScrollEnabled={true}>
+						{donations &&
+							Object.keys(donations).map(key => (
+								<View key={key} style={styles.childBox}>
+									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
+									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t"}{donations[key].zipCode}</Text>
+									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t"}{donations[key].itemName}</Text>
+									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Quantity: </Text>{"\t"}{donations[key].quantity}</Text>
+									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Weight: </Text>{"\t"}{donations[key].weight}</Text>
+									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Category: </Text>{"\t"}{donations[key].category}</Text>
+								</View>
+							))
+						}
+					</ScrollView>
+				</View>
+				<TouchableOpacity
+					style={styles.buttonBox}
+					onPress={getAllDocs}
+				>
+					<Text style={styles.buttonText}>Retrieve Donations</Text>
+				</TouchableOpacity>
+			</ScrollView>
 		</View>
 	)
 }
@@ -49,30 +51,26 @@ const ViewDonations = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		backgroundColor: '#f5f5f5',
-		paddingTop: 80,
-		paddingHorizontal: 20,
 	},
 	title: {
 		fontSize: 25,
 		fontWeight: 'bold',
 		color: '#376c3e',
 		marginBottom: 20,
+		alignSelf: 'center'
 	},
 	parentBox: {
 		height: '315',
 		width: '100%',
 		borderColor: 'darkgreen',
-		borderWidth: 5,
+		borderWidth: 2,
 		borderRadius: 5
 	},
 	childBox: {
 		margin: 10,
 		padding: 10,
 		borderColor: 'black',
-		borderWidth: 3,
+		borderWidth: 2,
 		borderRadius: 5,
 	},
 	buttonBox: {
@@ -89,9 +87,8 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: 'white',
 	},
-
 	dataText: {
-		paddingVertical: 5,  
+		paddingVertical: 2,  
 		borderBottomWidth: 1,  
 		borderBottomColor: 'black',  
 	},

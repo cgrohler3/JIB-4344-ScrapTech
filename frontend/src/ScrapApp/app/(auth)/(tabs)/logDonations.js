@@ -167,79 +167,79 @@ const LogDonations = () => {
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
-			<Text style={styles.title}>Log Donation</Text>
-			<TextInput
-				style={styles.donorInput}
-				placeholder='Donor Name - OPTIONAL'
-				placeholderTextColor='gray'
-				value={dName}
-				onChangeText={setdName}
-				returnKeyType='done'
-			/>
-			<TextInput
-				style={styles.donorInput}
-				placeholder='Donor Email - OPTIONAL'
-				placeholderTextColor='gray'
-				value={email}
-				onChangeText={setEmail}
-				returnKeyType='done'
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder='Zip Code'
-				placeholderTextColor='gray'
-				value={zipCode}
-				onChangeText={setZipCode}
-				keyboardType="numeric"
-				autoComplete='off'
-				returnKeyType='done'
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder='Item Name'
-				placeholderTextColor='gray'
-				value={itemName}
-				onChangeText={setItemName}
-				returnKeyType='done'
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder='Item Quantity'
-				placeholderTextColor='gray'
-				value={quantity}
-				onChangeText={setQuantity}
-				keyboardType='numeric'
-				returnKeyType='done'
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder='Item Weight'
-				placeholderTextColor='gray'
-				value={weight}
-				onChangeText={setWeight}
-				keyboardType='numeric'
-				returnKeyType='done'
-			/>
-			<Dropdown
-				style={styles.dropdown}
-				selectedTextStyle={styles.selectedTextStyle}
-				data={items}
-				labelField='label'
-				valueField='value'
-				placeholder='Select Category'
-				placeholderStyle={styles.placeholderStyle}
-				value={category}
-				onChange={(item) => {
-					setCategory(item.value)
-				}}
-				activeColor='lightgray'
-			/>
-			<TouchableOpacity
-				style={styles.buttonBox}
-				onPress={handleSave}
-			>
-				<Text style={styles.buttonText}>Save Donation</Text>
-			</TouchableOpacity>
+				<Text style={styles.title}>Log Donation</Text>
+				<TextInput
+					style={styles.donorInput}
+					placeholder='Donor Name - OPTIONAL'
+					placeholderTextColor='gray'
+					value={dName}
+					onChangeText={setdName}
+					returnKeyType='done'
+				/>
+				<TextInput
+					style={styles.donorInput}
+					placeholder='Donor Email - OPTIONAL'
+					placeholderTextColor='gray'
+					value={email}
+					onChangeText={setEmail}
+					returnKeyType='done'
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder='Zip Code'
+					placeholderTextColor='gray'
+					value={zipCode}
+					onChangeText={setZipCode}
+					keyboardType="numeric"
+					autoComplete='off'
+					returnKeyType='done'
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder='Item Name'
+					placeholderTextColor='gray'
+					value={itemName}
+					onChangeText={setItemName}
+					returnKeyType='done'
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder='Item Quantity'
+					placeholderTextColor='gray'
+					value={quantity}
+					onChangeText={setQuantity}
+					keyboardType='numeric'
+					returnKeyType='done'
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder='Item Weight'
+					placeholderTextColor='gray'
+					value={weight}
+					onChangeText={setWeight}
+					keyboardType='numeric'
+					returnKeyType='done'
+				/>
+				<Dropdown
+					style={styles.dropdown}
+					selectedTextStyle={styles.selectedTextStyle}
+					data={items}
+					labelField='label'
+					valueField='value'
+					placeholder='Select Category'
+					placeholderStyle={styles.placeholderStyle}
+					value={category}
+					onChange={(item) => {
+						setCategory(item.value)
+					}}
+					activeColor='lightgray'
+				/>
+				<TouchableOpacity
+					style={styles.buttonBox}
+					onPress={handleSave}
+				>
+					<Text style={styles.buttonText}>Save Donation</Text>
+				</TouchableOpacity>
 			</ScrollView>
 		</View>
 	)
