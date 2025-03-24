@@ -1,19 +1,21 @@
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
-	View,
+	View
 } from 'react-native'
 import { Timestamp, addDoc, collection, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
+import axios from "axios"
 import { db } from '../../../lib/firebaseConfig'
 import { useState } from 'react'
-import axios from "axios"
 
 const LogDonations = () => {
+	const [dName, setdName] = useState('')
 	const [email, setEmail] = useState('')
 	const [zipCode, setZipCode] = useState('')
 	const [itemName, setItemName] = useState('')
@@ -23,11 +25,26 @@ const LogDonations = () => {
 
 	// Update This Dynamically From DB
 	const [items, setItems] = useState([
+		{ label: 'Classroom/Office', value: 'Classroom/Office' },
+		{ label: 'Containers', value: 'Containers' },
+		{ label: 'Decor', value: 'Decor' },
+		{ label: 'Fiber Arts', value: 'Fiber Arts' },
+		{ label: 'Fine Arts/Frames', value: 'Fine Arts/Frames' },
+		{ label: 'Floral/Garden', value: 'Floral/Garden' },
+		{ label: 'Found Objects', value: 'Found Objects' },
+		{ label: 'General Craft Supplies', value: 'General Craft Supplies' },
 		{ label: 'Glass', value: 'Glass' },
-		{ label: 'Fabric', value: 'Fabric' },
-		{ label: 'Vinyl', value: 'Vinyl' },
-		{ label: 'Plastic', value: 'Plastic' },
-		{ label: 'Other', value: 'Other' },
+		{ label: 'Holiday', value: 'Holiday' },
+		{ label: 'Jewelry', value: 'Jewelry' },
+		{ label: 'Paint', value: 'Paint' },
+		{ label: 'Papercraft', value: 'Papercraft' },
+		{ label: 'Party', value: 'Party' },
+		{ label: 'Photograhy', value: 'Photograhy' },
+		{ label: 'Screen & Block Painting', value: 'Screen & Block Painting' },
+		{ label: 'Sculpture', value: 'Sculpture' },
+		{ label: 'Soap/Candle Making', value: 'Soap/Candle Making' },
+		{ label: 'Tools', value: 'Tools' },
+		{ label: 'Toys', value: 'Toys' },
 	])
 
 	const handleSave = () => {
@@ -38,7 +55,15 @@ const LogDonations = () => {
 
 		Alert.alert(
 			'Confirm Save?',
-			`You entered:\n\nEmail: ${email}\nZip Code: ${zipCode}\nItem Name: ${itemName}\nQuantity: ${quantity}\nWeight: ${weight}\nCategory: ${category}\n\nDo you want to save?`,
+			`You entered:\n
+			Donor Name: ${dName}
+			Donor Email: ${email}
+			Zip Code: ${zipCode}
+			Item Name: ${itemName}
+			Quantity: ${quantity}
+			Weight: ${weight}
+			Category: ${category}\n\n`+
+			`Do you want to save?`,
 			[
 				{ text: 'Cancel', style: 'cancel' },
 				{
@@ -47,6 +72,7 @@ const LogDonations = () => {
 						saveDoc()
 						updateZipcode()
 						updateHeatmap()
+						setdName('')
 						setEmail('')
 						setZipCode('')
 						setItemName('')
@@ -62,6 +88,7 @@ const LogDonations = () => {
 	const saveDoc = async () => {
 		const timestamp = Timestamp.now()
 		const snapshot = await addDoc(collection(db, 'donations'), {
+			name: dName,
 			email: email,
 			zipCode: zipCode,
 			itemName: itemName,
@@ -109,9 +136,7 @@ const LogDonations = () => {
 		const docRef = doc(db, "zip_positions", zipCode)
 		const docSnap = await getDoc(docRef)
 
-
 		if (!docSnap.exists()) {
-
 			try {
 				const url = "https://nominatim.openstreetmap.org/search?postalcode=" + zipCode + "&country=US&format=json"
 				const response = await axios.get(url)
@@ -141,24 +166,31 @@ const LogDonations = () => {
 
 	return (
 		<View style={styles.container}>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
 			<Text style={styles.title}>Log Donation</Text>
-
 			<TextInput
-				style={styles.input}
-				placeholder='Email - OPTIONAL'
+				style={styles.donorInput}
+				placeholder='Donor Name - OPTIONAL'
+				placeholderTextColor='gray'
+				value={dName}
+				onChangeText={setdName}
+				returnKeyType='done'
+			/>
+			<TextInput
+				style={styles.donorInput}
+				placeholder='Donor Email - OPTIONAL'
 				placeholderTextColor='gray'
 				value={email}
 				onChangeText={setEmail}
 				returnKeyType='done'
 			/>
-
 			<TextInput
 				style={styles.input}
 				placeholder='Zip Code'
 				placeholderTextColor='gray'
 				value={zipCode}
 				onChangeText={setZipCode}
-				keyboardType='numeric'
+				keyboardType="numeric"
 				autoComplete='off'
 				returnKeyType='done'
 			/>
@@ -170,7 +202,6 @@ const LogDonations = () => {
 				onChangeText={setItemName}
 				returnKeyType='done'
 			/>
-
 			<TextInput
 				style={styles.input}
 				placeholder='Item Quantity'
@@ -180,7 +211,6 @@ const LogDonations = () => {
 				keyboardType='numeric'
 				returnKeyType='done'
 			/>
-
 			<TextInput
 				style={styles.input}
 				placeholder='Item Weight'
@@ -190,7 +220,6 @@ const LogDonations = () => {
 				keyboardType='numeric'
 				returnKeyType='done'
 			/>
-
 			<Dropdown
 				style={styles.dropdown}
 				selectedTextStyle={styles.selectedTextStyle}
@@ -205,13 +234,13 @@ const LogDonations = () => {
 				}}
 				activeColor='lightgray'
 			/>
-
 			<TouchableOpacity
 				style={styles.buttonBox}
 				onPress={handleSave}
 			>
 				<Text style={styles.buttonText}>Save Donation</Text>
 			</TouchableOpacity>
+			</ScrollView>
 		</View>
 	)
 }
@@ -219,11 +248,36 @@ const LogDonations = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		backgroundColor: '#f5f5f5',
-		paddingTop: 80,
-		paddingHorizontal: 20,
+	},
+	title: {
+		fontSize: 25,
+		fontWeight: 'bold',
+		color: '#376c3e',
+		marginBottom: 20,
+		alignSelf: 'center'
+	},
+	donorInput: {
+		width: '100%',
+		height: 40,
+		borderColor: '#ddd',
+		borderWidth: 1.5,
+		borderRadius: 5,
+		borderColor: '#376c3e',
+		paddingHorizontal: 10,
+		marginBottom: 15,
+		backgroundColor: '#fff',
+		color: 'black',
+	},
+	input: {
+		width: '100%',
+		height: 40,
+		borderColor: '#ddd',
+		borderWidth: 1,
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		marginBottom: 15,
+		backgroundColor: '#fff',
+		color: 'black',
 	},
 	dropdown: {
 		width: '100%',
@@ -243,23 +297,6 @@ const styles = StyleSheet.create({
 	placeholderStyle: {
 		color: 'gray',
 		fontSize: 14,
-	},
-	title: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		color: '#376c3e',
-		marginBottom: 20,
-	},
-	input: {
-		width: '100%',
-		height: 40,
-		borderColor: '#ddd',
-		borderWidth: 1,
-		borderRadius: 5,
-		paddingHorizontal: 10,
-		marginBottom: 15,
-		backgroundColor: '#fff',
-		color: 'black',
 	},
 	dropdownContainer: {
 		backgroundColor: 'white',
