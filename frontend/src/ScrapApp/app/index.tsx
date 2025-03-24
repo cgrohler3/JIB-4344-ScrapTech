@@ -3,6 +3,8 @@ import {
 	Alert,
 	Image,
 	KeyboardAvoidingView,
+	Pressable,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -18,10 +20,13 @@ import {
 	signInWithEmailAndPassword
 } from 'firebase/auth'
 
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
+
 export default function Index() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [loading, setLoading] = useState(false)
+	const [show, setShow] = useState(false)
 
 	const addUser = async () => {
 		const timestamp = Timestamp.now()
@@ -120,65 +125,65 @@ export default function Index() {
 	}
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.imageBox}>
-				<Image
-					source={require('../assets/images/scraplanta-logo.png')}
-					style={styles.image}
-					resizeMode='contain'
-				/>
-			</View>
-			<KeyboardAvoidingView behavior='padding'>
-				<TextInput
-					style={styles.input}
-					value={email}
-					onChangeText={setEmail}
-					autoCapitalize='none'
-					keyboardType='email-address'
-					placeholder='Email'
-				/>
-				<TextInput
-					style={styles.input}
-					value={password}
-					onChangeText={setPassword}
-					secureTextEntry
-					placeholder='Password'
-				/>
-				{loading ? (
-					<ActivityIndicator size={'large'} style={{ margin: 28 }} />
-				) : (
-					<View style={{ marginTop: 15, gap: 10 }}>
-						<TouchableOpacity
-							style={styles.buttonBox}
-							onPress={signIn}
-						>
-							<Text style={styles.buttonText}>LOGIN</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.buttonBoxAlt}
-							onPress={signUp}
-						>
-							<Text style={styles.buttonTextAlt}>REGISTER</Text>
-						</TouchableOpacity>
-						<TouchableOpacity 
-							style={styles.forgotButton}
-							onPress={forgotPassword}
-						>
-							<Text style={{ color: '#2196F3', textDecorationLine: 'underline' }}>Forgot Password?</Text>
-						</TouchableOpacity>
-					</View>
-				)}
-			</KeyboardAvoidingView>
+		<View style={{ flex: 1 }}>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
+				<View style={styles.imageBox}>
+					<Image
+						source={require('../assets/images/scraplanta-logo.png')}
+						style={styles.image}
+						resizeMode='contain'
+					/>
+				</View>
+				<KeyboardAvoidingView behavior='padding'>
+					<TextInput
+						style={styles.input}
+						value={email}
+						onChangeText={setEmail}
+						autoCapitalize='none'
+						keyboardType='email-address'
+						placeholder='Email'
+					/>
+					<TextInput
+						style={styles.input}
+						value={password}
+						onChangeText={setPassword}
+						secureTextEntry={show ? false : true}
+						placeholder='Password'
+					/>
+					<Pressable onPress={() => { setShow(!show) }} style={{ position: 'absolute', right: 15, top: 72 }}>
+						<FontAwesome6 name={show ? 'eye' : 'eye-slash'} size={20} color='#376c3e' />
+					</Pressable>
+					{loading ? (
+						<ActivityIndicator size={'large'} style={{ margin: 28 }} />
+					) : (
+						<View style={{ marginTop: 15, gap: 10 }}>
+							<TouchableOpacity
+								style={styles.buttonBox}
+								onPress={signIn}
+							>
+								<Text style={styles.buttonText}>LOGIN</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.buttonBoxAlt}
+								onPress={signUp}
+							>
+								<Text style={styles.buttonTextAlt}>REGISTER</Text>
+							</TouchableOpacity>
+							<TouchableOpacity 
+								style={styles.forgotButton}
+								onPress={forgotPassword}
+							>
+								<Text style={{ color: '#2196F3', textDecorationLine: 'underline' }}>Forgot Password?</Text>
+							</TouchableOpacity>
+						</View>
+					)}
+				</KeyboardAvoidingView>
+			</ScrollView>
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		marginHorizontal: 20,
-		flex: 1,
-		justifyContent: 'center',
-	},
 	imageBox: {
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -213,12 +218,11 @@ const styles = StyleSheet.create({
 		height: 35,
 		width: '100%',
 		borderWidth: 2,
-		borderColor: '#376c3e',
+		borderColor: 'gray',
 		borderRadius: 3,
 		paddingHorizontal: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		// marginBottom: 90,
 	},
 	buttonText: {
 		fontWeight: 'bold',
@@ -231,6 +235,5 @@ const styles = StyleSheet.create({
 	forgotButton: {
 		alignSelf: 'center',
 		marginTop: 15,
-		marginBottom: 90,
 	}
 })
