@@ -71,6 +71,7 @@ const LogDonations = () => {
 					onPress: () => {
 						saveDoc()
 						updateZipcode()
+						updateCategory()
 						updateHeatmap()
 						setdName('')
 						setEmail('')
@@ -107,7 +108,31 @@ const LogDonations = () => {
 			})
 	}
 
-	// Change this to cloud-function
+	const updateCategory = async () => {
+		const docRef = doc(db, "categories", category)
+		const docSnap = await getDoc(docRef)
+
+		if (docSnap.exists()) {
+			await updateDoc(docRef, {
+				[`zipMap.${zipCode}`]: increment(Number(weight)),
+				total_donations: increment(1),
+				total_weight: increment(Number(weight))
+			})
+
+		} else {
+			const snapshot = await setDoc(doc(db, "categories", category), {
+				zipMap: {
+					[zipCode]: Number(weight),
+				},
+				total_donations: 1,
+				total_weight: Number(weight),
+			}, {merge: true})
+
+			snapshot.then(() => console.log("Added new category"))
+		}
+	}
+
+
 	const updateZipcode = async () => {
 		const docRef = doc(db, "zip_codes", zipCode)
 		const docSnap = await getDoc(docRef)
