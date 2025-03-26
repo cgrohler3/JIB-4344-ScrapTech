@@ -44,7 +44,7 @@ export default function TabLayout() {
 		<Tabs 
 			screenOptions={{ 
 				tabBarActiveTintColor: '#2196F3',
-				tabBarStyle: { height: 60, paddingTop: 5 },
+				tabBarStyle: { height: 55, paddingTop: 2 },
 				headerRight: () => (
 					<TouchableOpacity
 						style={styles.buttonBoxAlt}
@@ -53,7 +53,7 @@ export default function TabLayout() {
 						<Text style={styles.buttonTextAlt}>LOGOUT</Text>
 					</TouchableOpacity>
 				)
-			}}>
+		}}>
 			<Tabs.Screen
 				name='home'
 				options={{
