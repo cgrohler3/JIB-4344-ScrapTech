@@ -71,6 +71,7 @@ const LogDonations = () => {
 					onPress: () => {
 						saveDoc()
 						updateZipcode()
+						updateCategory()
 						updateHeatmap()
 						setdName('')
 						setEmail('')
@@ -97,7 +98,7 @@ const LogDonations = () => {
 			category: category,
 			timestamp: timestamp,
 		})
-	
+
 		snapshot
 			.then(() => {
 				Alert.alert('Success', 'Donation Saved Successfully!')
@@ -107,7 +108,31 @@ const LogDonations = () => {
 			})
 	}
 
-	// Change this to cloud-function
+	const updateCategory = async () => {
+		const docRef = doc(db, "categories", category)
+		const docSnap = await getDoc(docRef)
+
+		if (docSnap.exists()) {
+			await updateDoc(docRef, {
+				[`zipMap.${zipCode}`]: increment(Number(weight)),
+				total_donations: increment(1),
+				total_weight: increment(Number(weight))
+			})
+
+		} else {
+			const snapshot = await setDoc(doc(db, "categories", category), {
+				zipMap: {
+					[zipCode]: Number(weight),
+				},
+				total_donations: 1,
+				total_weight: Number(weight),
+			}, {merge: true})
+
+			snapshot.then(() => console.log("Added new category"))
+		}
+	}
+
+
 	const updateZipcode = async () => {
 		const docRef = doc(db, "zip_codes", zipCode)
 		const docSnap = await getDoc(docRef)
@@ -118,7 +143,7 @@ const LogDonations = () => {
 				total_donations: increment(1),
 				total_weight: increment(Number(weight))
 			})
-			
+
 		} else {
 			const snapshot = await setDoc(doc(db, "zip_codes", zipCode), {
 				categories: {
@@ -140,7 +165,7 @@ const LogDonations = () => {
 			try {
 				const url = "https://nominatim.openstreetmap.org/search?postalcode=" + zipCode + "&country=US&format=json"
 				const response = await axios.get(url)
-	
+
 				if (response.data.length > 0) {
 					console.log(response.data[0])
 					const {lat, lon} = response.data[0]
@@ -259,7 +284,6 @@ const styles = StyleSheet.create({
 	donorInput: {
 		width: '100%',
 		height: 40,
-		borderColor: '#ddd',
 		borderWidth: 1.5,
 		borderRadius: 5,
 		borderColor: '#376c3e',
