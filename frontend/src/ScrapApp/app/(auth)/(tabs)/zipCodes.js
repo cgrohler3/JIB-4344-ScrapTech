@@ -92,7 +92,7 @@ const ZipCodes = () => {
     }, [zipCode]);
 
     const getColor = (index) => {
-        const colors = ["#6C63FF", "#5551A2", "#F1A7B1", "#FFBB33", "#4CAF50", "#FF5722", "#8BC34A", "#FFC107"];
+        const colors = ["#6C63FF", "#5551A2", "#F1A7B1", "#FFBB33", "#4CAF50", "#FF5722", "#8BC34A", "#FFC107", "#E91E63", "#03A9F4", "#9C27B0", "#FFEB3B", "#009688", "#795548", "#673AB7", "#FF9800", "#CDDC39", "#607D8B", "#00BCD4", "#F44336"];
         return colors[index % colors.length];
     };
 
@@ -115,9 +115,13 @@ const ZipCodes = () => {
 
             <View style={styles.content}>
                 {activeView === 'view1' ? (
+
                     <ScrollView contentContainerStyle={styles.container}>
                         <Text style={styles.title}>Donations (By Zip Code)</Text>
+                         <Text style={styles.title}>Zip Code ({zipCode}) - Category Distribution and Totals</Text>
+
                         <View style={styles.chartBox}>
+                            <Text style={styles.catBox}>Categories:</Text>
                             <PieChart
                                 data={chartData}
                                 width={Dimensions.get('window').width - 40}
@@ -214,7 +218,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     buttonBox: {
-        height: 40,
+        height: 50,
         width: '47%',
         borderRadius: 3,
         justifyContent: 'center',
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
         marginRight: 4,
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         color: 'white',
     },
@@ -234,6 +238,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#376c3e',
         marginBottom: 20,
+        marginTop: 32
     },
     dropdown: {
         width: '100%',
@@ -256,11 +261,13 @@ const styles = StyleSheet.create({
     },
     chartBox: {
         width: '100%',
-        height: 250,
+        height: 290,
         borderColor: 'darkgray',
         borderWidth: 1,
         borderRadius: 5,
         marginBottom: 20,
+        marginTop: 20,
+        paddingTop: 16
     },
     weightBox: {
         fontSize: 15,
@@ -276,6 +283,12 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 5,
         marginBottom: 20,
+    },
+    catBox: {
+        textAlign: 'right',
+        paddingRight: 256,
+        fontWeight: 'bold',
+        fontSize: 15
     }
 });
 
