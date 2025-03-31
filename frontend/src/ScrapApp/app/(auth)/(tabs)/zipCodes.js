@@ -1,9 +1,9 @@
-import { Dimensions, StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
+import { BarChart, PieChart } from "react-native-chart-kit";
+import { Button, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from "react"
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 
 import { Dropdown } from "react-native-element-dropdown";
-import { PieChart, BarChart } from "react-native-chart-kit";
 import { db } from '../../../lib/firebaseConfig'
 
 const ZipCodes = () => {
@@ -15,7 +15,20 @@ const ZipCodes = () => {
     const [donations, setDonations] = useState(0)
     const [weight, setWeight] = useState(0)
 
+    const [category, setCategory] = useState()
+    const [categories, setCategories] = useState([])
+    
     const [topZipSummaries, setTopZipSummaries] = useState([])
+
+    const [data, setData] = useState({
+        labels: [],
+        datasets: [
+            {
+                data: [],
+            },
+        ],
+    })
+    // const [tmp, setTmp] = useState({})
 
     const switchView = (view) => {
         setActiveView(view);
@@ -31,6 +44,36 @@ const ZipCodes = () => {
             })
         })
         setZipCodes(docs)
+    }
+
+    const getCategories = async () => {
+        const snapshot = await getDocs(collection(db, "categories"))
+        const docs = []
+        snapshot.forEach((doc) => {
+            docs.push({
+                label: doc.id,
+                value: doc.id
+            })
+        })
+        setCategories(docs)
+    }
+
+    const setCategoryData = (value) => {
+        setCategory(value)
+        getData()
+    }
+
+    const getData = async () => {
+        const docSnap = await getDoc(doc(db, "categories", category))
+        const data = docSnap.data()
+        
+        setData({
+            labels: Object.keys(data["zipMap"]),
+            datasets: [{
+                data: Object.values(data["zipMap"])
+            }]
+        })
+        // console.log(data.labels)
     }
 
     const getTopZipCodeSummaries = async () => {
@@ -63,6 +106,7 @@ const ZipCodes = () => {
 
     useEffect(() => {
         getZipCodes();
+        getCategories();
         getTopZipCodeSummaries();
     }, [])
 
@@ -155,17 +199,17 @@ const ZipCodes = () => {
                 ) : (
                     <ScrollView contentContainerStyle={styles.container}>
                         <Text style={styles.title}>Donations (By Material)</Text>
-
                         <View style={styles.barBox}>
                             <BarChart
-                                data={{
-                                    labels: ['Material 1', 'Material 2', 'Material 3', 'Material 4'],
-                                    datasets: [
-                                        {
-                                            data: [2, 45, 3, 60],
-                                        },
-                                    ],
-                                }}
+                                // data={{
+                                //     labels: getCategoryLabels(),
+                                //     datasets: [
+                                //         {
+                                //             data: [2, 45, 3, 60],
+                                //         },
+                                //     ],
+                                // }}
+                                data={data}
                                 width={Dimensions.get('window').width - 40}
                                 height={250}
                                 chartConfig={{
@@ -182,6 +226,21 @@ const ZipCodes = () => {
                             />
                         </View>
 
+                        <Dropdown
+                            style={styles.dropdown}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            data={categories}
+                            labelField='label'
+                            valueField='value'
+                            placeholder='Select Category'
+                            placeholderStyle={styles.placeholderStyle}
+                            value={category}
+                            onChange={(item) => setCategoryData(item.value)}
+                            activeColor='lightgray'
+                        />
+                        
+                        
+                        <Button title="Refresh" onPress={getTopZipCodeSummaries}/>
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Top Zip Codes Summary</Text>
                             {topZipSummaries.map((summary, idx) => (
