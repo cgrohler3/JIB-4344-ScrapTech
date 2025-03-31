@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from "react"
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 
@@ -14,6 +14,8 @@ const ZipCodes = () => {
 
     const [donations, setDonations] = useState(0)
     const [weight, setWeight] = useState(0)
+
+    const [topZipSummaries, setTopZipSummaries] = useState([])
 
     const switchView = (view) => {
         setActiveView(view);
@@ -31,8 +33,37 @@ const ZipCodes = () => {
         setZipCodes(docs)
     }
 
+    const getTopZipCodeSummaries = async () => {
+        const snapshot = await getDocs(collection(db, "zip_codes"));
+        const zipDataArray = [];
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            zipDataArray.push({
+                zip: doc.id,
+                totalWeight: data.total_weight,
+                totalDonations: data.total_donations,
+                categories: data.categories,
+            });
+        });
+
+        const sorted = zipDataArray.sort((a, b) => b.totalWeight - a.totalWeight);
+        const top5 = sorted.slice(0, 5);
+
+        const summaries = top5.map((zipData) => {
+            const categorySummary = Object.entries(zipData.categories)
+                .map(([cat, weight]) => `${cat}: ${weight} lbs`)
+                .join(", ");
+
+            return `Zip ${zipData.zip} - Weight: ${zipData.totalWeight} lbs, Donations: ${zipData.totalDonations}, Categories: ${categorySummary}`;
+        });
+
+        setTopZipSummaries(summaries);
+    }
+
     useEffect(() => {
-        getZipCodes()
+        getZipCodes();
+        getTopZipCodeSummaries();
     }, [])
 
     const getDataByZipCode = async () => {
@@ -55,7 +86,9 @@ const ZipCodes = () => {
     }
 
     useEffect(() => {
-        getDataByZipCode()
+        if (zipCode) {
+            getDataByZipCode()
+        }
     }, [zipCode]);
 
     const getColor = (index) => {
@@ -82,7 +115,7 @@ const ZipCodes = () => {
 
             <View style={styles.content}>
                 {activeView === 'view1' ? (
-                    <View style={styles.container}>
+                    <ScrollView contentContainerStyle={styles.container}>
                         <Text style={styles.title}>Donations (By Zip Code)</Text>
                         <View style={styles.chartBox}>
                             <PieChart
@@ -99,10 +132,10 @@ const ZipCodes = () => {
                             />
                             <Text style={styles.weightBox}>
                                 Total Donations:
-                                <Text style={{fontWeight: 'bold'}}> {donations}</Text>
-                                {'\t\t\t\t'} {/* Fix: correct spacing */}
+                                <Text style={{ fontWeight: 'bold' }}> {donations}</Text>
+                                {'\t\t\t\t'}
                                 Total Weight:
-                                <Text style={{fontWeight: 'bold'}}> {weight}</Text>
+                                <Text style={{ fontWeight: 'bold' }}> {weight}</Text>
                             </Text>
                         </View>
 
@@ -118,18 +151,18 @@ const ZipCodes = () => {
                             onChange={(item) => setZipCode(item.value)}
                             activeColor='lightgray'
                         />
-                    </View>
+                    </ScrollView>
                 ) : (
-                    <View style={styles.container}>
+                    <ScrollView contentContainerStyle={styles.container}>
                         <Text style={styles.title}>Donations (By Material)</Text>
 
                         <View style={styles.barBox}>
                             <BarChart
                                 data={{
-                                    labels: ['Material 1', 'Material 2', 'Material 3', 'Material 4'], //dummy materials
+                                    labels: ['Material 1', 'Material 2', 'Material 3', 'Material 4'],
                                     datasets: [
                                         {
-                                            data: [2, 45, 3, 60], // Dummy data, y-axis values generate based off this
+                                            data: [2, 45, 3, 60],
                                         },
                                     ],
                                 }}
@@ -137,21 +170,25 @@ const ZipCodes = () => {
                                 height={250}
                                 chartConfig={{
                                     backgroundGradientFrom: '#f5f5f5',
-                                    backgroundGradientTo: '#f5f5f5',  //for some reason, not inlcuding a gradient color makes the background black. Do not remove!
+                                    backgroundGradientTo: '#f5f5f5',
                                     fillShadowGradientOpacity: 1,
-                                    decimalPlaces: 0, // Makes sure no decimals on Y-axis
-                                    color: (opacity = 1) => `rgba(55, 108, 62, ${opacity})`, // Green bars
-                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black label color
+                                    decimalPlaces: 0,
+                                    color: (opacity = 1) => `rgba(55, 108, 62, ${opacity})`,
+                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                                     style: {
                                         borderRadius: 16,
-
                                     },
                                 }}
                             />
                         </View>
-                    </View>
 
-
+                        <View style={{ marginTop: 20 }}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Top Zip Codes Summary</Text>
+                            {topZipSummaries.map((summary, idx) => (
+                                <Text key={idx} style={{ marginBottom: 6 }}>{summary}</Text>
+                            ))}
+                        </View>
+                    </ScrollView>
                 )}
             </View>
         </View>
@@ -165,6 +202,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
         paddingHorizontal: 20,
+        paddingBottom: 40, // extra space for scroll view bottom
+    },
+    buttoncontainer: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
     },
     buttonGroup: {
         flexDirection: 'row',
@@ -236,6 +278,5 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     }
 });
-
 
 export default ZipCodes;
