@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c03e1309-e4c9-484d-a214-168322b3c852" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/.expo/types/router.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/.expo/types/router.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/logDonations.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/logDonations.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/heatMap.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/heatMap.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/zipCodes.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/zipCodes.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,7 +40,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "categoryChart",
+    "git-widget-placeholder": "heatmapCleanup",
     "last_opened_file_path": "C:/Users/Hayden/Documents/Github/JIB-4344-ScrapTech",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

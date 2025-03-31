@@ -117,7 +117,6 @@ const ZipCodes = () => {
                 {activeView === 'view1' ? (
 
                     <ScrollView contentContainerStyle={styles.container}>
-                        <Text style={styles.title}>Donations (By Zip Code)</Text>
                          <Text style={styles.title}>Zip Code ({zipCode}) - Category Distribution and Totals</Text>
 
                         <View style={styles.chartBox}>
