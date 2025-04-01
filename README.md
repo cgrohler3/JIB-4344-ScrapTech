@@ -27,8 +27,9 @@ Firestore meets the cost needs for the application while offering a powerful clo
 ### Bug Fixes
 -
 ### Known Issues
--
-
+- UI and funtionality issues with IOS devices. 
+- Materials bar chart selection on Zip Codes tab need to be preshed twice to display chart.
+- Scrolling issues are present when displaying certain charts (bar charts, pie charts).
 ## v0.3.0 Release
 ### Features
 #### Donation Density (Heat) Map
