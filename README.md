@@ -21,15 +21,16 @@ Firestore meets the cost needs for the application while offering a powerful clo
 + Added zip code contributions to category collection in Firestore.
 #### UI Updates
 + Displayed Log Donation fields as optional.
-+ Added Home Screen instructions.
 + Zoom icon replaced spyglass for improved user experience (Heat Map).
 + Visibility toggle for password input.
 ### Bug Fixes
--
+-Added instructions to Home Screen.<br/>
+-Corrected Category Options in Log Donation.<br/>
+-Included Colors for all categories in Pie Chart visuals.
 ### Known Issues
-- UI and funtionality issues with IOS devices. 
-- Materials bar chart selection on Zip Codes tab need to be preshed twice to display chart.
-- Scrolling issues are present when displaying certain charts (bar charts, pie charts).
+-UI and funtionality issues with IOS devices. <br/>
+-Materials bar chart selection on Zip Codes tab need to be preshed twice to display chart.<br/>
+-Scrolling issues are present when displaying certain charts (bar charts, pie charts).
 ## v0.3.0 Release
 ### Features
 #### Donation Density (Heat) Map
