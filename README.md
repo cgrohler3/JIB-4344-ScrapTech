@@ -12,6 +12,23 @@ Firebase brings simplicity to the management of backend functionality and commun
 Firestore meets the cost needs for the application while offering a powerful cloud database that can be scaled as needed. It also requires very little maintenance, and provides built-in security and authentication/authorization features that help make it secure and powerful.
 
 # 📄 Release Notes
+## v0.4.0 Release
+### Features
+#### Category Data Bar Graph
++ Added Option to swap between category and zip code data visualizations.
+#### Top Zip Codes List
++ Displayed zip codes contributing the highest number of donations in a selected category.
++ Added zip code contributions to category collection in Firestore.
+#### UI Updates
++ Displayed Log Donation fields as optional.
++ Added Home Screen instructions.
++ Zoom icon replaced spyglass for improved user experience (Heat Map).
++ Visibility toggle for password input.
+### Bug Fixes
+-
+### Known Issues
+-
+
 ## v0.3.0 Release
 ### Features
 #### Donation Density (Heat) Map
