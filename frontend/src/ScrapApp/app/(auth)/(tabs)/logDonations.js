@@ -1,5 +1,6 @@
 import {
 	Alert,
+	Keyboard,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -134,7 +135,7 @@ const LogDonations = () => {
 
 
 	const updateZipcode = async () => {
-		const docRef = doc(db, "zip_codes", zipCode)
+		const docRef = doc(db, "zipCodes", zipCode)
 		const docSnap = await getDoc(docRef)
 
 		if (docSnap.exists()) {
@@ -145,7 +146,7 @@ const LogDonations = () => {
 			})
 
 		} else {
-			const snapshot = await setDoc(doc(db, "zip_codes", zipCode), {
+			const snapshot = await setDoc(doc(db, "zipCodes", zipCode), {
 				categories: {
 					[category]: Number(weight),
 				},
@@ -158,7 +159,7 @@ const LogDonations = () => {
 	}
 
 	const updateHeatmap = async () => {
-		const docRef = doc(db, "zip_positions", zipCode)
+		const docRef = doc(db, "zipPositions", zipCode)
 		const docSnap = await getDoc(docRef)
 
 		if (!docSnap.exists()) {
@@ -170,7 +171,7 @@ const LogDonations = () => {
 					console.log(response.data[0])
 					const {lat, lon} = response.data[0]
 
-					const snapshot = await setDoc(doc(db, "zip_positions", zipCode), {
+					const snapshot = await setDoc(doc(db, "zipPositions", zipCode), {
 						total_weight: Number(weight),
 						lat: parseFloat(lat),
 						long: parseFloat(lon),
@@ -218,6 +219,7 @@ const LogDonations = () => {
 					keyboardType="numeric"
 					autoComplete='off'
 					returnKeyType='done'
+					onBlur={() => Keyboard.dismiss()}
 				/>
 				<TextInput
 					style={styles.input}

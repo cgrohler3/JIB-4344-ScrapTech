@@ -1,5 +1,5 @@
 import { ActivityIndicator, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import MapView, { Heatmap } from 'react-native-maps'
+import MapView, { Heatmap, Marker } from 'react-native-maps'
 import React, { useEffect, useRef, useState } from 'react'
 import { collection, count, getDocs } from 'firebase/firestore'
 
@@ -12,14 +12,20 @@ const HeatMap = () => {
 	const state = { latitude: 33, longitude: -83.3, latitudeDelta: 6, longitudeDelta: 6 }
 	const country = { latitude: 37.09, longitude: -95, latitudeDelta: 70, longitudeDelta: 70 }
 
+	const [isVisible, setIsVisible] = useState(true)
 	const [region, setRegion] = useState(city)
 	const [zoomLevel, setZoomLevel] = useState(0)
 	const [data, setData] = useState([])
+	const [markers, setMarkers] = useState([])
 
 	const mapRef = useRef(null)
 	const toggleZoom = () => {
 		setZoomLevel((zoomLevel + 1) % 3)
 		const newRegion = (zoomLevel == 0 ? city : zoomLevel == 1 ? state : country)
+		if (newRegion != city)
+			setIsVisible(false)
+		else
+			setIsVisible(true)
 		mapRef.current.animateToRegion(newRegion, 1000)
 	}
 
@@ -32,7 +38,7 @@ const HeatMap = () => {
 	};
 	
 	const getData = async () => {
-		const snapshot = await getDocs(collection(db, 'zip_positions'))
+		const snapshot = await getDocs(collection(db, 'zipPositions'))
 		const data = snapshot.docs.map((doc) => {
 			const docData = doc.data()
 			return {
@@ -42,8 +48,18 @@ const HeatMap = () => {
 			}
 		})
 		setData(data)
-	}
+		// console.log(data)
 
+		const marks = snapshot.docs.map((doc) => {
+			const docData = doc.data()
+			return {
+				coordinate: { latitude: docData.lat, longitude: docData.long }, title: doc.id, description: docData.total_weight.toString()
+			}
+		})
+		setMarkers(marks)
+		console.log(marks)
+	}
+	
 	useEffect(() => {
 		getData()
 	}, [])
@@ -63,6 +79,14 @@ const HeatMap = () => {
 						opacity={0.75}
 						radius={50}
 					/>
+					{isVisible && markers.map((marker, index) => (
+						<Marker
+							key={index}
+							coordinate={marker.coordinate}
+							title={marker.title}
+							description={marker.description}
+						/>
+					))}
 				</MapView>
 			)}
 			<TouchableOpacity
