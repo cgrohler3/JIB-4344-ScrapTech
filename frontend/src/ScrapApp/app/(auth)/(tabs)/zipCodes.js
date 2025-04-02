@@ -1,4 +1,3 @@
-import { BarChart, PieChart } from 'react-native-chart-kit'
 import {
 	Button,
 	Dimensions,
@@ -8,8 +7,9 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import { PieChart, StackedBarChart } from 'react-native-chart-kit'
 import React, { useEffect, useState } from 'react'
-import { Timestamp, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { Timestamp, and, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
@@ -20,24 +20,22 @@ const ZipCodes = () => {
     
 	const [zipCode, setZipCode] = useState("")
     const [zipCodes, setZipCodes] = useState([])
-	const [chartData, setChartData] = useState([])
+	const [pieData, setPieData] = useState([])
 	const [donations, setDonations] = useState(0)
 	const [weight, setWeight] = useState(0)
     
+    const [time, setTime] = useState("week")
 	const [category, setCategory] = useState("")
 	const [categories, setCategories] = useState([])
-    const [timerange, setTimerange] = useState("week")
-    
-	// const [topZipSummaries, setTopZipSummaries] = useState([])
-	// const [data, setData] = useState({
-	//     labels: [],
-	//     datasets: [{ data: [] }],
-	// })
-	
+    const [rawData, setRawData] = useState([])
+    const [barData, setBarData] = useState([])
+
+	const [topZipSummaries, setTopZipSummaries] = useState([])
+	  
     useEffect(() => {
         getZipCodes()
         getCategories()
-        // getTopZipCodeSummaries()
+        getTopZipCodeSummaries()
     }, [])
     
     useEffect(() => {
@@ -67,7 +65,7 @@ const ZipCodes = () => {
                 legendFontSize: 15,
             }
         })
-        setChartData(formattedData)
+        setPieData(formattedData)
         setDonations(data.total_donations)
         setWeight(data.total_weight)
     }
@@ -86,32 +84,78 @@ const ZipCodes = () => {
 	    setCategories(docs)
 	}
 
-    const getDataByCategory = async () => {
-        const now = new Date()
-        now = now.setDate(now.getDate() - 7)
-        const lastWeek = Timestamp.fromDate(now)
-
-        const docSnap = await getDocs(query(collection(db, "donations"), where("tiemstamp", ">=", lastWeek)))
-        const data = docSnap.data()
-        
-        console.log(lastWeek)
-        console.log(data)
-
-        // const formattedData = Object.entries(data.categories).map(([category, weight], index) => {
-        //     const percentage = parseInt(Math.round(parseFloat(weight / data.total_weight).toFixed(2) * 100))
-        //     return {
-        //         name: category,
-        //         amount: percentage,
-        //         color: getColor(index),
-        //         legendFontColor: "#3D3E44",
-        //         legendFontSize: 15,
-        //     }
-        // })
-        // setChartData(formattedData)
-        // setDonations(data.total_donations)
-        // setWeight(data.total_weight)
+    const getTS = () => {
+        const date = new Date()
+        if (time == "week") {
+            date.setDate(date.getDate() - 7)
+        }
+        return Timestamp.fromDate(date)
     }
 
+    const getDataByCategory = async () => {
+        const ts = getTS()
+        const snapshot = await getDocs(query(
+            collection(db, "donations"), 
+            where("timestamp", ">=", ts),
+            where("category", "==", category)
+        ))
+        
+        const docs = []
+	    snapshot.forEach((doc) => {
+            docs.push({ zipCode: doc.data().zipCode, weight: doc.data().weight, timestamp: doc.data().timestamp })
+	    })
+        setRawData(docs)
+
+        const groupRawData = docs.reduce((acc, item) => {
+            const day = item.timestamp.toDate().toLocaleDateString("en-US", { weekday: "short" })
+            const zip = item.zipCode
+
+            if (!acc[day]) acc[day] = {}
+            if (!acc[day][zip]) acc[day][zip] = 0
+
+            acc[day][zip] += item.weight
+
+            return acc
+        }, {})
+        setBarData(groupRawData)
+    }
+
+    const prepareChartData = () => {
+        const labels = ["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        const zips = Array.from(new Set(rawData.map(item => item.zipCode)))
+        const dataMatrix = labels.map(label => {
+            const day = barData[label] || {}
+            return zips.map(zip => day[zip] || 0)
+        })
+        const barColors = ["#FF6384", "#36A2EB", "#36A4E"]
+
+        return {
+            labels: labels,
+            legend: zips,
+            data: dataMatrix,
+            barColors: barColors
+        }
+    }
+
+    const getTopZipCodeSummaries = async () => {
+        const snapshot = await getDocs(collection(db, "zipCodes"));
+        const zipDataArray = [];
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            zipDataArray.push({
+                zip: doc.id,
+                totalWeight: data.total_weight || 0,
+                totalDonations: data.total_donations || 0,
+                categories: data.categories || {},
+            });
+        });
+
+        const sorted = zipDataArray.sort((a, b) => b.totalWeight - a.totalWeight);
+        setTopZipSummaries(sorted.slice(0, 5));
+        console.log(topZipSummaries)
+    }
+    
 	return (
         <View style={{ flex: 1 }}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 25 }}>
@@ -134,7 +178,7 @@ const ZipCodes = () => {
                         <Text style={styles.title}>Zip Codes</Text>
                         <View style={styles.pieChart}>
                             <PieChart
-                                data={chartData}
+                                data={pieData}
                                 width={Dimensions.get("window").width}
                                 height={200}
                                 accessor={"amount"}
@@ -146,7 +190,7 @@ const ZipCodes = () => {
                                 hasLegend={false}
                                 center={[120, 0]}
                             />
-                            {chartData.map((item, index) => (
+                            {pieData.map((item, index) => (
                                 <Text key={index} style={{ fontSize: 17, textAlignVertical: 'center' }}>
                                     <FontAwesome name="circle" size={18} color={item.color}/>  {item.amount}%  {item.name}
                                 </Text>
@@ -176,20 +220,19 @@ const ZipCodes = () => {
                     <View style={styles.container}>
                         <Text style={styles.title}>Categories</Text>
                         <View style={styles.barChart}>
-                            {/* <BarChart
-	                            data={data}
-	                            width={Dimensions.get('window').width - 54}
-	                            height={200}
-	                            chartConfig={{
-	                                backgroundGradientFrom: '#f5f5f5',
-	                                backgroundGradientTo: '#f5f5f5',
-	                                fillShadowGradientOpacity: 1,
-	                                decimalPlaces: 0,
-	                                color: (opacity = 1) => `rgba(55, 108, 62, ${opacity})`,
-	                                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-	                                style: { borderRadius: 16 },
-	                            }}
-	                        /> */}
+                            <StackedBarChart
+                                data={prepareChartData()}
+                                width={350}
+                                height={300}
+                                chartConfig={{
+                                    backgroundGradientFrom: "#fff",
+                                    backgroundGradientTo: "#fff",
+                                    decimalPlaces: 0,
+                                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                }}
+                                barPercentage={0.7}
+                            />
                         </View>
                         <Dropdown
                             style={styles.dropdown}
@@ -203,24 +246,24 @@ const ZipCodes = () => {
                             onChange={(item) => setCategory(item.value)}
                             activeColor='lightgray'
                         />
-                        {/* <Button title="Refresh" onPress={getTopZipCodeSummaries} />
-	                    <View style={{ marginTop: 20 }}>
-	                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>Top Zip Codes Summary</Text>
-	                        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-	                            {topZipSummaries.map((zip, idx) => (
-	                                <View key={idx} style={{ width: Dimensions.get('window').width / 3.3, backgroundColor: '#fff', padding: 10, borderRadius: 8, elevation: 2 }}>
-	                                    <Text style={{ fontWeight: 'bold', fontSize: 14, marginBottom: 4, textAlign: 'center', color: '#376c3e' }}>Zip {zip.zip}</Text>
-	                                    <Text style={{ fontSize: 12, textAlign: 'center' }}>Weight: {zip.totalWeight} lbs</Text>
-	                                    <Text style={{ fontSize: 12, textAlign: 'center' }}>Donations: {zip.totalDonations}</Text>
-	                                    <View style={{ marginTop: 6 }}>
-	                                        {Object.entries(zip.categories).map(([cat, w], i) => (
-	                                            <Text key={i} style={{ fontSize: 11, textAlign: 'center', color: '#555' }}>{cat}: {w} lbs</Text>
-	                                        ))}
-	                                    </View>
-	                                </View>
-	                            ))}
-	                        </View>
-	                    </View> */}
+                        <Button title="Refresh" onPress={getTopZipCodeSummaries} />
+                        <View style={{ marginTop: 20 }}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>Top Zip Codes Summary</Text>
+                            <View style={styles.topZipContainer}>
+                                {topZipSummaries.map((zip, idx) => (
+                                    <View key={idx} style={{ width: Dimensions.get('window').width / 3.3, backgroundColor: '#fff', padding: 10, borderRadius: 8, elevation: 2 }}>
+                                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginBottom: 4, textAlign: 'center', color: '#376c3e' }}>Zip {zip.zip}</Text>
+                                        <Text style={{ fontSize: 12, textAlign: 'center' }}>Weight: {zip.totalWeight} lbs</Text>
+                                        <Text style={{ fontSize: 12, textAlign: 'center' }}>Donations: {zip.totalDonations}</Text>
+                                        <View style={{ marginTop: 6 }}>
+                                            {Object.entries(zip.categories).map(([cat, w], i) => (
+                                                <Text key={i} style={{ fontSize: 11, textAlign: 'center', color: '#555' }}>{cat}: {w} lbs</Text>
+                                            ))}
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
                     </View>
 	            )}
             </ScrollView>
@@ -304,22 +347,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
     },
-
-
-	// barBox: {
-	//     width: '100%',
-	//     height: 250,
-	//     backgroundColor: '#f5f5f5',
-	//     borderWidth: 0,
-	//     borderRadius: 5,
-	//     marginBottom: 20,
-	// },
-	// catBox: {
-	//     textAlign: 'right',
-	//     paddingRight: 256,
-	//     fontWeight: 'bold',
-	//     fontSize: 15,
-	// },
+    topZipContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        gap: 15,
+    }
 })
 
 export default ZipCodes
