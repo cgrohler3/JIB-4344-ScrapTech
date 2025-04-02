@@ -22,6 +22,14 @@ const HeatMap = () => {
 		const newRegion = (zoomLevel == 0 ? city : zoomLevel == 1 ? state : country)
 		mapRef.current.animateToRegion(newRegion, 1000)
 	}
+
+	const getZoomIcon = () => {
+		if (zoomLevel === 0) {
+			return 'down-left-and-up-right-to-center';
+		} else {
+			return 'up-right-and-down-left-from-center';
+		}
+	};
 	
 	const getData = async () => {
 		const snapshot = await getDocs(collection(db, 'zipPositions'))
@@ -61,7 +69,7 @@ const HeatMap = () => {
 				style={styles.zoomButton}
 				onPress={toggleZoom}
 			>
-				<FontAwesome6 name='magnifying-glass' size={20} color='white' />
+				<FontAwesome6 name={getZoomIcon()} size={20} color='white' />
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.refreshButton}
