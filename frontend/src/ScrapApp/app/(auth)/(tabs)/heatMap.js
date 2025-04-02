@@ -24,7 +24,7 @@ const HeatMap = () => {
 	}
 	
 	const getData = async () => {
-		const snapshot = await getDocs(collection(db, 'zip_positions'))
+		const snapshot = await getDocs(collection(db, 'zipPositions'))
 		const data = snapshot.docs.map((doc) => {
 			const docData = doc.data()
 			return {
