@@ -1,5 +1,6 @@
 import {
 	Alert,
+	Keyboard,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -47,6 +48,16 @@ const LogDonations = () => {
 		{ label: 'Toys', value: 'Toys' },
 	])
 
+	const clearInputs = () => {
+		setdName('')
+		setEmail('')
+		setZipCode('')
+		setItemName('')
+		setQuantity('')
+		setWeight('')
+		setCategory('')
+	}
+
 	const handleSave = () => {
 		if (!zipCode || !itemName || !quantity || !weight || !category) {
 			Alert.alert('Missing Fields', 'All product information must be filled!')
@@ -73,13 +84,7 @@ const LogDonations = () => {
 						updateZipcode()
 						updateCategory()
 						updateHeatmap()
-						setdName('')
-						setEmail('')
-						setZipCode('')
-						setItemName('')
-						setQuantity('')
-						setWeight('')
-						setCategory('')
+						clearInputs()
 					},
 				},
 			]
@@ -134,7 +139,7 @@ const LogDonations = () => {
 
 
 	const updateZipcode = async () => {
-		const docRef = doc(db, "zip_codes", zipCode)
+		const docRef = doc(db, "zipCodes", zipCode)
 		const docSnap = await getDoc(docRef)
 
 		if (docSnap.exists()) {
@@ -145,7 +150,7 @@ const LogDonations = () => {
 			})
 
 		} else {
-			const snapshot = await setDoc(doc(db, "zip_codes", zipCode), {
+			const snapshot = await setDoc(doc(db, "zipCodes", zipCode), {
 				categories: {
 					[category]: Number(weight),
 				},
@@ -158,7 +163,7 @@ const LogDonations = () => {
 	}
 
 	const updateHeatmap = async () => {
-		const docRef = doc(db, "zip_positions", zipCode)
+		const docRef = doc(db, "zipPositions", zipCode)
 		const docSnap = await getDoc(docRef)
 
 		if (!docSnap.exists()) {
@@ -170,7 +175,7 @@ const LogDonations = () => {
 					console.log(response.data[0])
 					const {lat, lon} = response.data[0]
 
-					const snapshot = await setDoc(doc(db, "zip_positions", zipCode), {
+					const snapshot = await setDoc(doc(db, "zipPositions", zipCode), {
 						total_weight: Number(weight),
 						lat: parseFloat(lat),
 						long: parseFloat(lon),
@@ -193,6 +198,12 @@ const LogDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
 				<Text style={styles.title}>Log Donation</Text>
+				<TouchableOpacity
+					style={styles.buttonBoxAlt}
+					onPress={clearInputs}
+				>
+					<Text style={styles.buttonTextAlt}>CLEAR</Text>
+				</TouchableOpacity>
 				<TextInput
 					style={styles.donorInput}
 					placeholder='Donor Name - OPTIONAL'
@@ -218,6 +229,7 @@ const LogDonations = () => {
 					keyboardType="numeric"
 					autoComplete='off'
 					returnKeyType='done'
+					onBlur={() => Keyboard.dismiss()}
 				/>
 				<TextInput
 					style={styles.input}
@@ -340,6 +352,23 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: 'bold',
 		color: 'white',
+	},
+	buttonBoxAlt: {
+		height: 30,
+		width: 75,
+		borderWidth: 2,
+		borderColor: 'gray',
+		borderRadius: 3,
+		paddingHorizontal: 10,
+		justifyContent: 'center',
+		alignItems: 'center',
+		position: "absolute",
+		left: 370,
+		top: 50,
+	},
+	buttonTextAlt: {
+		fontWeight: 'bold',
+		color: '#376c3e',
 	},
 })
 

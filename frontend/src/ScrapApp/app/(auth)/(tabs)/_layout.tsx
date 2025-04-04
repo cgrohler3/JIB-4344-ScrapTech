@@ -23,7 +23,7 @@ export default function TabLayout() {
 	const handleLogout = () => {
 		Alert.alert(
 			'Confirm Logout?',
-			`You are about to logout! Please save any progress to avoid losing it!`,
+			`You are about to logout! Please save any unsaved donations to avoid losing progress!`,
 			[
 				{ text: 'Cancel', style: 'cancel' },
 				{

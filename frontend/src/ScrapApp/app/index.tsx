@@ -30,7 +30,7 @@ export default function Index() {
 
 	const addUser = async () => {
 		const timestamp = Timestamp.now()
-		const snapshot = await addDoc(collection(db, "users"), {
+		await addDoc(collection(db, "users"), {
 			email: email,
 			timestamp: timestamp
 		})
