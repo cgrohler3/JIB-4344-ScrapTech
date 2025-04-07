@@ -1,3 +1,5 @@
+import "randomcolor"
+
 import {
 	Button,
 	Dimensions,
@@ -9,13 +11,16 @@ import {
 } from 'react-native'
 import { PieChart, StackedBarChart } from 'react-native-chart-kit'
 import React, { useEffect, useState } from 'react'
-import { Timestamp, and, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { Timestamp, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { db } from '../../../lib/firebaseConfig'
+import randomColor from "randomcolor"
+import { useIsFocused } from "@react-navigation/native"
 
 const ZipCodes = () => {
+    const isFocused = useIsFocused()
 	const [activeView, setActiveView] = useState('view1')
     
 	const [zipCode, setZipCode] = useState("")
@@ -33,15 +38,28 @@ const ZipCodes = () => {
 	const [topZipSummaries, setTopZipSummaries] = useState([])
 	  
     useEffect(() => {
-        getZipCodes()
-        getCategories()
-        getTopZipCodeSummaries()
-    }, [])
+        if (isFocused) {
+            getZipCodes()
+            getCategories()
+            getTopZipCodeSummaries()
+            console.log("REFRESH")
+
+            if (zipCode != "") getDataByZipCode()
+        }
+    }, [isFocused])
     
     useEffect(() => {
         if (zipCode) getDataByZipCode()
         if (category) getDataByCategory()
     }, [zipCode, category])
+
+    const clearPie = () => {
+        setZipCode("")
+        getZipCodes()
+        setPieData([])
+        setWeight(0)
+        setDonations(0)
+    }
 
     const getZipCodes = async () => {
 	    const snapshot = await getDocs(collection(db, "zipCodes"))
@@ -55,12 +73,13 @@ const ZipCodes = () => {
     const getDataByZipCode = async () => {
         const docSnap = await getDoc(doc(db, "zipCodes", zipCode))
         const data = docSnap.data()
+        const colors = randomColor({ count: Object.keys(data.categories).length })
         const formattedData = Object.entries(data.categories).map(([category, weight], index) => {
-            const percentage = parseInt(Math.round(parseFloat(weight / data.total_weight).toFixed(2) * 100))
+            const percentage = parseInt(weight)
             return {
                 name: category,
                 amount: percentage,
-                color: getColor(index),
+                color: colors[index],
                 legendFontColor: "#3D3E44",
                 legendFontSize: 15,
             }
@@ -69,12 +88,7 @@ const ZipCodes = () => {
         setDonations(data.total_donations)
         setWeight(data.total_weight)
     }
-    
-    const getColor = (index) => {
-        const colors = ["#6C63FF", "#5551A2", "#F1A7B1", "#FFBB33", "#4CAF50", "#FF5722", "#8BC34A", "#FFC107", "#E91E63", "#03A9F4", "#9C27B0", "#FFEB3B", "#009688", "#795548", "#673AB7", "#FF9800", "#CDDC39", "#607D8B", "#00BCD4", "#F44336"]
-        return colors[index % colors.length]
-    }
-    
+
 	const getCategories = async () => {
 	    const snapshot = await getDocs(collection(db, "categories"))
 	    const docs = []
@@ -127,7 +141,7 @@ const ZipCodes = () => {
             const day = barData[label] || {}
             return zips.map(zip => day[zip] || 0)
         })
-        const barColors = ["#FF6384", "#36A2EB", "#36A4E"]
+        const barColors = ["#FF6384", "#36A2EB", "#326A4E"]
 
         return {
             labels: labels,
@@ -153,12 +167,21 @@ const ZipCodes = () => {
 
         const sorted = zipDataArray.sort((a, b) => b.totalWeight - a.totalWeight);
         setTopZipSummaries(sorted.slice(0, 5));
-        console.log(topZipSummaries)
     }
+
+    const data = {
+        labels: ["Test1", "Test2"],
+        legend: [],
+        data: [
+          [60, 60, 60],
+          [30, 30, 60]
+        ],
+        barColors: ["#dfe4ea", "#ced6e0", "#a4b0be"]
+    };
     
 	return (
         <View style={{ flex: 1 }}>
-			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 25 }}>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 25, paddingVertical: 20 }}>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonBox}
@@ -179,7 +202,7 @@ const ZipCodes = () => {
                         <View style={styles.pieChart}>
                             <PieChart
                                 data={pieData}
-                                width={Dimensions.get("window").width}
+                                width={200}
                                 height={200}
                                 accessor={"amount"}
                                 backgroundColor={"transparent"}
@@ -188,11 +211,11 @@ const ZipCodes = () => {
                                     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                                 }}
                                 hasLegend={false}
-                                center={[120, 0]}
+                                center={[50, 0]}
                             />
                             {pieData.map((item, index) => (
                                 <Text key={index} style={{ fontSize: 17, textAlignVertical: 'center' }}>
-                                    <FontAwesome name="circle" size={18} color={item.color}/>  {item.amount}%  {item.name}
+                                    <FontAwesome name="circle" size={18} color={item.color}/>  {(item.amount * 100 / weight).toFixed(2)}%  {item.name}
                                 </Text>
                             ))}
                             <Text style={styles.weightBox}>
@@ -202,6 +225,12 @@ const ZipCodes = () => {
                                 Total Weight:
                                 <Text style={{ fontWeight: 'bold' }}> {weight}</Text>
                             </Text>
+                            <TouchableOpacity
+                                style={styles.buttonBoxAlt}
+                                onPress={clearPie}
+                            >
+                                <Text style={styles.buttonTextAlt}>CLEAR</Text>
+                            </TouchableOpacity>
                         </View>
                         <Dropdown
                             style={styles.dropdown}
@@ -220,18 +249,42 @@ const ZipCodes = () => {
                     <View style={styles.container}>
                         <Text style={styles.title}>Categories</Text>
                         <View style={styles.barChart}>
-                            <StackedBarChart
+                            {/* <StackedBarChart
                                 data={prepareChartData()}
-                                width={350}
+                                width={375}
                                 height={300}
                                 chartConfig={{
                                     backgroundGradientFrom: "#fff",
                                     backgroundGradientTo: "#fff",
-                                    decimalPlaces: 0,
                                     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                                     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                    // propsForBackgroundLines: {
+                                    //     // strokeDasharray: "4",
+                                    //     // strokeWidth: 2, // If you put 0 in the value no line is displayed
+                                    //     // stroke: `rgba(0, 0, 0, 0)`,
+                                    //     // paddingBottom: 10,
+                                    // },
+                                    // propsForLabels: {
+                                    //     fontSize: 12,
+                                    //     dy: 8
+                                    // },
                                 }}
                                 barPercentage={0.7}
+                                showLegend={false}
+                            /> */}
+                            <StackedBarChart
+                                data={data}
+                                width={375}
+                                height={200}
+                                chartConfig={{
+                                    backgroundGradientFrom: "#fff",
+                                    backgroundGradientTo: "#fff",
+                                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                    propsForHorizontalLabels: {
+                                        dy: -5,
+                                    },
+                                }}
                             />
                         </View>
                         <Dropdown
@@ -246,7 +299,7 @@ const ZipCodes = () => {
                             onChange={(item) => setCategory(item.value)}
                             activeColor='lightgray'
                         />
-                        <Button title="Refresh" onPress={getTopZipCodeSummaries} />
+                        {/* <Button title="Refresh" onPress={getTopZipCodeSummaries} />
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>Top Zip Codes Summary</Text>
                             <View style={styles.topZipContainer}>
@@ -263,7 +316,7 @@ const ZipCodes = () => {
                                     </View>
                                 ))}
                             </View>
-                        </View>
+                        </View> */}
                     </View>
 	            )}
             </ScrollView>
@@ -281,7 +334,7 @@ const styles = StyleSheet.create({
     buttonBox: {
 		height: 40,
         width: 125,
-		borderRadius: 3,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#376c3e',
@@ -291,6 +344,23 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: 'white',
 	},
+    buttonBoxAlt: {
+		height: 30,
+		width: 65,
+		borderWidth: 2,
+		borderColor: '#376c3e',
+		borderRadius: 3,
+		paddingHorizontal: 10,
+		justifyContent: 'center',
+		alignItems: 'center',
+		position: "absolute",
+		left: 8,
+		top: 8,
+	},
+	buttonTextAlt: {
+		fontWeight: 'bold',
+		color: '#376c3e',
+	},
     container: {
         justifyContent: "center",
         alignItems: "center",
@@ -299,7 +369,7 @@ const styles = StyleSheet.create({
 	    fontSize: 25,
 	    fontWeight: 'bold',
 	    color: '#376c3e',
-        marginBottom: 15,
+        margin: 15,
 	},
 	dropdown: {
 	    width: '100%',
@@ -346,6 +416,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 20,
         backgroundColor: 'white',
+        paddingTop: 20,
+        paddingBottom: 10
     },
     topZipContainer: {
         flexDirection: "row",
