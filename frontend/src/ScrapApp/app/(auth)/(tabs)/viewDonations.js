@@ -1,9 +1,10 @@
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import {Dimensions, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
 import { Text, View } from 'react-native'
 import { collection, getDocs } from 'firebase/firestore'
 
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { db } from '../../../lib/firebaseConfig'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 const ViewDonations = () => {
 	const [donations, setDonations] = useState([])
@@ -26,6 +27,18 @@ const ViewDonations = () => {
 						{donations &&
 							Object.keys(donations).map(key => (
 								<View key={key} style={styles.childBox}>
+									<View style={styles.editButtonBox}>
+										{/* Edit Button */}
+										<TouchableOpacity onPress={() => false} style={styles.editButton}>
+
+											<FontAwesome6 name={'pencil'} size={20} color='black' />
+										</TouchableOpacity>
+
+										{/* Delete Button */}
+										<TouchableOpacity onPress={() => false} style={styles.editButton}>
+											<FontAwesome6 name={'trash-can'} size={20} color='black' />
+										</TouchableOpacity>
+									</View>
 									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
 									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t"}{donations[key].zipCode}</Text>
 									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Item Name: </Text>{"\t"}{donations[key].itemName}</Text>
@@ -67,11 +80,24 @@ const styles = StyleSheet.create({
 		borderRadius: 5
 	},
 	childBox: {
+		backgroundColor: '#fff',
+		elevation: 2,
 		margin: 10,
 		padding: 10,
 		borderColor: 'black',
 		borderWidth: 2,
-		borderRadius: 5,
+		borderRadius: 8,
+	},
+	editButtonBox: {
+		position: "absolute",
+		top: 10,
+		right: 10,
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+	},
+	editButton: {
+		marginRight: 10,
 	},
 	buttonBox: {
 		height: 40,
@@ -88,9 +114,9 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	dataText: {
-		paddingVertical: 2,  
-		borderBottomWidth: 1,  
-		borderBottomColor: 'black',  
+		paddingVertical: 2,
+		borderBottomWidth: 1,
+		borderBottomColor: 'black',
 	},
 })
 

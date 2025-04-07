@@ -88,7 +88,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='zipCodes'
 				options={{
-					title: 'Zip Codes',
+					title: 'Data View',
 					tabBarIcon: ({ color }) => (
 						<FontAwesome6 name='chart-pie' size={24} color={color} />
 					),
