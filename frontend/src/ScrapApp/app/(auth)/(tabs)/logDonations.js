@@ -48,6 +48,16 @@ const LogDonations = () => {
 		{ label: 'Toys', value: 'Toys' },
 	])
 
+	const clearInputs = () => {
+		setdName('')
+		setEmail('')
+		setZipCode('')
+		setItemName('')
+		setQuantity('')
+		setWeight('')
+		setCategory('')
+	}
+
 	const handleSave = () => {
 		if (!zipCode || !itemName || !quantity || !weight || !category) {
 			Alert.alert('Missing Fields', 'All product information must be filled!')
@@ -74,13 +84,7 @@ const LogDonations = () => {
 						updateZipcode()
 						updateCategory()
 						updateHeatmap()
-						setdName('')
-						setEmail('')
-						setZipCode('')
-						setItemName('')
-						setQuantity('')
-						setWeight('')
-						setCategory('')
+						clearInputs()
 					},
 				},
 			]
@@ -194,6 +198,12 @@ const LogDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
 				<Text style={styles.title}>Log Donation</Text>
+				<TouchableOpacity
+					style={styles.buttonBoxAlt}
+					onPress={clearInputs}
+				>
+					<Text style={styles.buttonTextAlt}>CLEAR</Text>
+				</TouchableOpacity>
 				<TextInput
 					style={styles.donorInput}
 					placeholder='Donor Name - OPTIONAL'
@@ -342,6 +352,23 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: 'bold',
 		color: 'white',
+	},
+	buttonBoxAlt: {
+		height: 30,
+		width: 75,
+		borderWidth: 2,
+		borderColor: 'gray',
+		borderRadius: 3,
+		paddingHorizontal: 10,
+		justifyContent: 'center',
+		alignItems: 'center',
+		position: "absolute",
+		left: 370,
+		top: 50,
+	},
+	buttonTextAlt: {
+		fontWeight: 'bold',
+		color: '#376c3e',
 	},
 })
 
