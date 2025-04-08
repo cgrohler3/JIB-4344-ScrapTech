@@ -26,12 +26,12 @@ const LogDonations = () => {
 
 	// Update This Dynamically From DB
 	const [items, setItems] = useState([
-		{ label: 'Classroom/Office', value: 'Classroom/Office' },
+		{ label: 'Classroom/Office', value: 'Classroom & Office' },
 		{ label: 'Containers', value: 'Containers' },
 		{ label: 'Decor', value: 'Decor' },
 		{ label: 'Fiber Arts', value: 'Fiber Arts' },
-		{ label: 'Fine Arts/Frames', value: 'Fine Arts/Frames' },
-		{ label: 'Floral/Garden', value: 'Floral/Garden' },
+		{ label: 'Fine Arts/Frames', value: 'Fine Arts & Frames' },
+		{ label: 'Floral/Garden', value: 'Floral & Garden' },
 		{ label: 'Found Objects', value: 'Found Objects' },
 		{ label: 'General Craft Supplies', value: 'General Craft Supplies' },
 		{ label: 'Glass', value: 'Glass' },
@@ -40,10 +40,10 @@ const LogDonations = () => {
 		{ label: 'Paint', value: 'Paint' },
 		{ label: 'Papercraft', value: 'Papercraft' },
 		{ label: 'Party', value: 'Party' },
-		{ label: 'Photograhy', value: 'Photograhy' },
+		{ label: 'Photography', value: 'Photography' },
 		{ label: 'Screen & Block Painting', value: 'Screen & Block Painting' },
 		{ label: 'Sculpture', value: 'Sculpture' },
-		{ label: 'Soap/Candle Making', value: 'Soap/Candle Making' },
+		{ label: 'Soap/Candle Making', value: 'Soap & Candle Making' },
 		{ label: 'Tools', value: 'Tools' },
 		{ label: 'Toys', value: 'Toys' },
 	])
