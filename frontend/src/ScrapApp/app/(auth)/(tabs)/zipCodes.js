@@ -1,20 +1,22 @@
 import "randomcolor"
 
 import {
-	Button,
 	Dimensions,
 	ScrollView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
+	useWindowDimensions,
 } from 'react-native'
 import { PieChart, StackedBarChart } from 'react-native-chart-kit'
 import React, { useEffect, useState } from 'react'
+import { Svg, Text as SvgText } from "react-native-svg"
 import { Timestamp, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { barLabels } from "../../../helpers/barLabels"
 import { db } from '../../../lib/firebaseConfig'
 import randomColor from "randomcolor"
 import { useIsFocused } from "@react-navigation/native"
@@ -29,20 +31,22 @@ const ZipCodes = () => {
 	const [donations, setDonations] = useState(0)
 	const [weight, setWeight] = useState(0)
     
-    const [time, setTime] = useState("week")
+    const [chartWidth, setWidth] = useState(1)
+    const [ts, setTS] = useState({})
+    const [time, setTime] = useState("")
+    const [labels, setLabels] = useState([])
+    const [data, setData] = useState({})
 	const [category, setCategory] = useState("")
 	const [categories, setCategories] = useState([])
     const [rawData, setRawData] = useState([])
     const [barData, setBarData] = useState([])
 
-	const [topZipSummaries, setTopZipSummaries] = useState([])
+	const [topZips, setTopZips] = useState([])
 	  
     useEffect(() => {
         if (isFocused) {
             getZipCodes()
             getCategories()
-            getTopZipCodeSummaries()
-            console.log("REFRESH")
 
             if (zipCode != "") getDataByZipCode()
         }
@@ -50,8 +54,11 @@ const ZipCodes = () => {
     
     useEffect(() => {
         if (zipCode) getDataByZipCode()
-        if (category) getDataByCategory()
-    }, [zipCode, category])
+        if (category) getTopZips()
+        if (category && time) {
+            processData()
+        }
+    }, [zipCode, category, time])
 
     const clearPie = () => {
         setZipCode("")
@@ -89,7 +96,16 @@ const ZipCodes = () => {
         setWeight(data.total_weight)
     }
 
-	const getCategories = async () => {
+    const clearBar = () => {
+        setCategory("")
+        setTime("")
+        setTS("")
+        setLabels([])
+        setData({})
+        setTopZips([])
+    }
+    
+    const getCategories = async () => {
 	    const snapshot = await getDocs(collection(db, "categories"))
 	    const docs = []
 	    snapshot.forEach((doc) => {
@@ -98,87 +114,84 @@ const ZipCodes = () => {
 	    setCategories(docs)
 	}
 
-    const getTS = () => {
-        const date = new Date()
-        if (time == "week") {
-            date.setDate(date.getDate() - 7)
-        }
-        return Timestamp.fromDate(date)
-    }
-
-    const getDataByCategory = async () => {
-        const ts = getTS()
-        const snapshot = await getDocs(query(
-            collection(db, "donations"), 
-            where("timestamp", ">=", ts),
-            where("category", "==", category)
-        ))
-        
-        const docs = []
-	    snapshot.forEach((doc) => {
-            docs.push({ zipCode: doc.data().zipCode, weight: doc.data().weight, timestamp: doc.data().timestamp })
-	    })
-        setRawData(docs)
-
-        const groupRawData = docs.reduce((acc, item) => {
-            const day = item.timestamp.toDate().toLocaleDateString("en-US", { weekday: "short" })
-            const zip = item.zipCode
-
-            if (!acc[day]) acc[day] = {}
-            if (!acc[day][zip]) acc[day][zip] = 0
-
-            acc[day][zip] += item.weight
-
-            return acc
-        }, {})
-        setBarData(groupRawData)
-    }
-
-    const prepareChartData = () => {
-        const labels = ["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        const zips = Array.from(new Set(rawData.map(item => item.zipCode)))
-        const dataMatrix = labels.map(label => {
-            const day = barData[label] || {}
-            return zips.map(zip => day[zip] || 0)
-        })
-        const barColors = ["#FF6384", "#36A2EB", "#326A4E"]
-
-        return {
-            labels: labels,
-            legend: zips,
-            data: dataMatrix,
-            barColors: barColors
-        }
-    }
-
-    const getTopZipCodeSummaries = async () => {
-        const snapshot = await getDocs(collection(db, "zipCodes"));
-        const zipDataArray = [];
-
+    const processData = async () => {
+        console.log(category, " ", time);
+    
+        const output = barLabels(time);
+        // Remove setTS(output.ts) since we use output.ts directly
+        setLabels(output.labels);
+    
+        const snapshot = await getDocs(
+            query(
+                collection(db, "donations"),
+                where("timestamp", ">=", output.ts), // Use output.ts directly
+                where("category", "==", category)
+            )
+        );
+    
+        const docs = [];
         snapshot.forEach((doc) => {
-            const data = doc.data();
-            zipDataArray.push({
-                zip: doc.id,
-                totalWeight: data.total_weight || 0,
-                totalDonations: data.total_donations || 0,
-                categories: data.categories || {},
+            docs.push({
+                zipCode: doc.data().zipCode,
+                weight: doc.data().weight,
+                timestamp: doc.data().timestamp,
             });
         });
+    
+        // Compute groupedData immediately (no stale state)
+        const groupedData = docs.reduce((acc, item) => {
+            const date = item.timestamp.toDate();
+            const zip = item.zipCode;
+            let key;
+    
+            if (time === "Week") {
+                key = date.toLocaleDateString("en-US", { weekday: "short" }); // "Mon", "Tue"
+                setWidth(7 * 80)
+            } else if (time === "Month") {
+                key = date.getDate().toString(); // "1", "2", ..., "31"
+                setWidth(32 * 80)
+            } else if (time === "Year") {
+                key = date.toLocaleDateString("en-US", { month: "short" }); // "Jan", "Feb"
+                setWidth(12 * 80)
+            }
+    
+            if (!acc[key]) acc[key] = {};
+            if (!acc[key][zip]) acc[key][zip] = 0;
+    
+            acc[key][zip] += item.weight;
+            return acc;
+        }, {});
+    
+        setBarData(groupedData);
+    
+        // Generate chart data
+        const zips = Array.from(new Set(docs.map((item) => item.zipCode)));
+        const dataMatrix = output.labels.map((label) => {
+            const item = groupedData[label] || {};
+            return zips.map((zip) => item[zip] || 0);
+        });
+    
+        const colors = randomColor({ count: zips.length });
+    
+        setData({
+            labels: output.labels,
+            legend: zips,
+            data: dataMatrix,
+            barColors: colors,
+        });
+    };
 
-        const sorted = zipDataArray.sort((a, b) => b.totalWeight - a.totalWeight);
-        setTopZipSummaries(sorted.slice(0, 5));
+    const getTopZips = async () => {
+		const docSnap = await getDoc(doc(db, "categories", category))
+        const zipMap = docSnap.data()["zipMap"]
+        const items = Object.entries(zipMap).sort((a,b) => a[1] - b[1]).splice(-5, 5).reverse()
+        setTopZips({
+            t_donations: docSnap.data()["total_donations"],
+            t_weight: docSnap.data()["total_weight"],
+            zipMap: items
+        })
     }
 
-    const data = {
-        labels: ["Test1", "Test2"],
-        legend: [],
-        data: [
-          [60, 60, 60],
-          [30, 30, 60]
-        ],
-        barColors: ["#dfe4ea", "#ced6e0", "#a4b0be"]
-    };
-    
 	return (
         <View style={{ flex: 1 }}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 25, paddingVertical: 20 }}>
@@ -249,74 +262,90 @@ const ZipCodes = () => {
                     <View style={styles.container}>
                         <Text style={styles.title}>Categories</Text>
                         <View style={styles.barChart}>
-                            {/* <StackedBarChart
-                                data={prepareChartData()}
-                                width={375}
-                                height={300}
-                                chartConfig={{
-                                    backgroundGradientFrom: "#fff",
-                                    backgroundGradientTo: "#fff",
-                                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                    // propsForBackgroundLines: {
-                                    //     // strokeDasharray: "4",
-                                    //     // strokeWidth: 2, // If you put 0 in the value no line is displayed
-                                    //     // stroke: `rgba(0, 0, 0, 0)`,
-                                    //     // paddingBottom: 10,
-                                    // },
-                                    // propsForLabels: {
-                                    //     fontSize: 12,
-                                    //     dy: 8
-                                    // },
-                                }}
-                                barPercentage={0.7}
-                                showLegend={false}
-                            /> */}
-                            <StackedBarChart
-                                data={data}
-                                width={375}
-                                height={200}
-                                chartConfig={{
-                                    backgroundGradientFrom: "#fff",
-                                    backgroundGradientTo: "#fff",
-                                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                    propsForHorizontalLabels: {
-                                        dy: -5,
-                                    },
-                                }}
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={true}
+                            >
+                                {Object.keys(data).length > 0 && (
+                                    <StackedBarChart 
+                                        data={data}
+                                        hideLegend={true}
+                                        yAxisLabel=""
+                                        yAxisSuffix=""
+                                        width={Math.max(chartWidth, Dimensions.get("window").width)}
+                                        height={400}
+                                        chartConfig={{
+                                            backgroundColor: '#ffffff',
+                                            backgroundGradientFrom: '#ffffff',
+                                            backgroundGradientTo: '#ffffff',
+                                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                            barPercentage: 1,
+                                            propsForBackgroundLines: {
+                                                stroke: 0
+                                            },
+                                            propsForVerticalLabels: {
+                                                dx: -7,
+                                                dy: 1,
+                                                rotation: 30
+                                            }
+                                        }}
+                                    />
+                                )}
+                            </ScrollView>
+                            <TouchableOpacity
+                                style={styles.buttonBoxAlt}
+                                onPress={clearBar}
+                            >
+                                <Text style={styles.buttonTextAlt}>CLEAR</Text>
+                            </TouchableOpacity>
+                            <Text style={styles.buttonTextAlt}>{labels}</Text>
+                            <Text style={styles.buttonTextAlt}>{chartWidth}</Text>
+                        </View>
+                        <View style={styles.dropdownContainer}>
+                            <Dropdown
+                                style={styles.dropdown}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                data={categories}
+                                labelField='label'
+                                valueField='value'
+                                placeholder='Select Category'
+                                placeholderStyle={styles.placeholderStyle}
+                                value={category}
+                                onChange={(item) => setCategory(item.value)}
+                                activeColor='lightgray'
+                            />
+                            <Dropdown
+                                style={styles.dropdown}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                data={[
+                                    { label: "Week", value: "Week" },
+                                    { label: "Month", value: "Month" },
+                                    { label: "Year", value: "Year" },
+                                ]}
+                                labelField='label'
+                                valueField='value'
+                                placeholder='Select Time'
+                                placeholderStyle={styles.placeholderStyle}
+                                value={time}
+                                onChange={(item) => setTime(item.value)}
+                                activeColor='lightgray'
                             />
                         </View>
-                        <Dropdown
-                            style={styles.dropdown}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            data={categories}
-                            labelField='label'
-                            valueField='value'
-                            placeholder='Select Category'
-                            placeholderStyle={styles.placeholderStyle}
-                            value={category}
-                            onChange={(item) => setCategory(item.value)}
-                            activeColor='lightgray'
-                        />
-                        {/* <Button title="Refresh" onPress={getTopZipCodeSummaries} />
-                        <View style={{ marginTop: 20 }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>Top Zip Codes Summary</Text>
-                            <View style={styles.topZipContainer}>
-                                {topZipSummaries.map((zip, idx) => (
-                                    <View key={idx} style={{ width: Dimensions.get('window').width / 3.3, backgroundColor: '#fff', padding: 10, borderRadius: 8, elevation: 2 }}>
-                                        <Text style={{ fontWeight: 'bold', fontSize: 14, marginBottom: 4, textAlign: 'center', color: '#376c3e' }}>Zip {zip.zip}</Text>
-                                        <Text style={{ fontSize: 12, textAlign: 'center' }}>Weight: {zip.totalWeight} lbs</Text>
-                                        <Text style={{ fontSize: 12, textAlign: 'center' }}>Donations: {zip.totalDonations}</Text>
-                                        <View style={{ marginTop: 6 }}>
-                                            {Object.entries(zip.categories).map(([cat, w], i) => (
-                                                <Text key={i} style={{ fontSize: 11, textAlign: 'center', color: '#555' }}>{cat}: {w} lbs</Text>
-                                            ))}
-                                        </View>
-                                    </View>
-                                ))}
+                        {topZips.length != 0 && (
+                            <View style={styles.zipsContainer}>
+                                <View style={styles.zipsBox}>
+                                    <Text style={styles.subTitle}>Category Summary</Text>
+                                    <Text>Total Donations: {topZips["t_donations"]}</Text>
+                                    <Text>Total Weight: {topZips["t_weight"]}</Text>
+                                </View>
+                                <View style={styles.zipsBox}>
+                                    <Text style={styles.subTitle}>Top Zip Codes</Text>
+                                    {topZips["zipMap"].map((item, idx) => (
+                                        <Text key={idx}>{idx+1}. {item[0]} - {item[1]}</Text>
+                                    ))}
+                                </View>
                             </View>
-                        </View> */}
+                        )}
                     </View>
 	            )}
             </ScrollView>
@@ -324,7 +353,7 @@ const ZipCodes = () => {
 	)
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({    
     buttonContainer: {
         flexDirection: "row",
         justifyContent: "center",
@@ -354,8 +383,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		position: "absolute",
-		left: 8,
-		top: 8,
+		left: 0,
+		top: -43,
 	},
 	buttonTextAlt: {
 		fontWeight: 'bold',
@@ -419,11 +448,32 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 10
     },
-    topZipContainer: {
+    dropdownContainer: {
         flexDirection: "row",
-        flexWrap: "wrap",
         justifyContent: "center",
-        gap: 15,
+        width: "50%",
+        // gap: 9
+    },
+    zipsContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 10,
+        marginTop: 20,
+        textAlign: "center",
+    },
+    zipsBox: { 
+        width: 150,
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 8,
+        elevation: 2,
+        alignItems: "center"
+    },
+    subTitle: {
+        fontWeight: "bold",
+        paddingBottom: 5,
+        color: "#376c3e"
     }
 })
 
