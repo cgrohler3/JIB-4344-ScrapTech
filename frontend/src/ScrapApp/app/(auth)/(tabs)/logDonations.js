@@ -89,24 +89,22 @@ const LogDonations = () => {
 
 	const saveDoc = async () => {
 		const timestamp = Timestamp.now()
-		const snapshot = await addDoc(collection(db, 'donations'), {
-			name: dName,
-			email: email,
-			zipCode: zipCode,
-			itemName: itemName,
-			quantity: Number(quantity),
-			weight: Number(weight),
-			category: category,
-			timestamp: timestamp,
-		})
 
-		snapshot
-			.then(() => {
-				Alert.alert('Success', 'Donation Saved Successfully!')
+		try {
+			const snapshot = await addDoc(collection(db, 'donations'), {
+				name: dName,
+				email: email,
+				zipCode: zipCode,
+				itemName: itemName,
+				quantity: Number(quantity),
+				weight: Number(weight),
+				category: category,
+				timestamp: timestamp,
 			})
-			.catch((err) => {
-				Alert.alert('Fail', 'Error when logging donation: ', err)
-			})
+			Alert.alert('Success', 'Donation Saved Successfully!')
+		} catch (err) {
+			Alert.alert('Fail', 'Error when logging donation: ', err)
+		}
 	}
 
 	const updateCategory = async () => {
