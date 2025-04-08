@@ -10,7 +10,7 @@ import {
 	useWindowDimensions,
 } from 'react-native'
 import { PieChart, StackedBarChart } from 'react-native-chart-kit'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Svg, Text as SvgText } from "react-native-svg"
 import { Timestamp, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
 
@@ -24,6 +24,7 @@ import { useIsFocused } from "@react-navigation/native"
 const ZipCodes = () => {
     const isFocused = useIsFocused()
 	const [activeView, setActiveView] = useState('view1')
+    const scrollViewRef = useRef(null);
     
 	const [zipCode, setZipCode] = useState("")
     const [zipCodes, setZipCodes] = useState([])
@@ -57,6 +58,9 @@ const ZipCodes = () => {
         if (category) getTopZips()
         if (category && time) {
             processData()
+            if (scrollViewRef.current) {
+                scrollViewRef.current.scrollTo({ y: 0, animated: true });
+            }
         }
     }, [zipCode, category, time])
 
@@ -265,13 +269,16 @@ const ZipCodes = () => {
                             <ScrollView
                                 horizontal
                                 showsHorizontalScrollIndicator={true}
+                                ref={scrollViewRef}
                             >
                                 {Object.keys(data).length > 0 && (
                                     <StackedBarChart 
-                                        data={data}
-                                        hideLegend={true}
-                                        yAxisLabel=""
-                                        yAxisSuffix=""
+                                        data={{
+                                            labels: data.labels,
+                                            legend: [],
+                                            data: data.data.map(item => item.map(val => val === 0 ? null : val)),
+                                            barColors: data.barColors
+                                        }} 
                                         width={Math.max(chartWidth, Dimensions.get("window").width)}
                                         height={400}
                                         chartConfig={{
@@ -280,15 +287,19 @@ const ZipCodes = () => {
                                             backgroundGradientTo: '#ffffff',
                                             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                                             barPercentage: 1,
-                                            propsForBackgroundLines: {
-                                                stroke: 0
+                                            propsForHorizontalLabels: {
+                                                dy: -5
+                                            },
+                                            propsForLabels: {
+                                                dx: 0
                                             },
                                             propsForVerticalLabels: {
                                                 dx: -7,
                                                 dy: 1,
                                                 rotation: 30
-                                            }
+                                            },
                                         }}
+                                        segments={5}
                                     />
                                 )}
                             </ScrollView>
@@ -298,12 +309,17 @@ const ZipCodes = () => {
                             >
                                 <Text style={styles.buttonTextAlt}>CLEAR</Text>
                             </TouchableOpacity>
-                            <Text style={styles.buttonTextAlt}>{labels}</Text>
-                            <Text style={styles.buttonTextAlt}>{chartWidth}</Text>
+                            <View style={styles.barLegend}>
+                                {Object.keys(data).length > 0 && data["legend"].map((item, index) => (
+                                    <Text key={index} style={{ fontSize: 17, textAlignVertical: 'center' }}>
+                                        <FontAwesome name="circle" size={18} color={data["barColors"][index]}/> {item}
+                                    </Text>
+                                ))}
+                            </View>
                         </View>
                         <View style={styles.dropdownContainer}>
                             <Dropdown
-                                style={styles.dropdown}
+                                style={styles.nestedDropdown}
                                 selectedTextStyle={styles.selectedTextStyle}
                                 data={categories}
                                 labelField='label'
@@ -315,7 +331,7 @@ const ZipCodes = () => {
                                 activeColor='lightgray'
                             />
                             <Dropdown
-                                style={styles.dropdown}
+                                style={styles.nestedDropdown}
                                 selectedTextStyle={styles.selectedTextStyle}
                                 data={[
                                     { label: "Week", value: "Week" },
@@ -450,10 +466,20 @@ const styles = StyleSheet.create({
     },
     dropdownContainer: {
         flexDirection: "row",
-        justifyContent: "center",
-        width: "50%",
-        // gap: 9
+        justifyContent: "space-between",
+        width: "100%"
     },
+    nestedDropdown: {
+        width: '49%',
+	    height: 40,
+	    borderColor: '#ddd',
+	    borderWidth: 1,
+	    borderRadius: 5,
+	    paddingHorizontal: 10,
+	    backgroundColor: '#fff',
+	    color: 'gray',
+	    fontSize: 14,
+	},
     zipsContainer: {
         justifyContent: "center",
         alignItems: "center",
@@ -474,6 +500,13 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         paddingBottom: 5,
         color: "#376c3e"
+    },
+    barLegend: {
+        flexDirection: "row",
+        gap: 15,
+        width: "100%",
+        justifyContent: "center",
+        alignContent: "center",
     }
 })
 

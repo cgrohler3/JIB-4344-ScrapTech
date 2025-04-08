@@ -37,7 +37,7 @@ function barLabels(time) {
             result["labels"].push(yearAgo.toLocaleString("default", { month: "short" }))
             yearAgo.setMonth(yearAgo.getMonth() + 1)
         }
-        result["labels"].pop()
+        result["labels"].shift()
     }
 
     return result
