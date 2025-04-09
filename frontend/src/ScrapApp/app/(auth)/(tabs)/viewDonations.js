@@ -1,6 +1,6 @@
 import {Dimensions, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
 import { Text, View } from 'react-native'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, orderBy, startAt, query } from 'firebase/firestore'
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { db } from '../../../lib/firebaseConfig'
@@ -10,7 +10,16 @@ const ViewDonations = () => {
 	const [donations, setDonations] = useState([])
 
 	const getAllDocs = async () => {
-		const snapshot = await getDocs(collection(db, 'donations'))
+		
+		const now = new Date()
+		const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000)
+		const docQuery = query(
+			collection(db, 'donations'),
+			orderBy('timestamp'),
+			startAt(twoDaysAgo)
+		)
+		
+		const snapshot = await getDocs(docQuery)
 		const docs = []
 		snapshot.forEach((doc) => {
 			docs.push({ id: doc.id, ...doc.data() })
@@ -21,7 +30,7 @@ const ViewDonations = () => {
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
-				<Text style={styles.title}>View Donations</Text>
+				<Text style={styles.title}>Manage Recent Donations (Last 24 hrs.)</Text>
 				<View style={styles.parentBox}>
 					<ScrollView persistentScrollbar={true} nestedScrollEnabled={true}>
 						{donations &&
@@ -31,12 +40,12 @@ const ViewDonations = () => {
 										{/* Edit Button */}
 										<TouchableOpacity onPress={() => false} style={styles.editButton}>
 
-											<FontAwesome6 name={'pencil'} size={20} color='black' />
+											<FontAwesome6 name={'pencil'} size={20} color='#376c3e' />
 										</TouchableOpacity>
 
 										{/* Delete Button */}
 										<TouchableOpacity onPress={() => false} style={styles.editButton}>
-											<FontAwesome6 name={'trash-can'} size={20} color='black' />
+											<FontAwesome6 name={'trash-can'} size={20} color='#ed2d2d' />
 										</TouchableOpacity>
 									</View>
 									<Text style = {styles.dataText}><Text style={{fontWeight: "bold"}}>Email: </Text>{"\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
@@ -73,14 +82,15 @@ const styles = StyleSheet.create({
 		alignSelf: 'center'
 	},
 	parentBox: {
-		height: '315',
+		height: '450',
 		width: '100%',
 		borderColor: 'darkgreen',
 		borderWidth: 2,
-		borderRadius: 5
+		borderRadius: 5,
+		backgroundColor: '#376c3e'
 	},
 	childBox: {
-		backgroundColor: '#fff',
+		backgroundColor: '#ffffff',
 		elevation: 2,
 		margin: 10,
 		padding: 10,
@@ -90,7 +100,7 @@ const styles = StyleSheet.create({
 	},
 	editButtonBox: {
 		position: "absolute",
-		top: 10,
+		top: 8,
 		right: 10,
 		flexDirection: "row",
 		justifyContent: "space-between",
@@ -98,6 +108,7 @@ const styles = StyleSheet.create({
 	},
 	editButton: {
 		marginRight: 10,
+		paddingRight: 5,
 	},
 	buttonBox: {
 		height: 40,
@@ -106,7 +117,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#376c3e',
-		marginTop: 25
+		marginTop: 25,
+		borderRadius: 10
 	},
 	buttonText: {
 		fontSize: 18,
@@ -115,8 +127,9 @@ const styles = StyleSheet.create({
 	},
 	dataText: {
 		paddingVertical: 2,
-		borderBottomWidth: 1,
-		borderBottomColor: 'black',
+		borderBottomWidth: 2,
+		borderBottomColor: 'gray',
+		fontWeight: '500'
 	},
 })
 
