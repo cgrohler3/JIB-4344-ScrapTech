@@ -213,7 +213,10 @@ const LogDonations = () => {
 					placeholder='Zip Code'
 					placeholderTextColor='gray'
 					value={zipCode}
-					onChangeText={setZipCode}
+					onChangeText={(text) => {
+						const numeric = text.replace(/[^0-9]/g, '').slice(0, 5);
+						setZipCode(numeric);
+					  }}
 					keyboardType="numeric"
 					autoComplete='off'
 					returnKeyType='done'
@@ -232,7 +235,12 @@ const LogDonations = () => {
 					placeholder='Item Quantity'
 					placeholderTextColor='gray'
 					value={quantity}
-					onChangeText={setQuantity}
+					onChangeText={(text) => {
+						const cleaned = text.replace(/[^0-9.]/g, '');
+						const parts = cleaned.split('.');
+						if (parts.length > 2) return;
+						setQuantity(cleaned);
+					  }}
 					keyboardType='numeric'
 					returnKeyType='done'
 				/>
@@ -241,7 +249,12 @@ const LogDonations = () => {
 					placeholder='Item Weight'
 					placeholderTextColor='gray'
 					value={weight}
-					onChangeText={setWeight}
+					onChangeText={(text) => {
+						const cleaned = text.replace(/[^0-9.]/g, '');
+						const parts = cleaned.split('.');
+						if (parts.length > 2) return;
+						setWeight(cleaned);
+					  }}
 					keyboardType='numeric'
 					returnKeyType='done'
 				/>
