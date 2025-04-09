@@ -27,6 +27,14 @@ const ViewDonations = () => {
 		setDonations(docs)
 	}
 
+	const deleteDono = async () => {
+		console.log("del pressed")
+	}
+
+	const editDono = async () => {
+		console.log("edit pressed")
+	}
+
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
@@ -38,13 +46,13 @@ const ViewDonations = () => {
 								<View key={key} style={styles.childBox}>
 									<View style={styles.editButtonBox}>
 										{/* Edit Button */}
-										<TouchableOpacity onPress={() => false} style={styles.editButton}>
+										<TouchableOpacity onPress={editDono} style={styles.editButton}>
 
 											<FontAwesome6 name={'pencil'} size={20} color='#376c3e' />
 										</TouchableOpacity>
 
 										{/* Delete Button */}
-										<TouchableOpacity onPress={() => false} style={styles.editButton}>
+										<TouchableOpacity onPress={deleteDono} style={styles.editButton}>
 											<FontAwesome6 name={'trash-can'} size={20} color='#ed2d2d' />
 										</TouchableOpacity>
 									</View>
@@ -109,6 +117,7 @@ const styles = StyleSheet.create({
 	editButton: {
 		marginRight: 10,
 		paddingRight: 5,
+		zIndex: 10
 	},
 	buttonBox: {
 		height: 40,
