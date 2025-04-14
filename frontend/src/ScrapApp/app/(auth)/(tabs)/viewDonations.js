@@ -1,6 +1,6 @@
 import {Dimensions, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
 import { Text, View } from 'react-native'
-import { collection, getDocs, orderBy, startAt, query } from 'firebase/firestore'
+import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore'
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { db } from '../../../lib/firebaseConfig'
@@ -27,12 +27,73 @@ const ViewDonations = () => {
 		setDonations(docs)
 	}
 
-	const deleteDono = async () => {
-		console.log("del pressed")
+	const deleteDono = async (id) => {
+		
+		const docRef = doc(db, 'donations', id)
+		const docSnap = await getDoc(docRef)
+
+		if (!docSnap.exists()){
+			console.log("Donation not found. Check Firestore Console")
+			return
+		}
+
+		const zip = docSnap.get("zipCode")
+		const category = docSnap.get("category")
+		const weight = docSnap.get("weight")
+		console.log(typeof zip)
+		console.log(typeof category)
+		console.log(typeof weight)
+		// Heat Map Removal
+		const hmRef = doc(db, "zipPositions", zip)
+		const hmSnap = await getDoc(hmRef)
+
+		if (hmSnap.get("total_weight") == Number(weight)) {
+			await deleteDoc(hmRef)
+		} else {
+			await updateDoc(hmRef, {
+							total_weight: increment(-1 * Number(weight))
+						})
+		}
+		
+		
+		// Categories Removal
+		const catRef = doc(db, "categories", category)
+		const catSnap = await getDoc(catRef)
+
+		if (catSnap.get("total_weight") == Number(weight)) {
+			await deleteDoc(catRef)
+		} else {
+			await updateDoc(catRef, {
+							[`zipMap.${zip}`]: increment(-1 * Number(weight)),
+							total_donations: increment(-1),
+							total_weight: increment(-1 * Number(weight))
+						})
+		}
+		
+		// Zip Codes Removal
+		const zipRef = doc(db, "zipCodes", zip)
+		const zipSnap = await getDoc(zipRef)
+
+		if (zipSnap.get("total_weight") == Number(weight)) {
+			await deleteDoc(zipRef)
+		} else {
+			await updateDoc(zipRef, {
+							[`categories.${category}`]: increment(-1 * Number(weight)),
+							total_donations: increment(-1),
+							total_weight: increment(-1 * Number(weight))
+						})
+		}
+		
+		// Donation Removal
+		await deleteDoc(docRef)
+
+
+
+		console.log("Deleted document: ID=", id, " zip=", zip, "cat=", category, "weight=", weight)
 	}
 
-	const editDono = async () => {
-		console.log("edit pressed")
+	const editDono = async (id) => {
+		console.log("edit pressed on ", id)
 	}
 
 	return (
@@ -46,13 +107,13 @@ const ViewDonations = () => {
 								<View key={key} style={styles.childBox}>
 									<View style={styles.editButtonBox}>
 										{/* Edit Button */}
-										<TouchableOpacity onPress={editDono} style={styles.editButton}>
+										<TouchableOpacity onPress={() => editDono(donations[key].id)} style={styles.editButton}>
 
 											<FontAwesome6 name={'pencil'} size={20} color='#376c3e' />
 										</TouchableOpacity>
 
 										{/* Delete Button */}
-										<TouchableOpacity onPress={deleteDono} style={styles.editButton}>
+										<TouchableOpacity onPress={() => deleteDono(donations[key].id)} style={styles.editButton}>
 											<FontAwesome6 name={'trash-can'} size={20} color='#ed2d2d' />
 										</TouchableOpacity>
 									</View>
