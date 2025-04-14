@@ -1,6 +1,6 @@
 import {Dimensions, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
 import { Text, View } from 'react-native'
-import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc, increment } from 'firebase/firestore'
+import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc, increment, deleteField } from 'firebase/firestore'
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { db } from '../../../lib/firebaseConfig'
@@ -61,11 +61,20 @@ const ViewDonations = () => {
 		if (catSnap.get("total_weight") == Number(weight)) {
 			await deleteDoc(catRef)
 		} else {
-			await updateDoc(catRef, {
-							[`zipMap.${zip}`]: increment(-1 * Number(weight)),
-							total_donations: increment(-1),
-							total_weight: increment(-1 * Number(weight))
-						})
+			const map = catSnap.get("zipMap")
+			if (map[zip] == Number(weight)) {
+				await updateDoc(catRef, {
+					[`zipMap.${zip}`]: deleteField(),
+					total_donations: increment(-1),
+					total_weight: increment(-1 * Number(weight))
+				})
+			} else {
+				await updateDoc(catRef, {
+					[`zipMap.${zip}`]: increment(-1 * Number(weight)),
+					total_donations: increment(-1),
+					total_weight: increment(-1 * Number(weight))
+				})
+			}
 		}
 		
 		// Zip Codes Removal
@@ -75,11 +84,20 @@ const ViewDonations = () => {
 		if (zipSnap.get("total_weight") == Number(weight)) {
 			await deleteDoc(zipRef)
 		} else {
-			await updateDoc(zipRef, {
-							[`categories.${category}`]: increment(-1 * Number(weight)),
-							total_donations: increment(-1),
-							total_weight: increment(-1 * Number(weight))
-						})
+			const map = zipSnap.get("categories")
+			if (map[category] == Number(weight)) {
+				await updateDoc(zipRef, {
+					[`categories.${category}`]: deleteField(),
+					total_donations: increment(-1),
+					total_weight: increment(-1 * Number(weight))
+				})
+			} else {
+				await updateDoc(zipRef, {
+					[`categories.${category}`]: increment(-1 * Number(weight)),
+					total_donations: increment(-1),
+					total_weight: increment(-1 * Number(weight))
+				})
+			}
 		}
 		
 		// Donation Removal
@@ -91,7 +109,14 @@ const ViewDonations = () => {
 	}
 
 	const editDono = async (id) => {
-		console.log("edit pressed on ", id)
+		const docRef = doc(db, 'donations', id)
+		const docSnap = await getDoc(docRef)
+		const category = docSnap.get("category")
+		const zip = docSnap.get("zipCode")
+		const catRef = doc(db, "categories", category)
+		const catSnap = await getDoc(catRef)
+		const map = catSnap.get("zipMap")
+		console.log(map[zip])
 	}
 
 	return (
