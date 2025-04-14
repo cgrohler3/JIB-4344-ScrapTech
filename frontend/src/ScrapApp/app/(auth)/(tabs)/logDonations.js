@@ -194,7 +194,7 @@ const LogDonations = () => {
 
 	return (
 		<View style={styles.container}>
-			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }}>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
 				<Text style={styles.title}>Log Donation</Text>
 				<TouchableOpacity
 					style={styles.buttonBoxAlt}
