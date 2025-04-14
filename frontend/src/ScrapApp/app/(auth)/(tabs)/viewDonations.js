@@ -1,6 +1,6 @@
 import {Dimensions, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
 import { Text, View } from 'react-native'
-import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc, increment } from 'firebase/firestore'
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { db } from '../../../lib/firebaseConfig'
@@ -40,9 +40,7 @@ const ViewDonations = () => {
 		const zip = docSnap.get("zipCode")
 		const category = docSnap.get("category")
 		const weight = docSnap.get("weight")
-		console.log(typeof zip)
-		console.log(typeof category)
-		console.log(typeof weight)
+		
 		// Heat Map Removal
 		const hmRef = doc(db, "zipPositions", zip)
 		const hmSnap = await getDoc(hmRef)
