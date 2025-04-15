@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
 	},
     buttonBoxAlt: {
 		height: 30,
-		width: 65,
+		width: 85,
 		borderWidth: 2,
 		borderColor: '#376c3e',
 		borderRadius: 3,
