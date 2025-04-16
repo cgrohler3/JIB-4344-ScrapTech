@@ -108,16 +108,6 @@ const ViewDonations = () => {
 		console.log("Deleted document: ID=", id, " zip=", zip, "cat=", category, "weight=", weight)
 	}
 
-	const editDono = async (id) => {
-		const docRef = doc(db, 'donations', id)
-		const docSnap = await getDoc(docRef)
-		const category = docSnap.get("category")
-		const zip = docSnap.get("zipCode")
-		const catRef = doc(db, "categories", category)
-		const catSnap = await getDoc(catRef)
-		const map = catSnap.get("zipMap")
-		console.log(map[zip])
-	}
 
 	return (
 		<View style={styles.container}>
@@ -129,12 +119,6 @@ const ViewDonations = () => {
 							Object.keys(donations).map(key => (
 								<View key={key} style={styles.childBox}>
 									<View style={styles.editButtonBox}>
-										{/* Edit Button */}
-										<TouchableOpacity onPress={() => editDono(donations[key].id)} style={styles.editButton}>
-
-											<FontAwesome6 name={'pencil'} size={20} color='#376c3e' />
-										</TouchableOpacity>
-
 										{/* Delete Button */}
 										<TouchableOpacity onPress={() => deleteDono(donations[key].id)} style={styles.editButton}>
 											<FontAwesome6 name={'trash-can'} size={20} color='#ed2d2d' />
