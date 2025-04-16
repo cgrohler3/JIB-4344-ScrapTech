@@ -129,7 +129,7 @@ const ViewDonations = () => {
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
-				<Text style={styles.title}>Manage Recent Donations (Last 24 hrs.)</Text>
+				<Text style={styles.title}>View / Delete Recent Donations (Last 2 Days)</Text>
 				<View style={styles.parentBox}>
 					<ScrollView persistentScrollbar={true} nestedScrollEnabled={true}>
 						{donations &&
