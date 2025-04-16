@@ -1,4 +1,4 @@
-import {Dimensions, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
+import {Dimensions, ScrollView, StyleSheet, TouchableOpacity, Alert} from 'react-native'
 import { Text, View } from 'react-native'
 import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc, increment, deleteField } from 'firebase/firestore'
 
@@ -25,6 +25,22 @@ const ViewDonations = () => {
 			docs.push({ id: doc.id, ...doc.data() })
 		})
 		setDonations(docs)
+	}
+
+	const confirmDel = async (id) => {
+		Alert.alert(
+			'Confirm Delete?',
+			'This action cannot be undone.',
+			[
+				{text: 'Cancel'},
+				{
+					text: 'DELETE',
+					onPress: async() => {
+						await deleteDono(id)
+					}
+				}
+			]
+		)
 	}
 
 	const deleteDono = async (id) => {
@@ -106,6 +122,7 @@ const ViewDonations = () => {
 
 
 		console.log("Deleted document: ID=", id, " zip=", zip, "cat=", category, "weight=", weight)
+		await getAllDocs()
 	}
 
 
@@ -120,7 +137,7 @@ const ViewDonations = () => {
 								<View key={key} style={styles.childBox}>
 									<View style={styles.editButtonBox}>
 										{/* Delete Button */}
-										<TouchableOpacity onPress={() => deleteDono(donations[key].id)} style={styles.editButton}>
+										<TouchableOpacity onPress={() => confirmDel(donations[key].id)} style={styles.editButton}>
 											<FontAwesome6 name={'trash-can'} size={20} color='#ed2d2d' />
 										</TouchableOpacity>
 									</View>
