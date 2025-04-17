@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c03e1309-e4c9-484d-a214-168322b3c852" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/heatMap.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/heatMap.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/zipCodes.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/zipCodes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/home.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,24 +34,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "heatmapCleanup",
-    "last_opened_file_path": "C:/Users/Hayden/Documents/Github/JIB-4344-ScrapTech",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Users\\Hayden\\Documents\\Github\\JIB-4344-ScrapTech\\frontend\\src\\ScrapApp\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;appointments&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Hayden/Documents/Github/JIB-4344-ScrapTech&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Hayden\\Documents\\Github\\JIB-4344-ScrapTech\\frontend\\src\\ScrapApp\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Hayden\Documents\Github\JIB-4344-ScrapTech\frontend\src\ScrapApp\node_modules" />
       <recent name="C:\Users\Hayden\Documents\Github\JIB-4344-ScrapTech\frontend\src\ScrapApp" />
       <recent name="C:\Users\Hayden\Documents\Github\JIB-4344-ScrapTech\frontend\src\ScrapApp\assets\images" />
     </key>
@@ -76,6 +76,8 @@
       <workItem from="1738874917763" duration="3058000" />
       <workItem from="1738882177308" duration="4372000" />
       <workItem from="1740592061978" duration="9659000" />
+      <workItem from="1744685045200" duration="1019000" />
+      <workItem from="1744734201927" duration="2716000" />
     </task>
     <servers />
   </component>

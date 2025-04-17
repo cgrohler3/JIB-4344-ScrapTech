@@ -105,16 +105,6 @@ export default function TabLayout() {
 					...(isEmployee ? {} : {href: null})
 				}}
 			/>
-			<Tabs.Screen
-				name='appointments'
-				options={{
-					title: 'Appointments',
-					tabBarIcon: ({ color }) => (
-						<FontAwesome6 name='calendar-days' size={24} color={color} />
-					),
-					...(isEmployee ? {} : {href: null})
-				}}
-			/>
 		</Tabs>
 	)
 }

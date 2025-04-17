@@ -196,12 +196,14 @@ const LogDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
 				<Text style={styles.title}>Log Donation</Text>
-				<TouchableOpacity
-					style={styles.buttonBoxAlt}
-					onPress={clearInputs}
-				>
-					<Text style={styles.buttonTextAlt}>CLEAR</Text>
-				</TouchableOpacity>
+				<View style={{alignItems: 'center'}}>
+					<TouchableOpacity
+						style={styles.buttonBoxAlt}
+						onPress={clearInputs}
+					>
+						<Text style={styles.buttonTextAlt}>CLEAR</Text>
+					</TouchableOpacity>
+				</View>
 				<TextInput
 					style={styles.donorInput}
 					placeholder='Donor Name - OPTIONAL'
@@ -371,11 +373,9 @@ const styles = StyleSheet.create({
 		borderColor: 'gray',
 		borderRadius: 3,
 		paddingHorizontal: 10,
+		marginBottom: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		position: "absolute",
-		left: 370,
-		top: 50,
 	},
 	buttonTextAlt: {
 		fontWeight: 'bold',
