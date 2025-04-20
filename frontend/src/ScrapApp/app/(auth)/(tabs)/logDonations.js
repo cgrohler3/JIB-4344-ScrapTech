@@ -258,7 +258,7 @@ const LogDonations = () => {
 				/>
 				<TextInput
 					style={styles.input}
-					placeholder='Item Weight'
+					placeholder='Item Weight (lbs)'
 					placeholderTextColor='gray'
 					value={weight}
 					onChangeText={(text) => {

@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c03e1309-e4c9-484d-a214-168322b3c852" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/logDonations.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/ScrapApp/app/(auth)/(tabs)/logDonations.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +77,8 @@
       <workItem from="1738882177308" duration="4372000" />
       <workItem from="1740592061978" duration="9659000" />
       <workItem from="1744685045200" duration="1019000" />
-      <workItem from="1744734201927" duration="2716000" />
+      <workItem from="1744734201927" duration="3309000" />
+      <workItem from="1745100163412" duration="1245000" />
     </task>
     <servers />
   </component>
