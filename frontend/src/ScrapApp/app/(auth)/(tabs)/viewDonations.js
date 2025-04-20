@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 
 const ViewDonations = () => {
 	const [donations, setDonations] = useState([])
+	const [boxVisible, setBoxVisible] = useState(false)
 
 	const getAllDocs = async () => {
 		
@@ -25,6 +26,7 @@ const ViewDonations = () => {
 			docs.push({ id: doc.id, ...doc.data() })
 		})
 		setDonations(docs)
+		setBoxVisible(true)
 	}
 
 	const confirmDel = async (id) => {
@@ -130,7 +132,7 @@ const ViewDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
 				<Text style={styles.title}>View / Delete Recent Donations (Last 2 Days)</Text>
-				<View style={styles.parentBox}>
+				<View style={[styles.parentBox, boxVisible ? styles.visibleBox : styles.hidden]}>
 					<ScrollView persistentScrollbar={true} nestedScrollEnabled={true}>
 						{donations &&
 							Object.keys(donations).map(key => (
@@ -181,6 +183,15 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		borderRadius: 5,
 		backgroundColor: '#376c3e'
+	},
+	hidden: {
+		height: '0',
+		width: '100%',
+		borderColor: 'transparent',
+		borderWidth: 2,
+		borderRadius: 5,
+		backgroundColor: '#transparent',
+		overflow: 'hidden'
 	},
 	childBox: {
 		backgroundColor: '#ffffff',
