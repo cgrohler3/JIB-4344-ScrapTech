@@ -266,43 +266,34 @@ const ZipCodes = () => {
                     <View style={styles.container}>
                         <Text style={styles.title}>Categories</Text>
                         <View style={styles.barChart}>
-                            <ScrollView
-                                horizontal
-                                showsHorizontalScrollIndicator={true}
-                                ref={scrollViewRef}
-                            >
-                                {Object.keys(data).length > 0 && (
-                                    <StackedBarChart 
-                                        data={{
-                                            labels: data.labels,
-                                            legend: [],
-                                            data: data.data.map(item => item.map(val => val === 0 ? null : val)),
-                                            barColors: data.barColors
-                                        }} 
-                                        width={Math.max(chartWidth, Dimensions.get("window").width)}
-                                        height={400}
-                                        chartConfig={{
-                                            backgroundColor: '#ffffff',
-                                            backgroundGradientFrom: '#ffffff',
-                                            backgroundGradientTo: '#ffffff',
-                                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                            barPercentage: 1,
-                                            propsForHorizontalLabels: {
-                                                dy: -5
-                                            },
-                                            propsForLabels: {
-                                                dx: 0
-                                            },
-                                            propsForVerticalLabels: {
-                                                dx: -7,
-                                                dy: 1,
-                                                rotation: 30
-                                            },
-                                        }}
-                                        segments={5}
-                                    />
-                                )}
-                            </ScrollView>
+                            {Object.keys(data).length > 0 && (
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{ transform: [{ rotate: '-90deg' }], fontSize: 16, marginRight: 10, fontWeight: 'bold', color: '#376c3e' }}>Weight in Pounds</Text>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={true} ref={scrollViewRef}>
+                                        <StackedBarChart
+                                            data={{
+                                                labels: data.labels,
+                                                legend: [],
+                                                data: data.data.map(item => item.map(val => val === 0 ? null : val)),
+                                                barColors: data.barColors
+                                            }}
+                                            width={Math.max(chartWidth, Dimensions.get("window").width)}
+                                            height={400}
+                                            chartConfig={{
+                                                backgroundColor: '#ffffff',
+                                                backgroundGradientFrom: '#ffffff',
+                                                backgroundGradientTo: '#ffffff',
+                                                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                                barPercentage: 1,
+                                                propsForHorizontalLabels: { dy: -5 },
+                                                propsForLabels: { dx: 0 },
+                                                propsForVerticalLabels: { dx: -7, dy: 1, rotation: 30 },
+                                            }}
+                                            segments={5}
+                                        />
+                                    </ScrollView>
+                                </View>
+                            )}
                             <TouchableOpacity
                                 style={styles.buttonBoxAlt}
                                 onPress={clearBar}
