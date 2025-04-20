@@ -120,7 +120,7 @@ const ViewDonations = () => {
 		
 		// Donation Removal
 		await deleteDoc(docRef)
-
+		Alert.alert('Success', 'Donation Removed')
 
 
 		console.log("Deleted document: ID=", id, " zip=", zip, "cat=", category, "weight=", weight)
