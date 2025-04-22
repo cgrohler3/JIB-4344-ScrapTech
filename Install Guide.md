@@ -1,29 +1,34 @@
-# Pre-requisites
+# Pre-Requisites
 ### Hardware
-  - Android Device (Designed for Galaxy Tab A9+) <br>
-  - [Purchase the Tablet](https://www.amazon.com/SAMSUNG-Android-Speakers-Upgraded-Graphite/dp/B0CLF3VPMV?tag=googhydr-20&source=dsa&hvcampaign=electronics&gbraid=0AAAAA-b0EosaL1JePXRt0olLzoyRqaGP6&gclid=Cj0KCQjw2ZfABhDBARIsAHFTxGzHadUVNLCBMxvn6oQlxMN39TdUmvcu2mOzkYthpyO7RDxR7TaJ8QcaAm2YEALw_wcB&th=1)
+  - Android Tablet (Preferably Galaxy Tab A9+ or Older) <br>
+  - [Purchase the Tablet Here](https://www.amazon.com/SAMSUNG-Android-Speakers-Upgraded-Graphite/dp/B0CLF3VPMV?tag=googhydr-20&source=dsa&hvcampaign=electronics&gbraid=0AAAAA-b0EosaL1JePXRt0olLzoyRqaGP6&gclid=Cj0KCQjw2ZfABhDBARIsAHFTxGzHadUVNLCBMxvn6oQlxMN39TdUmvcu2mOzkYthpyO7RDxR7TaJ8QcaAm2YEALw_wcB&th=1)
 ### Software
-  - Default OS run by selected device
+  - Ensure device's Android OS is up-to-date.
 
 # Libraries
-### Dependent libraries that must be installed: what third party software must be installed for your software to function? Provide links or terminal commands or instructions to install libraries.
-- Npm Commands?
-- List them?
+- No external libraries are needed to be installed.
+- Provided APK will handle such installations internally.
 
 # Download Instructions
 ### Accessing the Download
-- where to find?
-- how to download?
-# Build instructions (if needed)
-- if you are providing the raw source code rather than a binary build, how will the customer and users create the required executable application?
+- All APK builds will reside in Expo [(expo.dev)](https://expo.dev), where developer account would've been setup using client's provided credentials.
+- Access to such an account will be handed off to primary contact from client.
 # Installing the App
-- Accessing the config files
+- To download latest APK:
+1. Visit [(expo.dev)](https://expo.dev), and login using client credentials.
+2. In the navigation to the left, select "Projects"
+3. Select "ScrapApp" within Project list.
+4. In the navigation to the left, select "Builds", then "All builds"
+5. Click on the build with profile name of "production"
+6. Click on the blue button titled "Install", and install by scaning the QR code on the device to download.
+7. Or, click the dot menu to the right of "Install", then "Download build" to download the file directly to device.
+8. Lastly, click on the downloaded APK file to install app on the device.
 # Running the App
-- Selecting an icon? a folder? a script?
+- Once the APK downloads, user simply has to access the application to use it.
+- No additional execution is necessary to interact with the app.
 # Troubleshooting
 ### Install Errors
-- Download is corrupted
+- If the download is corrupted, meaning APK is not downloading the application: user needs to rebuild the application again and follow the install process using the new APK.
+- If APK is corrupted, again, rebuild the application to generate a new APK, and follow the install process above.
 ### Running Errors
-- I don't know what crash occured at runtime
-### Misc. Errors
-- Accessing download on a new device
+- If application is slow or struck, then simple close and repon the app on the device. This is the common solution for most errors when running the app.
