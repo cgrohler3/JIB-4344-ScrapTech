@@ -1,112 +1,95 @@
-# Materials Collection Dashboard to Assist Scraplanta with Donation Activities
+# ScrapApp: Donation Tracker created for Scraplanta
 This application supports the non-profit Scraplanta by innovating their donation intake process as well as by providing multiple avenues for visualizing the impact they have through receiving donations.
 
 **The open-source license chosen for this project is: GNU GPLv3**
 # 🔧 Technologies Used
 ## Frontend: React Native/Expo
-React Native along with the Expo framework provides an optimal way of developing an application across platforms (iOS, Android, Web) within a single development environment. Expo Go allows for testing for the application on native devices without deploying the application.
+React Native along with the Expo framework provides an optimal way of developing a mobile application. Expo Go allows for testing the application on native devices without deploying the application.
 ## Backend: Firebase
-Firebase brings simplicity to the management of backend functionality and communication between our application and database, especially in the long-term. It allows us to enable essential operations, such as logging/retrieving donations, creating data visualizations.
+Firebase brings simplicity to the management of backend functionality and communication between our application and database, especially in the long-term. It allows us to enable essential operations such as logging/retrieving donations and creating data visualizations.
 
 ## Database: Firebase Firestore
 Firestore meets the cost needs for the application while offering a powerful cloud database that can be scaled as needed. It also requires very little maintenance, and provides built-in security and authentication/authorization features that help make it secure and powerful.
 
 # 📄 Release Notes
-## v0.4.0 Release
+## v1.0 Release
 ### Features
-#### Category Data Bar Graph
-+ Added Option to swap between category and zip code data visualizations.
-#### Top Zip Codes List
-+ Displayed zip codes contributing the highest number of donations in a selected category.
-+ Added zip code contributions to category collection in Firestore.
-#### UI Updates
-+ Displayed Log Donation fields as optional.
-+ Zoom icon replaced spyglass for improved user experience (Heat Map).
-+ Visibility toggle for password input.
-### Bug Fixes
--Added instructions to Home Screen.<br/>
--Corrected Category Options in Log Donation.<br/>
--Included Colors for all categories in Pie Chart visuals.
-### Known Issues
--UI and funtionality issues with IOS devices. <br/>
--Materials bar chart selection on Zip Codes tab need to be preshed twice to display chart.<br/>
--Scrolling issues are present when displaying certain charts (bar charts, pie charts).
-## v0.3.0 Release
-### Features
-#### Donation Density (Heat) Map
-+ Added protected routing to allow only employees to access Heat Map.
-+ Utilized React Maps to create a Heat Map of logged donations per zipcode, where intensities represent weight of all donations.
-+ Added Refresh option to allow users to refresh the map by pulling new data.
-+ Added Zoom option to allow users to toggle between Local (ATL), State (GA), and Country (USA) views for better overview of donations in the Heat Map.
-#### Password Recovery
-+ Created "Forgot Password" option to allow registered users to reset their password.
-+ Configured Firebase to send emails to users for password recovery.
-### Bug Fixes
--Setup 2-day donation retrieval to reduce excessive reads from database <br/>
--Updated UI for screens to be more visually consistent and pleasing. <br/>
--Added Loading activity to items/screen to allow them to load gracefully.
-### Known Issues
--Application is volatile on iOS devices in both UI and functionality, specifically Heat Maps.
-
-
-## v0.2.0 Release
-### Features
-#### Donation Visualization By Zip Code
-+ Added taskbar navigation to show new screen for Zip Codes.
-+ Dyanmic Pie Chart that's updated based on selected zip code, which details the category breakdown of donations received from that zip code.
-+ Visualization also shows total quantity and weight for selected zip code.
-#### Global Logout
-+ Logout option is available on all screens, allowing users to end their session from any screen, rather than limiting to only the home screen.
-#### Protected/User-Specific Routes
-+ Users are shown application screens based on user type: Volunteer or Employee.
-+ Employees can view employee-specific screens, like Zip Codes, while Volunteers cannot.
-### Bug Fixes
--Login error messages are more informative and capture more error states. <br/>
--UI changes to allow Scraplanta logo to be displayed fully.
-### Known Issues
--No built-in process for recovery/renewal of forgotten passwords. <br/>
--Inconsisent font/UI styling between screen header and content. <br/>
--Empty Home Screen, needs to be updated to be more informative for User/Employee. <br>
--Pie Chart is not automatically refreshed after new donation logging for selected zip code. <br>
--User-Specific Routes for Employee load after a slight delay, will need to optimize. <br>
--Application doesn't allow for two Users, regardless of type, to have the same Email. <br>
--View Donations screen queries entire "donations" collection, leading to higher # of reads, needs to be updated. <br/>
-
-
-## v0.1.0 Release
-### Features
-#### Account Creation / Sign In
-+ A simplistic way of authenticating users via Firebase was created. Currently, accounts can be registered using an email and password, and accessed using same credentials in the login process.
-+ Additional alerts have been added to notify user of any errors encountered during login/register process. Ex: Invalid Credentials/User not registered.
 #### Log Donations
-+ Donation logging is fully functional with a variety of fields stored to the Firestore database. New fieldss include email, zipcode, and timestamp of donation logging, and a confirmation request is provided.
++ Stores donations in Firestore database upon saving.
++ Created required donation fields: zip code, item name, quantity, weight, category
++ Created optional donation fields: donor name and email
++ Added request to confirm donation details.
++ Added alert upon successful donation logging.
++ Added alert upon missing input fields.
++ Added ‘clear’ button to empty user inputs.
++ Included timestamp field linked to saved donation.
+#### View Donations
++ Provided a collection of donations made in the last 48 hours.
++ Added ‘retrieve donations’ button to query database.
++ Included red trash icon on each donation.
++ Listed a summary of each donation.
++ Added ability to delete a donation.
++ Included confirmation request for donation deletion.
++ Added alert upon successful deletion.
+#### Zip Codes Data View
++ Added dropdown to select a zip code.
++ Added chart to display zip code data.
++ Populated pie charts with different colors for each category.
++ Added legend for pie charts.
++ Listed zip code donation count.
++ Listed zip code total weight.
++ Added ‘clear’ button to remove user selection.
+#### Categories Data View
++ Created dropdown for category filtering.
++ Created dropdown for time period filtering.
++ Supplied bar chart according to user filtering.
++ Added labels to chart
++ Displayed zip code contributions to selected categories over selected time frames.
++ Provided category summary with total donation quantities and total weight.
++ Listed top zip codes and corresponding weights for the selected category.
++ Added ‘clear’ button to remove user selections.
+#### Heat Map
++ Utilized React Maps to create a Heat Map of logged donations per zip code, where intensities represent weight of all donations.
++ Added refresh option to allow users to refresh the map by pulling new data.
++ Added Zoom option to allow users to toggle between Local (ATL), State (GA), and Country (USA) views for better overview of donations in the Heat Map.
++ Populated heat map with pressable icons, allowing for zip codes and totals to be identified.
+#### Home Screen
++ Added Scraplanta logo.
++ Displayed a greeting for the user.
++ Added button to link externally to calendly services for booking appointments.
+#### Account Screen
++ Added Scraplanta logo.
++ Added input fields for email and password.
++ Included ‘forgot password’ for recovery email option.
++ Added hidden toggle for password field.
++ Provided option to register user.
++ Provided option to login user.
++ Added error alert messages.
+#### Usability / Quality of Life
++ Added navigation bar to route to all screens.
++ Limited appearance of screens based on user type (employee vs. volunteer).
++ Logout option is available on all screens, allowing users to end their session from any screen, rather than limiting this option to only the home screen.
++ Added buttons to swap between zip code and category charts.
++ Designated optional fields with text and green outlines.
 ### Bug Fixes
--UI updates to Donation Retrieval. <br/>
--UI updates for Log Donation.
+- UI fix on Log Donation corrected differences in font between header and content.
+- Pie charts now update upon logging a donation without reloading the app.
+- Removed visual delay in loading user routes in the navigation bar.
+- Stopped view donations from querying the whole database and causing too many reads.
+- Fixed Scraplanta logo appearing only partially on the screen.
+- Changed error messages from being a catch all to being specific and giving guidance.
+- Fixed category options in log donation failing to save due to ‘/’ character by replacing with ‘&’.
+- Added loading activity to screens to prevent visual errors.
+- Fixed UI consistency across screens.
+- Replaced heat map spyglass icon with zoom icon to avoid confusing users.
+- Added enough colors for all categories to be represented in pie charts.
+- Fixed bug requiring zip code dropdown to be pressed twice to display charts.
 ### Known Issues
--Authentication persistance seems to affect login error messages.
-
-## v0.0.0 Release
-### Features
-#### Logging Donations Base Functionality
-+ This feature was chosen for demonstration of the tech stack as it is perhaps the most crucial feature of the application. It is the only feature that writes to the database (firestore). It allows for interaction with the UI on the front end (react native) that communicates to the backend (javascript), ensuring the entire stack's proficiency is demonstrated for our application's 0.0.0 release.
-
-
-### Bug Fixes
--N/A
-### Known Issues
-- Becasue our application is being developed for mobile platforms, Expo's development server on the web is not optimized and has some broken UI. However, the application, for the purposes of the artifact demo, works on mobile.
-
-
-# ⚙️ Installation
-1. Clone the Repository
-2. Install required dependecies
-3. For developers, add "lib" folder in "frontend/src/ScrapApp" and add "firebaseConfig.js" file in "lib" folder. Then, populate .js file with configuration code (as provided by Scraplanta).
-
-# ♻️ Run the ScrapApp
-1. Run the app
-+ Navigate to frontend/src/ScrapApp from powershell or any CLI.
-+ From the same CLI, run "npx expo start"
-2. Acces the app on Expo Go (Mobile) by scanning provided QR code or press 'w' key to view web version.
-
-
+- Since the app was designed for android tablets, the UI is imperfect and the heat map is non-functional on iOS devices.
+- Heat map centers itself upon first press of zoom, and then functions properly following this.
+- While zip code input is limited to 5 digit integers, zip codes that do not exist are accepted in donation logging and taint the database.
+- If all donations in view donations are deleted/empty, the green container still appears.
+- Zip codes data view reloads on every visit, so colors may change when navigating away and back from this screen within the application.
+- Deleting documents after donations have been logged with floating values (decimals) may cause undesired behavior. [e.g. 0.2 displaying as 0.20000000000001]
+- Categories data view chart is not intuitively scrollable.
+- There is no current method to edit donations, only to delete and then enter correctly.
