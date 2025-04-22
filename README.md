@@ -93,3 +93,5 @@ Firestore meets the cost needs for the application while offering a powerful clo
 - Deleting documents after donations have been logged with floating values (decimals) may cause undesired behavior. [e.g. 0.2 displaying as 0.20000000000001]
 - Categories data view chart is not intuitively scrollable.
 - There is no current method to edit donations, only to delete and then enter correctly.
+# Ready to Install?
+[Install Guide](https://github.com/cgrohler3/JIB-4344-ScrapTech/blob/main/Install%20Guide.md)
