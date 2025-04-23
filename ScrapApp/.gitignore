@@ -38,6 +38,4 @@ yarn-error.*
 # Additional
 lib/
 android/
-/app.json
-/eas.json
 /package-lock.json
