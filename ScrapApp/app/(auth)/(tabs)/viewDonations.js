@@ -11,7 +11,6 @@ const ViewDonations = () => {
 	const [boxVisible, setBoxVisible] = useState(false)
 
 	const getAllDocs = async () => {
-		
 		const now = new Date()
 		const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000)
 		const docQuery = query(

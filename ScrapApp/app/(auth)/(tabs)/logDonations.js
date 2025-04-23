@@ -8,12 +8,12 @@ import {
 	TouchableOpacity,
 	View
 } from 'react-native'
-import { Timestamp, addDoc, collection, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, doc, getDoc, getDocs, increment, setDoc, updateDoc } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import axios from "axios"
 import { db } from '../../../lib/firebaseConfig'
-import { useState } from 'react'
 
 const LogDonations = () => {
 	const [dName, setdName] = useState('')
@@ -23,30 +23,11 @@ const LogDonations = () => {
 	const [quantity, setQuantity] = useState(0)
 	const [weight, setWeight] = useState(0)
 	const [category, setCategory] = useState('')
+	const [items, setItems] = useState([])
 
-	// Update This Dynamically From DB
-	const [items, setItems] = useState([
-		{ label: 'Classroom/Office', value: 'Classroom & Office' },
-		{ label: 'Containers', value: 'Containers' },
-		{ label: 'Decor', value: 'Decor' },
-		{ label: 'Fiber Arts', value: 'Fiber Arts' },
-		{ label: 'Fine Arts/Frames', value: 'Fine Arts & Frames' },
-		{ label: 'Floral/Garden', value: 'Floral & Garden' },
-		{ label: 'Found Objects', value: 'Found Objects' },
-		{ label: 'General Craft Supplies', value: 'General Craft Supplies' },
-		{ label: 'Glass', value: 'Glass' },
-		{ label: 'Holiday', value: 'Holiday' },
-		{ label: 'Jewelry', value: 'Jewelry' },
-		{ label: 'Paint', value: 'Paint' },
-		{ label: 'Papercraft', value: 'Papercraft' },
-		{ label: 'Party', value: 'Party' },
-		{ label: 'Photography', value: 'Photography' },
-		{ label: 'Screen & Block Painting', value: 'Screen & Block Painting' },
-		{ label: 'Sculpture', value: 'Sculpture' },
-		{ label: 'Soap/Candle Making', value: 'Soap & Candle Making' },
-		{ label: 'Tools', value: 'Tools' },
-		{ label: 'Toys', value: 'Toys' },
-	])
+	useEffect(() => {
+		getItems()
+	}, [])
 
 	const clearInputs = () => {
 		setdName('')
@@ -91,11 +72,21 @@ const LogDonations = () => {
 		)
 	}
 
+	const getItems = async () => {
+		const snapshot = await getDocs(collection(db, "items"))
+		const docs = []
+		snapshot.forEach((doc) => {
+			docs.push({ label: doc.data().label, value: doc.data().label })
+		})
+		docs.sort((a,b) => a.label.localeCompare(b.label))
+		setItems(docs)
+	}
+
 	const saveDoc = async () => {
 		const timestamp = Timestamp.now()
 
 		try {
-			const snapshot = await addDoc(collection(db, 'donations'), {
+			await addDoc(collection(db, 'donations'), {
 				name: dName,
 				email: email,
 				zipCode: zipCode,
@@ -131,7 +122,7 @@ const LogDonations = () => {
 				total_weight: Number(weight),
 			}, {merge: true})
 
-			snapshot.then(() => console.log("Added new category"))
+			snapshot.then(() => console.log("Added New Category"))
 		}
 	}
 
@@ -155,7 +146,7 @@ const LogDonations = () => {
 				total_weight: Number(weight),
 			}, { merge: true })
 
-			snapshot.then(() => console.log("Added new zip code"))
+			snapshot.then(() => console.log("Added New Zip Code"))
 		}
 	}
 
@@ -165,21 +156,20 @@ const LogDonations = () => {
 
 		if (!docSnap.exists()) {
 			try {
-				const url = "https://nominatim.openstreetmap.org/search?postalcode=" + zipCode + "&country=US&format=json"
+				const url = `https://nominatim.openstreetmap.org/search?postalcode=${zipCode}&country=US&format=json`
 				const response = await axios.get(url)
 
 				if (response.data.length > 0) {
-					console.log(response.data[0])
 					const {lat, lon} = response.data[0]
 
-					const snapshot = await setDoc(doc(db, "zipPositions", zipCode), {
+					await setDoc(doc(db, "zipPositions", zipCode), {
 						total_weight: Number(weight),
 						lat: parseFloat(lat),
 						long: parseFloat(lon),
 					}, { merge: true })
 
 				} else {
-					console.log("No coordinate data for request")
+					console.log("Couldn't Find Zipcode! Ensure Zipcode Is Valid!")
 				}
 			} catch (error) {
 				console.error(error)
@@ -195,7 +185,7 @@ const LogDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
 				<Text style={styles.title}>Log Donation</Text>
-				<View style={{alignItems: 'center'}}>
+				<View style={styles.clearBtn}>
 					<TouchableOpacity
 						style={styles.buttonBoxAlt}
 						onPress={clearInputs}
@@ -282,6 +272,9 @@ const LogDonations = () => {
 						setCategory(item.value)
 					}}
 					activeColor='lightgray'
+					search={true}
+					mode="modal"
+					onFocus={getItems}
 				/>
 				<TouchableOpacity
 					style={styles.buttonBox}
@@ -304,6 +297,9 @@ const styles = StyleSheet.create({
 		color: '#376c3e',
 		marginBottom: 20,
 		alignSelf: 'center'
+	},
+	clearBtn: {
+		position: "relative"
 	},
 	donorInput: {
 		width: '100%',
@@ -375,6 +371,9 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
+		borderColor: "#376c3e",
+		position: "absolute",
+		top: -47,
 	},
 	buttonTextAlt: {
 		fontWeight: 'bold',

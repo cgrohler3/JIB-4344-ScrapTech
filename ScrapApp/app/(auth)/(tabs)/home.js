@@ -22,22 +22,24 @@ const HomeScreen = () => {
 
 	return (
 		<View style={{ flex: 1 }}>
-			<ScrollView contentContainerStyle={{justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
-				<View style={styles.imageBox}>
-					<Image
-						source={require('../../../assets/images/scraplanta-logo.png')}
-						style={styles.image}
-						resizeMode='contain'
-					/>
-					<Text style={styles.title}>Welcome, {email}!</Text>
-				</View>
-				<View style = {styles.btnContainer}>
-					<Text style={styles.btnTitle}>Booking an Appointment?</Text>
-					<TouchableOpacity
-						style={styles.calButton}
-						onPress={openCalendly}>
-						<Text style={styles.calButtonText}><FontAwesome name="external-link" size={18} color="white"/> Open Calendly</Text>
-					</TouchableOpacity>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 25, paddingVertical: 20 }}>
+				<View>
+					<View style={styles.imageBox}>
+						<Image
+							source={require('../../../assets/images/scraplanta-logo.png')}
+							style={styles.image}
+							resizeMode='contain'
+						/>
+						<Text style={styles.title}>Welcome, {email}!</Text>
+					</View>
+					<View style = {styles.btnContainer}>
+						<Text style={styles.btnTitle}>Booking an Appointment?</Text>
+						<TouchableOpacity
+							style={styles.calButton}
+							onPress={openCalendly}>
+							<Text style={styles.calButtonText}><FontAwesome name="external-link" size={18} color="white"/> Open Calendly</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</ScrollView>
 		</View>
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
 	imageBox: {
 		flex: 1,
 		alignItems: 'center',
-		marginBottom: 20
+		marginBottom: 25
 	},
 	image: {
 		width: 125,
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
 	},
 	btnContainer: {
 		justifyContent: "center",
-		alignItems: "center"
+		alignItems: "center",
 	},
 	btnTitle: {
 		fontSize: 20,
