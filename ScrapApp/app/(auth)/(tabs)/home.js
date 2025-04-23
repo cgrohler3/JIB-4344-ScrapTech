@@ -1,28 +1,28 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
+
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Linking } from 'react-native';
-
-
 import { auth } from '../../../lib/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const HomeScreen = () => {
 	const [email, setEmail] = useState('')
-	const openCalendly = () => {
-		const calendlyUrl = 'https://calendly.com/scraplantadonations/scraplanta-donation-appointments';
-		Linking.openURL(calendlyUrl);
-	};
-
+	
 	onAuthStateChanged(auth, (user) => {
 		if (user) {
 			setEmail(user.email)
 		}
 	})
+	
+	const openCalendly = () => {
+		const calendlyUrl = 'https://calendly.com/scraplantadonations/scraplanta-donation-appointments'
+		Linking.openURL(calendlyUrl)
+	}
 
 	return (
 		<View style={{ flex: 1 }}>
-			<ScrollView contentContainerStyle={{justifyContent: 'center', paddingHorizontal: 25 }}>
+			<ScrollView contentContainerStyle={{justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
 				<View style={styles.imageBox}>
 					<Image
 						source={require('../../../assets/images/scraplanta-logo.png')}
@@ -31,15 +31,15 @@ const HomeScreen = () => {
 					/>
 					<Text style={styles.title}>Welcome, {email}!</Text>
 				</View>
+				<View style = {styles.btnContainer}>
+					<Text style={styles.btnTitle}>Booking an Appointment?</Text>
+					<TouchableOpacity
+						style={styles.calButton}
+						onPress={openCalendly}>
+						<Text style={styles.calButtonText}><FontAwesome name="external-link" size={18} color="white"/> Open Calendly</Text>
+					</TouchableOpacity>
+				</View>
 			</ScrollView>
-			<View style = {styles.buttonContainer}>
-				<Text style={styles.calendarText}>Booking an Appointment?</Text>
-				<TouchableOpacity
-					style={styles.calButton}
-					onPress={openCalendly}>
-					<Text style={styles.calButtonText}>Open Calendly</Text>
-				</TouchableOpacity>
-			</View>
 		</View>
 
 	)
@@ -49,11 +49,10 @@ const styles = StyleSheet.create({
 	imageBox: {
 		flex: 1,
 		alignItems: 'center',
-		marginBottom: 25,
-		marginTop: 100,
+		marginBottom: 20
 	},
 	image: {
-		width: 200,
+		width: 125,
 		height: 100,
 		padding: 0,
 	},
@@ -61,32 +60,29 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		fontWeight: 'bold',
 		color: '#376c3e',
-		marginTop: 20
+		marginTop: 5
 	},
-	buttonContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginBottom: 350,
+	btnContainer: {
+		justifyContent: "center",
+		alignItems: "center"
 	},
-	calendarText: {
-		fontSize: 24,
+	btnTitle: {
+		fontSize: 20,
 		fontWeight: 'bold',
 		color: '#376c3e',
+		marginTop: 20
 	},
 	calButton: {
-		width: 200,
-		height: 45,
-		borderWidth: 2,
-		backgroundColor: '#376c3e',
+		height: 40,
+		width: 150,
 		borderRadius: 3,
-		paddingHorizontal: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 20,
+		backgroundColor: '#376c3e',
+		marginTop: 10
 	},
 	calButtonText: {
-		fontSize: 20,
+		fontSize: 18,
 		fontWeight: 'bold',
 		color: 'white',
 	},

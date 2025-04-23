@@ -135,7 +135,6 @@ const LogDonations = () => {
 		}
 	}
 
-
 	const updateZipcode = async () => {
 		const docRef = doc(db, "zipCodes", zipCode)
 		const docSnap = await getDoc(docRef)

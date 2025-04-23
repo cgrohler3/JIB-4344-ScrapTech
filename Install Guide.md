@@ -10,6 +10,27 @@
 - Provided APK will handle such installations internally.
 
 # Download Instructions
+### Developer Installation Instructions
+- Pre-Requisites:
+  - Ensure Package Name & SHA-1 are added in `Maps Platform API Key` to allow maps to work properly.
+- Expo Build (Using Expo Cloud in [(expo.dev)](https://expo.dev)) [~15-25 mins]
+  - Pre-Requisites:
+    1. Create Account on [(expo.dev)](https://expo.dev)) & Connect using `eas login`
+    2. Populate `"apiKey": "KEY"` in app.json with your key using this guide: [React Native Maps](https://docs.expo.dev/versions/latest/sdk/map-view/#create-an-api-key)
+    3. Create Android Prebuild using `npx expo prebuild --clean`
+  - To build development, use: `eas build --platform android --profile development`
+  - To build production, use: `eas build --platform android`
+
+- Android Build (Using Gradle) [~20-60 mins]
+  - Pre-Requisites:
+    1. Ensure CMake is up-to-date, Update if necessary from Android Studio.
+    2. Place "ScrapApp" folder in most parent root, preferably "C:\\" to avoid errors with long file paths.
+    3. Populate `"apiKey": "KEY"` in app.json with your key using this guide: [React Native Maps](https://docs.expo.dev/versions/latest/sdk/map-view/#create-an-api-key)
+    4. Add these properties to bundle.properties to ensure maps work as expected: [Maps Conf](https://docs.expo.dev/guides/local-app-production/)
+    5. Create Android Prebuild using `npx expo prebuild --clean`
+  - To build production, use: `cd android` & `./gradlew assembleRelease`
+
+- NOTE: Always prebuild before building (regardless of changes) to ensure build is up-to-date.
 ### Accessing the Download
 - All APK builds will reside in Expo [(expo.dev)](https://expo.dev), where developer account would've been setup using client's provided credentials.
 - Access to such an account will be handed off to primary contact from client.

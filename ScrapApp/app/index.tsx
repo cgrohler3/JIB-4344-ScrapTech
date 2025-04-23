@@ -20,6 +20,7 @@ import {
 	signInWithEmailAndPassword
 } from 'firebase/auth'
 
+import Checkbox from "expo-checkbox"
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 
 export default function Index() {
@@ -27,12 +28,14 @@ export default function Index() {
 	const [password, setPassword] = useState('')
 	const [loading, setLoading] = useState(false)
 	const [show, setShow] = useState(false)
+	const [isChecked, setChecked] = useState(false)
 
 	const addUser = async () => {
 		const timestamp = Timestamp.now()
 		await addDoc(collection(db, "users"), {
 			email: email,
-			timestamp: timestamp
+			timestamp: timestamp,
+			type: (isChecked ? "employee" : "volunteer")
 		})
 	}
 
@@ -169,6 +172,10 @@ export default function Index() {
 							>
 								<Text style={styles.buttonTextAlt}>REGISTER</Text>
 							</TouchableOpacity>
+							<View style={styles.checkbox}>
+								<Checkbox color="#376c3e" value={isChecked} onValueChange={setChecked} />
+								<Text>(Check If Registering As Employee)</Text>
+							</View>
 							<TouchableOpacity 
 								style={styles.forgotButton}
 								onPress={forgotPassword}
@@ -204,6 +211,12 @@ const styles = StyleSheet.create({
 		borderColor: 'gray',
 		marginBottom: 15,
 		letterSpacing: 1.25,
+	},
+	checkbox: {
+		flexDirection: "row",
+		gap: 10,
+		justifyContent: "center",
+		textAlign: "center",
 	},
 	buttonBox: {
 		height: 35,

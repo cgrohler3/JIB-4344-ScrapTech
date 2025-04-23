@@ -1,5 +1,5 @@
 import { auth, db } from '../lib/firebaseConfig'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { onAuthStateChanged } from 'firebase/auth'
@@ -16,9 +16,11 @@ function verifyUser() {
 
     useEffect(() => {
         const getEmployees = async () => {
-            const snapshot = await getDocs(collection(db, 'employees'))
+            const qryRef = query(collection(db, "users"), where("type", "==", "employee"))
+            const qrySnap = await getDocs(qryRef)
+
             const docs = []
-            snapshot.forEach((doc) => {
+            qrySnap.forEach((doc) => {
                 docs.push(doc.data().email)
             })
             setEmployees(docs)
@@ -27,7 +29,6 @@ function verifyUser() {
         getEmployees();
     }, []);
 
-    console.log(employees)
     return (employees.includes(email))
 }
 
