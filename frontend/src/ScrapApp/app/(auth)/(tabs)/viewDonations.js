@@ -1,10 +1,10 @@
-import {Dimensions, ScrollView, StyleSheet, TouchableOpacity, Alert} from 'react-native'
+import { Alert, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
 import { Text, View } from 'react-native'
-import { collection, getDocs, orderBy, startAt, query, deleteDoc, doc, getDoc, updateDoc, increment, deleteField } from 'firebase/firestore'
+import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, increment, orderBy, query, startAt, updateDoc } from 'firebase/firestore'
 
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { db } from '../../../lib/firebaseConfig'
-import React, { useState } from 'react'
 
 const ViewDonations = () => {
 	const [donations, setDonations] = useState([])

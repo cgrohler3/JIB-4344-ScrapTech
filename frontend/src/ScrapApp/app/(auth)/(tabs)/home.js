@@ -14,9 +14,6 @@ const HomeScreen = () => {
 		Linking.openURL(calendlyUrl);
 	};
 
-
-
-
 	onAuthStateChanged(auth, (user) => {
 		if (user) {
 			setEmail(user.email)

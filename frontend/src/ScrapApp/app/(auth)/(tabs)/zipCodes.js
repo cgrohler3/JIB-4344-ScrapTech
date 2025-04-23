@@ -1,5 +1,3 @@
-import "randomcolor"
-
 import {
 	Dimensions,
 	ScrollView,
@@ -7,12 +5,10 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
-	useWindowDimensions,
 } from 'react-native'
 import { PieChart, StackedBarChart } from 'react-native-chart-kit'
 import React, { useEffect, useRef, useState } from 'react'
-import { Svg, Text as SvgText } from "react-native-svg"
-import { Timestamp, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
