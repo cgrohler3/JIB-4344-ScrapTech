@@ -34,7 +34,7 @@
       1. When in the ScrapApp folder, perform: `cd android`
       2. Then, perform: `./gradlew assembleRelease`
 
-- NOTE: Ensure that `lib/firebaseConfig.js` directory/file exists in `ScrapApp` before building.
+- NOTE: Ensure that `lib/firebaseConfig.js` & `node_modules` directories exist in `ScrapApp` before building.
 - NOTE: Always prebuild before building (regardless of changes) to ensure build is up-to-date.
 ### Accessing the Download
 - Expo Build
