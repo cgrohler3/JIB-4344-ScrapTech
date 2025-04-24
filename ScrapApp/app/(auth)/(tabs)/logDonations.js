@@ -1,5 +1,6 @@
 import {
 	Alert,
+	FlatList,
 	Keyboard,
 	ScrollView,
 	StyleSheet,
@@ -9,7 +10,7 @@ import {
 	View
 } from 'react-native'
 import { Timestamp, addDoc, collection, doc, getDoc, getDocs, increment, query, setDoc, updateDoc, where } from 'firebase/firestore'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import axios from "axios"
@@ -24,10 +25,6 @@ const LogDonations = () => {
 	const [weight, setWeight] = useState(0)
 	const [category, setCategory] = useState('')
 	const [items, setItems] = useState([])
-
-	useEffect(() => {
-		getItems()
-	}, [])
 
 	const clearInputs = () => {
 		setdName('')
@@ -190,7 +187,7 @@ const LogDonations = () => {
 
 	return (
 		<View style={styles.container}>
-			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }} keyboardShouldPersistTaps="handled" >
 				<Text style={styles.title}>Log Donation</Text>
 				<TextInput
 					style={styles.donorInput}
@@ -208,20 +205,6 @@ const LogDonations = () => {
 					onChangeText={setEmail}
 					returnKeyType='done'
 				/>
-				<TextInput
-					style={styles.input}
-					placeholder='Zip Code'
-					placeholderTextColor='gray'
-					value={zipCode}
-					onChangeText={(text) => {
-						const numeric = text.replace(/[^0-9]/g, '').slice(0, 5);
-						setZipCode(numeric);
-					  }}
-					keyboardType="numeric"
-					autoComplete='off'
-					returnKeyType='done'
-					onBlur={() => Keyboard.dismiss()}
-				/>
 				<Dropdown
 					style={styles.dropdown}
 					selectedTextStyle={styles.selectedTextStyle}
@@ -236,8 +219,21 @@ const LogDonations = () => {
 					}}
 					activeColor='lightgray'
 					search={true}
-					mode='modal'
 					onFocus={getItems}
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder='Zip Code'
+					placeholderTextColor='gray'
+					value={zipCode}
+					onChangeText={(text) => {
+						const numeric = text.replace(/[^0-9]/g, '').slice(0, 5);
+						setZipCode(numeric);
+					  }}
+					keyboardType="numeric"
+					autoComplete='off'
+					returnKeyType='done'
+					onBlur={() => Keyboard.dismiss()}
 				/>
 				<TextInput
 					style={styles.input}
@@ -356,7 +352,7 @@ const styles = StyleSheet.create({
 	btnContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		marginTop: 25
+		marginTop: 15
 	},
 	buttonBox: {
 		height: 40,

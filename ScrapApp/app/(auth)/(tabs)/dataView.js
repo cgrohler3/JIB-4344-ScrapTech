@@ -17,10 +17,10 @@ import { db } from '../../../lib/firebaseConfig'
 import randomColor from "randomcolor"
 import { useIsFocused } from "@react-navigation/native"
 
-const ZipCodes = () => {
+const DataView = () => {
     const isFocused = useIsFocused()
+    const scrollViewRef = useRef(null)
 	const [activeView, setActiveView] = useState('view1')
-    const scrollViewRef = useRef(null);
     
 	const [zipCode, setZipCode] = useState("")
     const [zipCodes, setZipCodes] = useState([])
@@ -29,7 +29,6 @@ const ZipCodes = () => {
 	const [weight, setWeight] = useState(0)
     
     const [chartWidth, setWidth] = useState(1)
-    const [ts, setTS] = useState({})
     const [time, setTime] = useState("")
     const [labels, setLabels] = useState([])
     const [data, setData] = useState({})
@@ -39,7 +38,8 @@ const ZipCodes = () => {
     const [barData, setBarData] = useState([])
 
 	const [topZips, setTopZips] = useState([])
-	  
+
+    // Useful for auto-reloading charts
     useEffect(() => {
         if (isFocused) {
             getZipCodes()
@@ -55,7 +55,7 @@ const ZipCodes = () => {
         if (category && time) {
             processData()
             if (scrollViewRef.current) {
-                scrollViewRef.current.scrollTo({ y: 0, animated: true });
+                scrollViewRef.current.scrollTo({ y: 0, animated: true })
             }
         }
     }, [zipCode, category, time])
@@ -99,7 +99,6 @@ const ZipCodes = () => {
     const clearBar = () => {
         setCategory("")
         setTime("")
-        setTS("")
         setLabels([])
         setData({})
         setTopZips([])
@@ -109,25 +108,22 @@ const ZipCodes = () => {
 	    const snapshot = await getDocs(collection(db, "categories"))
 	    const docs = []
 	    snapshot.forEach((doc) => {
-	        docs.push({ label: doc.id, value: doc.id })
+	        docs.push({ label: doc.data().category, value: doc.data().category })
 	    })
 	    setCategories(docs)
 	}
 
     const processData = async () => {
-        console.log(category, " ", time);
-    
-        const output = barLabels(time);
-        // Remove setTS(output.ts) since we use output.ts directly
-        setLabels(output.labels);
+        const output = barLabels(time)
+        setLabels(output.labels)
     
         const snapshot = await getDocs(
             query(
                 collection(db, "donations"),
-                where("timestamp", ">=", output.ts), // Use output.ts directly
+                where("timestamp", ">=", output.ts),
                 where("category", "==", category)
             )
-        );
+        )
     
         const docs = [];
         snapshot.forEach((doc) => {
@@ -135,42 +131,40 @@ const ZipCodes = () => {
                 zipCode: doc.data().zipCode,
                 weight: doc.data().weight,
                 timestamp: doc.data().timestamp,
-            });
-        });
+            })
+        })
     
-        // Compute groupedData immediately (no stale state)
         const groupedData = docs.reduce((acc, item) => {
-            const date = item.timestamp.toDate();
-            const zip = item.zipCode;
-            let key;
+            const date = item.timestamp.toDate()
+            const zip = item.zipCode
+            let key
     
             if (time === "Week") {
-                key = date.toLocaleDateString("en-US", { weekday: "short" }); // "Mon", "Tue"
+                key = date.toLocaleDateString("en-US", { weekday: "short" }) // "Mon", "Tue"
                 setWidth(7 * 80)
             } else if (time === "Month") {
-                key = date.getDate().toString(); // "1", "2", ..., "31"
+                key = date.getDate().toString() // "1", "2", ..., "31"
                 setWidth(32 * 80)
             } else if (time === "Year") {
-                key = date.toLocaleDateString("en-US", { month: "short" }); // "Jan", "Feb"
+                key = date.toLocaleDateString("en-US", { month: "short" }) // "Jan", "Feb"
                 setWidth(12 * 80)
             }
     
-            if (!acc[key]) acc[key] = {};
-            if (!acc[key][zip]) acc[key][zip] = 0;
+            if (!acc[key]) acc[key] = {}
+            if (!acc[key][zip]) acc[key][zip] = 0
     
-            acc[key][zip] += item.weight;
-            return acc;
-        }, {});
+            acc[key][zip] += item.weight
+            return acc
+        }, {})
     
-        setBarData(groupedData);
+        setBarData(groupedData)
     
-        // Generate chart data
-        const zips = Array.from(new Set(docs.map((item) => item.zipCode)));
+        const zips = Array.from(new Set(docs.map((item) => item.zipCode)))
         const dataMatrix = output.labels.map((label) => {
-            const item = groupedData[label] || {};
-            return zips.map((zip) => item[zip] || 0);
-        });
-    
+            const item = groupedData[label] || {}
+            return zips.map((zip) => item[zip] || 0)
+        })
+        
         const colors = randomColor({ count: zips.length });
     
         setData({
@@ -178,11 +172,14 @@ const ZipCodes = () => {
             legend: zips,
             data: dataMatrix,
             barColors: colors,
-        });
-    };
+        })
+    }
 
     const getTopZips = async () => {
-		const docSnap = await getDoc(doc(db, "categories", category))
+        const qryRef = query(collection(db, "categories"), where("category", "==", category))
+		const qrySnap = await getDocs(qryRef)
+		const docSnap = await getDoc(qrySnap.docs[0].ref)
+        
         const zipMap = docSnap.data()["zipMap"]
         const items = Object.entries(zipMap).sort((a,b) => a[1] - b[1]).splice(-5, 5).reverse()
         setTopZips({
@@ -228,7 +225,7 @@ const ZipCodes = () => {
                             />
                             {pieData.map((item, index) => (
                                 <Text key={index} style={{ fontSize: 17, textAlignVertical: 'center' }}>
-                                    <FontAwesome name="circle" size={18} color={item.color}/>  {(item.amount * 100 / weight).toFixed(2)}%  {item.name}
+                                    <FontAwesome name="circle" size={18} color={item.color}/> {(item.amount * 100 / weight).toFixed(2)}%  {item.name}
                                 </Text>
                             ))}
                             <Text style={styles.weightBox}>
@@ -236,7 +233,7 @@ const ZipCodes = () => {
                                 <Text style={{ fontWeight: 'bold' }}> {donations}</Text>
                                 {'\t\t\t\t'}
                                 Total Weight:
-                                <Text style={{ fontWeight: 'bold' }}> {weight}</Text>
+                                <Text style={{ fontWeight: 'bold' }}> {weight} lbs</Text>
                             </Text>
                             <TouchableOpacity
                                 style={styles.buttonBoxAlt}
@@ -262,56 +259,54 @@ const ZipCodes = () => {
                     <View style={styles.container}>
                         <Text style={styles.title}>Categories</Text>
                         <View style={styles.barChart}>
-                        {Object.keys(data).length > 0 && (
-    <View style={{ alignItems: 'center' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ transform: [{ rotate: '-90deg' }], fontSize: 16, marginRight: 10, fontWeight: 'bold', color: '#376c3e' }}>Weight(lbs)</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={true} ref={scrollViewRef}>
-                <StackedBarChart
-                    data={{
-                        labels: data.labels,
-                        legend: [],
-                        data: data.data.map(item => item.map(val => val === 0 ? null : val)),
-                        barColors: data.barColors
-                    }}
-                    width={Math.max(chartWidth, Dimensions.get("window").width)}
-                    height={400}
-                    chartConfig={{
-                        backgroundColor: '#ffffff',
-                        backgroundGradientFrom: '#ffffff',
-                        backgroundGradientTo: '#ffffff',
-                        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                        barPercentage: 1,
-                        propsForHorizontalLabels: { dy: -5 },
-                        propsForLabels: { dx: 0 },
-                        propsForVerticalLabels: { dx: -7, dy: 1, rotation: 30 },
-                    }}
-                    segments={5}
-                />
-            </ScrollView>
-        </View>
-
-        {/* X-axis label */}
-        <Text style={{ marginTop: 10, fontSize: 16, fontWeight: 'bold', color: '#376c3e' }}>
-            {time === 'Week' && 'Day of the Week'}
-            {time === 'Month' && 'Day of the Month'}
-            {time === 'Year' && 'Months'}
-        </Text>
-    </View>
-)}
+                            {Object.keys(data).length > 0 && (
+                                <View style={{ alignItems: 'center' }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Text style={styles.xTitle}>Weight (lbs)</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={true} ref={scrollViewRef}>
+                                            <StackedBarChart
+                                                data={{
+                                                    labels: data.labels,
+                                                    legend: [],
+                                                    data: data.data.map(item => item.map(val => val === 0 ? null : val)),
+                                                    barColors: data.barColors
+                                                }}
+                                                width={Math.max(chartWidth, Dimensions.get("window").width)}
+                                                height={400}
+                                                chartConfig={{
+                                                    backgroundColor: '#ffffff',
+                                                    backgroundGradientFrom: '#ffffff',
+                                                    backgroundGradientTo: '#ffffff',
+                                                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                                    barPercentage: 1,
+                                                    propsForHorizontalLabels: { dy: -5 },
+                                                    propsForLabels: { dx: 0 },
+                                                    propsForVerticalLabels: { dx: -7, dy: 1, rotation: 30 },
+                                                }}
+                                                segments={5}
+                                            />
+                                        </ScrollView>
+                                    </View>
+                                    <Text style={styles.yTitle}>
+                                        {time === 'Week' && 'Past Week (in days)'}
+                                        {time === 'Month' && 'Past Month (in days)'}
+                                        {time === 'Year' && 'Past Year (in months)'}
+                                    </Text>
+                                </View>
+                            )}
+                            <View style={styles.barLegend}>
+                                {Object.keys(data).length > 0 && data["legend"].map((item, index) => (
+                                    <Text key={index} style={{ fontSize: 17, textAlignVertical: 'center' }}>
+                                        <FontAwesome name="circle" size={18} color={data["barColors"][index]} /> {item}
+                                    </Text>
+                                ))}
+                            </View>
                             <TouchableOpacity
                                 style={styles.buttonBoxAlt}
                                 onPress={clearBar}
                             >
                                 <Text style={styles.buttonTextAlt}>CLEAR</Text>
                             </TouchableOpacity>
-                            <View style={[styles.barLegend, { justifyContent: 'flex-start', paddingLeft: 40 }]}>
-    {Object.keys(data).length > 0 && data["legend"].map((item, index) => (
-        <Text key={index} style={{ fontSize: 17, textAlignVertical: 'center' }}>
-            <FontAwesome name="circle" size={18} color={data["barColors"][index]} /> {item}
-        </Text>
-    ))}
-</View>
                         </View>
                         <View style={styles.dropdownContainer}>
                             <Dropdown
@@ -330,9 +325,9 @@ const ZipCodes = () => {
                                 style={styles.nestedDropdown}
                                 selectedTextStyle={styles.selectedTextStyle}
                                 data={[
-                                    { label: "Week", value: "Week" },
-                                    { label: "Month", value: "Month" },
-                                    { label: "Year", value: "Year" },
+                                    { label: "Past Week", value: "Week" },
+                                    { label: "Past Month", value: "Month" },
+                                    { label: "Past Year", value: "Year" },
                                 ]}
                                 labelField='label'
                                 valueField='value'
@@ -347,13 +342,13 @@ const ZipCodes = () => {
                             <View style={styles.zipsContainer}>
                                 <View style={styles.zipsBox}>
                                     <Text style={styles.subTitle}>Category Summary</Text>
-                                    <Text>Total Donations: {topZips["t_donations"]}</Text>
-                                    <Text>Total Weight: {topZips["t_weight"]}</Text>
+                                    <Text>Total Donations: <Text style={{ fontWeight: "bold" }}>{topZips["t_donations"]}</Text></Text>
+                                    <Text>Total Weight: <Text style={{ fontWeight: "bold" }}>{topZips["t_weight"]} lbs</Text></Text>
                                 </View>
                                 <View style={styles.zipsBox}>
                                     <Text style={styles.subTitle}>Top Zip Codes</Text>
                                     {topZips["zipMap"].map((item, idx) => (
-                                        <Text key={idx}>{idx+1}. {item[0]} - {item[1]}</Text>
+                                        <Text key={idx}>{idx+1}. {item[0]} - <Text style={{ fontWeight: "bold" }}>{item[1]} lbs</Text></Text>
                                     ))}
                                 </View>
                             </View>
@@ -374,7 +369,7 @@ const styles = StyleSheet.create({
     },
     buttonBox: {
 		height: 40,
-        width: 125,
+        width: 145,
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -386,7 +381,7 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
     buttonBoxAlt: {
-		height: 30,
+		height: 40,
 		width: 85,
 		borderWidth: 2,
 		borderColor: '#376c3e',
@@ -396,7 +391,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		position: "absolute",
 		left: 0,
-		top: -43,
+		top: -53,
 	},
 	buttonTextAlt: {
 		fontWeight: 'bold',
@@ -414,7 +409,7 @@ const styles = StyleSheet.create({
 	},
 	dropdown: {
 	    width: '100%',
-	    height: 40,
+	    height: 45,
 	    borderColor: '#ddd',
 	    borderWidth: 1,
 	    borderRadius: 5,
@@ -458,7 +453,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: 'white',
         paddingTop: 20,
-        paddingBottom: 10
+        paddingBottom: 5
     },
     dropdownContainer: {
         flexDirection: "row",
@@ -467,7 +462,7 @@ const styles = StyleSheet.create({
     },
     nestedDropdown: {
         width: '49%',
-	    height: 40,
+	    height: 45,
 	    borderColor: '#ddd',
 	    borderWidth: 1,
 	    borderRadius: 5,
@@ -476,16 +471,31 @@ const styles = StyleSheet.create({
 	    color: 'gray',
 	    fontSize: 14,
 	},
+    xTitle: {
+        transform: [{ rotate: '-90deg' }],
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#376c3e',
+        margin: -20,
+    },
+    yTitle: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#376c3e',
+        marginTop: -30,
+        marginBottom: 0,
+        paddingBottom: -10,
+    },
     zipsContainer: {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
-        gap: 10,
+        gap: 26,
         marginTop: 20,
         textAlign: "center",
     },
     zipsBox: { 
-        width: 150,
+        width: 225,
         backgroundColor: '#fff',
         padding: 10,
         borderRadius: 8,
@@ -503,7 +513,9 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: "center",
         alignContent: "center",
+        marginTop: 5,
+        marginBottom: 10,
     }
 })
 
-export default ZipCodes
+export default DataView

@@ -86,7 +86,7 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name='zipCodes'
+				name='dataView'
 				options={{
 					title: 'Data View',
 					tabBarIcon: ({ color }) => (
