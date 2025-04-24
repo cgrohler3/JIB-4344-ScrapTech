@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 	},
 	calButton: {
 		height: 40,
-		width: 150,
+		width: 200,
 		borderRadius: 3,
 		justifyContent: 'center',
 		alignItems: 'center',

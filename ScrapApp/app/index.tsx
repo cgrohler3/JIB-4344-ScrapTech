@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
 		gap: 10,
 		justifyContent: "center",
 		textAlign: "center",
+		marginTop: 5
 	},
 	buttonBox: {
 		height: 35,
@@ -247,6 +248,6 @@ const styles = StyleSheet.create({
 	},
 	forgotButton: {
 		alignSelf: 'center',
-		marginTop: 15,
+		marginTop: 10,
 	}
 })

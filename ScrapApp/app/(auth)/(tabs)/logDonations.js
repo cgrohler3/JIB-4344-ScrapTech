@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	View
 } from 'react-native'
-import { Timestamp, addDoc, collection, doc, getDoc, getDocs, increment, setDoc, updateDoc } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, doc, getDoc, getDocs, increment, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { Dropdown } from 'react-native-element-dropdown'
@@ -103,26 +103,33 @@ const LogDonations = () => {
 	}
 
 	const updateCategory = async () => {
-		const docRef = doc(db, "categories", category)
-		const docSnap = await getDoc(docRef)
-
-		if (docSnap.exists()) {
-			await updateDoc(docRef, {
-				[`zipMap.${zipCode}`]: increment(Number(weight)),
-				total_donations: increment(1),
-				total_weight: increment(Number(weight))
-			})
-
-		} else {
-			const snapshot = await setDoc(doc(db, "categories", category), {
-				zipMap: {
-					[zipCode]: Number(weight),
-				},
-				total_donations: 1,
-				total_weight: Number(weight),
-			}, {merge: true})
-
-			snapshot.then(() => console.log("Added New Category"))
+		const qryRef = query(collection(db, "categories"), where("category", "==", category))
+		const qrySnap = await getDocs(qryRef)
+		
+		try {
+			if (!qrySnap.empty) {
+				const docRef = qrySnap.docs[0].ref
+				const snapshot = await updateDoc(docRef, {
+					[`zipMap.${zipCode}`]: increment(Number(weight)),
+					total_donations: increment(1),
+					total_weight: increment(Number(weight))
+				})
+	
+				snapshot.then(() => console.log("Updated Existing Category"))
+			} else {
+				const snapshot = await addDoc(collection(db, "categories"), {
+					zipMap: {
+						[zipCode]: Number(weight),
+					},
+					category: category,
+					total_donations: 1,
+					total_weight: Number(weight),
+				}, {merge: true})
+	
+				snapshot.then(() => console.log("Added New Category"))
+			}
+		} catch (e) {
+			console.log(e)
 		}
 	}
 
@@ -169,7 +176,7 @@ const LogDonations = () => {
 					}, { merge: true })
 
 				} else {
-					console.log("Couldn't Find Zipcode! Ensure Zipcode Is Valid!")
+					Alert.alert("Couldn't Find Zipcode! Ensure Zipcode Is Valid!")
 				}
 			} catch (error) {
 				console.error(error)
@@ -185,14 +192,6 @@ const LogDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }}>
 				<Text style={styles.title}>Log Donation</Text>
-				<View style={styles.clearBtn}>
-					<TouchableOpacity
-						style={styles.buttonBoxAlt}
-						onPress={clearInputs}
-					>
-						<Text style={styles.buttonTextAlt}>CLEAR</Text>
-					</TouchableOpacity>
-				</View>
 				<TextInput
 					style={styles.donorInput}
 					placeholder='Donor Name - OPTIONAL'
@@ -223,6 +222,23 @@ const LogDonations = () => {
 					returnKeyType='done'
 					onBlur={() => Keyboard.dismiss()}
 				/>
+				<Dropdown
+					style={styles.dropdown}
+					selectedTextStyle={styles.selectedTextStyle}
+					data={items}
+					labelField='label'
+					valueField='value'
+					placeholder='Select Category'
+					placeholderStyle={styles.placeholderStyle}
+					value={category}
+					onChange={(item) => {
+						setCategory(item.value)
+					}}
+					activeColor='lightgray'
+					search={true}
+					mode='modal'
+					onFocus={getItems}
+				/>
 				<TextInput
 					style={styles.input}
 					placeholder='Item Name'
@@ -230,6 +246,7 @@ const LogDonations = () => {
 					value={itemName}
 					onChangeText={setItemName}
 					returnKeyType='done'
+					autoCapitalize='None'
 				/>
 				<TextInput
 					style={styles.input}
@@ -259,29 +276,20 @@ const LogDonations = () => {
 					keyboardType='numeric'
 					returnKeyType='done'
 				/>
-				<Dropdown
-					style={styles.dropdown}
-					selectedTextStyle={styles.selectedTextStyle}
-					data={items}
-					labelField='label'
-					valueField='value'
-					placeholder='Select Category'
-					placeholderStyle={styles.placeholderStyle}
-					value={category}
-					onChange={(item) => {
-						setCategory(item.value)
-					}}
-					activeColor='lightgray'
-					search={true}
-					mode="modal"
-					onFocus={getItems}
-				/>
-				<TouchableOpacity
-					style={styles.buttonBox}
-					onPress={handleSave}
-				>
-					<Text style={styles.buttonText}>Save Donation</Text>
-				</TouchableOpacity>
+				<View style={styles.btnContainer}>
+					<TouchableOpacity
+						style={styles.buttonBox}
+						onPress={handleSave}
+					>
+						<Text style={styles.buttonText}>Save Donation</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={styles.buttonBoxAlt}
+						onPress={clearInputs}
+					>
+						<Text style={styles.buttonTextAlt}>CLEAR</Text>
+					</TouchableOpacity>
+				</View>
 			</ScrollView>
 		</View>
 	)
@@ -298,12 +306,9 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		alignSelf: 'center'
 	},
-	clearBtn: {
-		position: "relative"
-	},
 	donorInput: {
 		width: '100%',
-		height: 40,
+		height: 45,
 		borderWidth: 1.5,
 		borderRadius: 5,
 		borderColor: '#376c3e',
@@ -314,7 +319,7 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		width: '100%',
-		height: 40,
+		height: 45,
 		borderColor: '#ddd',
 		borderWidth: 1,
 		borderRadius: 5,
@@ -325,7 +330,7 @@ const styles = StyleSheet.create({
 	},
 	dropdown: {
 		width: '100%',
-		height: 40,
+		height: 45,
 		borderColor: '#ddd',
 		borderWidth: 1,
 		borderRadius: 5,
@@ -333,6 +338,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		color: 'gray',
 		fontSize: 14,
+		marginBottom: 15,
 	},
 	selectedTextStyle: {
 		color: 'black',
@@ -347,14 +353,18 @@ const styles = StyleSheet.create({
 		width: 400,
 		borderWidth: 1,
 	},
+	btnContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		marginTop: 25
+	},
 	buttonBox: {
 		height: 40,
-		width: '100%',
+		width: "82%",
+		justifyContent: "center",
+		alignItems: "center",
 		borderRadius: 3,
-		justifyContent: 'center',
-		alignItems: 'center',
 		backgroundColor: '#376c3e',
-		marginTop: 25
 	},
 	buttonText: {
 		fontSize: 18,
@@ -362,23 +372,18 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	buttonBoxAlt: {
-		height: 30,
-		width: 75,
+		height: 40,
+		width: "15%",
+		justifyContent: "center",
+		alignItems: "center",
 		borderWidth: 2,
-		borderColor: 'gray',
+		borderColor: '#376c3e',
 		borderRadius: 3,
-		paddingHorizontal: 10,
-		marginBottom: 10,
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderColor: "#376c3e",
-		position: "absolute",
-		top: -47,
 	},
 	buttonTextAlt: {
 		fontWeight: 'bold',
 		color: '#376c3e',
-	},
+	}
 })
 
 export default LogDonations
