@@ -253,6 +253,7 @@ const DataView = () => {
                             value={zipCode}
                             onChange={(item) => setZipCode(item.value)}
                             activeColor='lightgray'
+                            onFocus={getZipCodes}
                         />
                     </View>
 	            ) : (

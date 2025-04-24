@@ -1,6 +1,5 @@
 import {
 	Alert,
-	FlatList,
 	Keyboard,
 	ScrollView,
 	StyleSheet,
@@ -10,7 +9,7 @@ import {
 	View
 } from 'react-native'
 import { Timestamp, addDoc, collection, doc, getDoc, getDocs, increment, query, setDoc, updateDoc, where } from 'firebase/firestore'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Dropdown } from 'react-native-element-dropdown'
 import axios from "axios"
@@ -25,6 +24,17 @@ const LogDonations = () => {
 	const [weight, setWeight] = useState(0)
 	const [category, setCategory] = useState('')
 	const [items, setItems] = useState([])
+	const [donors, setDonors] = useState([])
+	const [width, setWidth] = useState(0)
+
+	useEffect(() => {
+		getDonors()
+		getItems()
+	}, [])
+
+	const handleLayout = (event) => {
+		setWidth(event.nativeEvent.layout.width);
+	}
 
 	const clearInputs = () => {
 		setdName('')
@@ -39,6 +49,10 @@ const LogDonations = () => {
 	const handleSave = () => {
 		if (!zipCode || !itemName || !quantity || !weight || !category) {
 			Alert.alert('Missing Fields', 'All product information must be filled!')
+			return
+		}
+		if ((dName.length > 0 && email.length == 0) || (dName.length == 0 && email.length > 0)) {
+			Alert.alert('Missing Donor Fields', 'All donor information must be filled!')
 			return
 		}
 
@@ -79,6 +93,18 @@ const LogDonations = () => {
 		setItems(docs)
 	}
 
+	const getDonors = async () => {
+		const qryRef = query(collection(db, "donations"), where("name", "!=", ""))
+		const qrySnap = await getDocs(qryRef)
+
+		if (qrySnap.empty) return
+		const docs = []
+		qrySnap.forEach((doc) => {
+			docs.push({ name: doc.data().name, email: doc.data().email })
+		})
+		setDonors(docs)
+	}
+	
 	const saveDoc = async () => {
 		const timestamp = Timestamp.now()
 
@@ -106,15 +132,15 @@ const LogDonations = () => {
 		try {
 			if (!qrySnap.empty) {
 				const docRef = qrySnap.docs[0].ref
-				const snapshot = await updateDoc(docRef, {
+				await updateDoc(docRef, {
 					[`zipMap.${zipCode}`]: increment(Number(weight)),
 					total_donations: increment(1),
 					total_weight: increment(Number(weight))
 				})
 	
-				snapshot.then(() => console.log("Updated Existing Category"))
+				console.log("Updated Existing Category")
 			} else {
-				const snapshot = await addDoc(collection(db, "categories"), {
+				await addDoc(collection(db, "categories"), {
 					zipMap: {
 						[zipCode]: Number(weight),
 					},
@@ -123,10 +149,10 @@ const LogDonations = () => {
 					total_weight: Number(weight),
 				}, {merge: true})
 	
-				snapshot.then(() => console.log("Added New Category"))
+				console.log("Added New Category")
 			}
 		} catch (e) {
-			console.log(e)
+			console.log("Update Category Error: ", e)
 		}
 	}
 
@@ -150,7 +176,7 @@ const LogDonations = () => {
 				total_weight: Number(weight),
 			}, { merge: true })
 
-			snapshot.then(() => console.log("Added New Zip Code"))
+			console.log("Added New Zip Code")
 		}
 	}
 
@@ -189,22 +215,74 @@ const LogDonations = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25, paddingVertical: 20 }} keyboardShouldPersistTaps="handled" >
 				<Text style={styles.title}>Log Donation</Text>
-				<TextInput
-					style={styles.donorInput}
-					placeholder='Donor Name - OPTIONAL'
-					placeholderTextColor='gray'
-					value={dName}
-					onChangeText={setdName}
-					returnKeyType='done'
-				/>
-				<TextInput
-					style={styles.donorInput}
-					placeholder='Donor Email - OPTIONAL'
-					placeholderTextColor='gray'
-					value={email}
-					onChangeText={setEmail}
-					returnKeyType='done'
-				/>
+				<View style={styles.donorView}>
+					<Dropdown
+						style={styles.donorDropdown}
+						selectedTextStyle={styles.selectedTextStyle}
+						placeholderStyle={styles.placeholderStyle}
+						data={
+							donors.map(obj => ({
+								label: obj.name,
+								value: obj.name
+							}))
+						}
+						labelField="label"
+						valueField="value"
+						placeholder="Select Existing Name"
+						value={dName}
+						onChange={item => {
+							setdName(item.value)
+						}}
+						activeColor="lightgray"
+						search={true}
+						containerStyle={{
+							width: width - 2,
+						}}
+						onFocus={getDonors}
+					/>
+					<TextInput
+						style={styles.donorInput}
+						placeholder='Donor Name - OPTIONAL'
+						placeholderTextColor='gray'
+						value={dName}
+						onChangeText={setdName}
+						returnKeyType='done'
+					/>
+				</View>
+				<View style={styles.donorView}>
+					<Dropdown
+						style={styles.donorDropdown}
+						selectedTextStyle={styles.selectedTextStyle}
+						placeholderStyle={styles.placeholderStyle}
+						data={
+							donors.map(obj => ({
+								label: obj.email,
+								value: obj.email
+							}))
+						}
+						labelField="label"
+						valueField="value"
+						placeholder="Select Existing Email"
+						value={email}
+						onChange={item => {
+							setEmail(item.value)
+						}}
+						activeColor="lightgray"
+						search={true}
+						containerStyle={{
+							width: width - 2,
+						}}
+						onFocus={getDonors}
+					/>
+					<TextInput
+						style={styles.donorInput}
+						placeholder='Donor Email - OPTIONAL'
+						placeholderTextColor='gray'
+						value={email}
+						onChangeText={setEmail}
+						returnKeyType='done'
+					/>
+				</View>
 				<Dropdown
 					style={styles.dropdown}
 					selectedTextStyle={styles.selectedTextStyle}
@@ -234,6 +312,7 @@ const LogDonations = () => {
 					autoComplete='off'
 					returnKeyType='done'
 					onBlur={() => Keyboard.dismiss()}
+					onLayout={handleLayout}
 				/>
 				<TextInput
 					style={styles.input}
@@ -302,17 +381,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		alignSelf: 'center'
 	},
-	donorInput: {
-		width: '100%',
-		height: 45,
-		borderWidth: 1.5,
-		borderRadius: 5,
-		borderColor: '#376c3e',
-		paddingHorizontal: 10,
-		marginBottom: 15,
-		backgroundColor: '#fff',
-		color: 'black',
-	},
 	input: {
 		width: '100%',
 		height: 45,
@@ -335,6 +403,35 @@ const styles = StyleSheet.create({
 		color: 'gray',
 		fontSize: 14,
 		marginBottom: 15,
+	},
+	donorView: {
+		position: 'relative',
+		flexDirection: "row",
+		width: "100%",
+		marginBottom: 15,
+		justifyContent: "space-between"
+	},
+	donorDropdown: {
+		width: "19%",
+		height: 45,
+		borderWidth: 1.5,
+		borderRadius: 5,
+		borderColor: '#376c3e',
+		paddingHorizontal: 10,
+		backgroundColor: '#fff',
+		color: 'gray',
+		fontSize: 14,
+		zIndex: 1000,
+	},
+	donorInput: {
+		width: "80%",
+		height: 45,
+		borderWidth: 1.5,
+		borderRadius: 5,
+		borderColor: '#376c3e',
+		paddingHorizontal: 10,
+		backgroundColor: '#fff',
+		color: 'black',
 	},
 	selectedTextStyle: {
 		color: 'black',

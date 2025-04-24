@@ -10,7 +10,7 @@ function barLabels(time) {
     }
 
     if (time == "Week") {
-        date.setDate(date.getDate() - 7)
+        date.setDate(date.getDate() - 6)
         date.setHours(0, 0, 0, 0)
         result["ts"] = Timestamp.fromDate(date)
         
@@ -27,7 +27,7 @@ function barLabels(time) {
             result["labels"].push(monthAgo.getDate().toString())
             monthAgo.setDate(monthAgo.getDate() + 1)
         }
-        result["labels"].pop()
+        result["labels"].shift()
     } else if (time == "Year") {
         const yearAgo = new Date(new Date().setFullYear(date.getFullYear() - 1))
         yearAgo.setHours(0, 0, 0, 0)

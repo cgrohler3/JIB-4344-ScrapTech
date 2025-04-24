@@ -20,7 +20,6 @@ const ViewDonations = () => {
 		twoDaysAgo.setHours(0, 0, 0, 0)
 
 		const qryRef = query(collection(db, 'donations'), orderBy('timestamp'), startAt(twoDaysAgo))
-		
 		const snapshot = await getDocs(qryRef)
 		const docs = []
 		snapshot.forEach((doc) => {

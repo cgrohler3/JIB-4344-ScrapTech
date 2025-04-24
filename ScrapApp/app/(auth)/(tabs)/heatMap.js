@@ -1,41 +1,28 @@
-import { ActivityIndicator, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native'
 import MapView, { Heatmap, Marker } from 'react-native-maps'
 import React, { useEffect, useRef, useState } from 'react'
-import { collection, count, getDocs } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { db } from "../../../lib/firebaseConfig"
 
 const HeatMap = () => {
-	const city = { latitude: 33.75, longitude: -84.39, latitudeDelta: 0.1, longitudeDelta: 0.1 }
-	const state = { latitude: 33, longitude: -83.3, latitudeDelta: 6, longitudeDelta: 6 }
-	const country = { latitude: 37.09, longitude: -95, latitudeDelta: 70, longitudeDelta: 70 }
-
-	const [isVisible, setIsVisible] = useState(true)
-	const [region, setRegion] = useState(city)
-	const [zoomLevel, setZoomLevel] = useState(0)
-	const [data, setData] = useState([])
-	const [markers, setMarkers] = useState([])
+	const levels = [
+		{ latitude: 33.75, longitude: -84.39, latitudeDelta: 0.1, longitudeDelta: 0.1 },
+		{ latitude: 33, longitude: -83.3, latitudeDelta: 6, longitudeDelta: 6 },
+		{ latitude: 37.09, longitude: -95, latitudeDelta: 70, longitudeDelta: 70 }
+	]
 
 	const mapRef = useRef(null)
-	const toggleZoom = () => {
-		setZoomLevel((zoomLevel + 1) % 3)
-		const newRegion = (zoomLevel == 0 ? city : zoomLevel == 1 ? state : country)
-		if (newRegion != city)
-			setIsVisible(false)
-		else
-			setIsVisible(true)
-		mapRef.current.animateToRegion(newRegion, 1000)
-	}
+	const [data, setData] = useState([])
+	const [markers, setMarkers] = useState([])
+	const [isVisible, setIsVisible] = useState(true)
+	const [region, setRegion] = useState({ idx: 0, level: levels[0] })
 
-	const getZoomIcon = () => {
-		if (zoomLevel === 0) {
-			return 'down-left-and-up-right-to-center';
-		} else {
-			return 'up-right-and-down-left-from-center';
-		}
-	};
+	useEffect(() => {
+		getData()
+	}, [])
 	
 	const getData = async () => {
 		const snapshot = await getDocs(collection(db, 'zipPositions'))
@@ -48,21 +35,36 @@ const HeatMap = () => {
 			}
 		})
 		setData(data)
-		// console.log(data)
-
 		const marks = snapshot.docs.map((doc) => {
 			const docData = doc.data()
 			return {
-				coordinate: { latitude: docData.lat, longitude: docData.long }, title: doc.id, description: docData.total_weight.toString()
+				coordinate: { latitude: docData.lat, longitude: docData.long }, title: doc.id, description: `${docData.total_weight} lbs`
 			}
 		})
 		setMarkers(marks)
-		console.log(marks)
+		setIsVisible(true)
+		setRegion({ idx: 0, label: levels[0] })
+		mapRef.current.animateToRegion(levels[0], 1000)
 	}
-	
-	useEffect(() => {
-		getData()
-	}, [])
+
+	const handleZoom = (val) => {
+		setRegion(prev => {
+			let newIdx
+			if ((prev.idx + val) < 0) {
+				newIdx = 0
+			} else if ((prev.idx + val) > 2) {
+				newIdx = 2
+			} else {
+				newIdx = (region.idx + val)
+			}
+			
+			mapRef.current.animateToRegion(levels[newIdx], 1000)
+			return {
+				idx: newIdx,
+				level: levels[newIdx]
+			}
+		})
+	}
 
 	return (
 		<View style={styles.container}>
@@ -72,7 +74,7 @@ const HeatMap = () => {
 				<MapView
 					ref={mapRef}
 					style={styles.map}
-					initialRegion={region}
+					initialRegion={levels[0]}
 				>
 					<Heatmap
 						points={data}
@@ -89,18 +91,32 @@ const HeatMap = () => {
 					))}
 				</MapView>
 			)}
-			<TouchableOpacity
-				style={styles.zoomButton}
-				onPress={toggleZoom}
-			>
-				<FontAwesome6 name={getZoomIcon()} size={20} color='white' />
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.refreshButton}
-				onPress={getData}
-			>
-				<FontAwesome name='refresh' size={22} color='white' />
-			</TouchableOpacity>
+			<View style={styles.mapBtnContainer}>
+				<TouchableOpacity
+					style={styles.mapBtn}
+					onPress={() => setIsVisible(!isVisible)}
+				>
+					<MaterialCommunityIcons name={(isVisible ? "map-marker" : "map-marker-off")} size={22} color="white" />
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={styles.mapBtn}
+					onPress={getData}
+				>
+					<FontAwesome name='refresh' size={22} color='white' />
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={styles.mapBtn}
+					onPress={() => handleZoom(-1)}
+				>
+					<FontAwesome name='plus' size={22} color='white' />
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={styles.mapBtn}
+					onPress={() => handleZoom(1)}
+				>
+					<FontAwesome name='minus' size={22} color='white' />
+				</TouchableOpacity>
+			</View>
 		</View>
 	)
 }
@@ -109,22 +125,21 @@ const styles = StyleSheet.create({
 	map: {
 		height: '100%',
 	},
-	zoomButton: {
+	mapBtnContainer: {
 		position: 'absolute',
-		bottom: '15',
-		right: '15',
-		padding: 9,
-		backgroundColor: '#376c3e',
-		borderRadius: 100,
+		flexDirection: "column",
+		gap: 5,
+		bottom: 70,
+		right: 10,
 	},
-	refreshButton: {
-		position: 'absolute',
-		bottom: '65',
-		right: '15',
-		padding: 9,
+	mapBtn: {
+		borderRadius: 40,
+		width: 40,
+		height: 40,
 		backgroundColor: '#376c3e',
-		borderRadius: 100,
-	}
+		justifyContent: "center",
+		alignItems: "center"
+	},
 })
 
 export default HeatMap
