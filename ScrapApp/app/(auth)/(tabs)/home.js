@@ -1,10 +1,16 @@
+import * as FileSystem from "expo-file-system"
+
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
+import { auth, db } from '../../../lib/firebaseConfig'
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Linking } from 'react-native';
-import { auth } from '../../../lib/firebaseConfig'
+import Feather from '@expo/vector-icons/Feather'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { Linking } from 'react-native'
+import Papa from "papaparse"
 import { onAuthStateChanged } from 'firebase/auth'
+import { shareAsync } from "expo-sharing"
 
 const HomeScreen = () => {
 	const [email, setEmail] = useState('')
@@ -20,9 +26,53 @@ const HomeScreen = () => {
 		Linking.openURL(calendlyUrl)
 	}
 
+	const exportDonations = async () => {
+		try {
+			const qryRef = query(collection(db, "donations"), orderBy("timestamp", "asc"))
+			const qrySnap = await getDocs(qryRef)
+
+			if (qrySnap.empty) {
+				Alert.alert("No Donations Found!")
+				return
+			}
+
+			const donations = {
+				fields: ["Date", "Donor Name", "Donor Email", "Category", "Zipcode", "Item Name", "Item Quantity", "Item Weight (lbs)"],
+				data: []
+			}
+			qrySnap.docs.forEach((doc) => {
+				donations.data.push([
+					doc.data().timestamp.toDate().toLocaleDateString(),
+					doc.data().name,
+					doc.data().email,
+					doc.data().category,
+					doc.data().zipCode,
+					doc.data().itemName,
+					doc.data().quantity,
+					doc.data().weight
+				])
+			})
+
+			const csv = Papa.unparse(donations)
+			const fileURI = FileSystem.documentDirectory + "donation-log.csv"
+
+			await FileSystem.writeAsStringAsync(fileURI, csv, {
+				encoding: FileSystem.EncodingType.UTF8
+			})
+			await shareAsync(fileURI)
+		} catch (error) {
+			console.log("Error Exporting Data: ", error)
+		}
+	}
+
 	return (
 		<View style={{ flex: 1 }}>
 			<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 25, paddingVertical: 20 }}>
+				<TouchableOpacity
+					style={styles.buttonBoxAlt}
+					onPress={exportDonations}>
+					<Text style={styles.buttonTextAlt}><Feather name="download" size={19} color="#376c3e" /> Download CSV</Text>
+				</TouchableOpacity>
 				<View>
 					<View style={styles.imageBox}>
 						<Image
@@ -88,6 +138,23 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: 'white',
 	},
+	buttonBoxAlt: {
+		height: 40,
+		width: 130,
+		justifyContent: "center",
+		alignItems: "center",
+		borderWidth: 2,
+		borderColor: '#376c3e',
+		borderRadius: 3,
+		position: "absolute",
+		top: 15,
+		right: 15
+	},
+	buttonTextAlt: {
+		fontSize: 16,
+		fontWeight: 'bold',
+		color: '#376c3e',
+	}
 })
 
 export default HomeScreen
