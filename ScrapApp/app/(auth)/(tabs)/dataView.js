@@ -488,15 +488,16 @@ const styles = StyleSheet.create({
         paddingBottom: -10,
     },
     zipsContainer: {
+        width: "100%",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
-        gap: 26,
+        justifyContent: "space-between",
         marginTop: 20,
         textAlign: "center",
     },
     zipsBox: { 
-        width: 225,
+        width: "49%",
         backgroundColor: '#fff',
         padding: 10,
         borderRadius: 8,
