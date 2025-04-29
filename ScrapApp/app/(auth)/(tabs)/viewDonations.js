@@ -23,10 +23,11 @@ const ViewDonations = () => {
 		const snapshot = await getDocs(qryRef)
 		const docs = []
 		snapshot.forEach((doc) => {
+			// console.log(doc.data().timestamp.toDate().toLocaleTimeString())
 			docs.push({ id: doc.id, ...doc.data() })
 		})
 		
-		setDonations(docs)
+		setDonations(docs.reverse())
 		setLoading(false)
 	}
 
@@ -179,6 +180,7 @@ const ViewDonations = () => {
 											<FontAwesome6 name={'trash-can'} size={20} color='#ed2d2d' />
 										</TouchableOpacity>
 									</View>
+									<Text style={styles.dataText}><Text style={{fontWeight: "bold"}}>Created On: </Text>{"\t"}{`${donations[key].timestamp.toDate().toLocaleDateString()} - ${donations[key].timestamp.toDate().toLocaleTimeString()}`}</Text>
 									<Text style={styles.dataText}><Text style={{fontWeight: "bold"}}>Donor Email: </Text>{"\t"}{donations[key].email ? donations[key].email : "N/A"}</Text>
 									<Text style={styles.dataText}><Text style={{fontWeight: "bold"}}>Donor Name: </Text>{"\t"}{donations[key].name ? donations[key].name : "N/A"}</Text>
 									<Text style={styles.dataText}><Text style={{fontWeight: "bold"}}>Zip Code: </Text>{"\t"}{donations[key].zipCode}</Text>
