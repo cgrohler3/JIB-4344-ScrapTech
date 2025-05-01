@@ -23,13 +23,32 @@
     - To build production, use: `eas build --platform android`
 
 - Android Build (Using Gradle) [~15~25 mins]
-  - Pre-Requisites
+  - Pre-Requisites #1 (Getting Code Files)
     1. Ensure CMake is up-to-date; If necessary, update from Android Studio.
-    2. Copy `ScrapApp` folder into the root folder (`C:/` in Windows).
-    3. Create Android prebuild using: `npx expo prebuild --clean`
-    4. Replace `build.gradle` and add `my-release-key.keystore` in `android/app` with provided files, or create your own keystore - [[React Native Maps]](https://docs.expo.dev/versions/latest/sdk/map-view/#create-an-api-key)
-    5. Copy the last 4 lines of provided `gradle.properties` into `android/gradle.properties` - [[Maps Config.]](https://docs.expo.dev/guides/local-app-production/)
-    6. Replace `"apiKey": "KEY"` with Google Maps API key in `app.json` & add it into `android:value` for API_KEY in `android/app/src/main/AndroidManifest.xml` 
+    2. Download `.zip` of the latest code from [GitHub Repo - JIB-4344-ScrapTech](https://github.com/cgrohler3/JIB-4344-ScrapTech)
+    3. Copy/unzip `ScrapApp` folder into the root folder (`C:/` in Windows).
+    4. Copy `lib` folder from provided developer files into `ScrapApp/`, where `lib/firebaseConfig.js` is the config file.
+    5. In `ScrapApp/`, perform `npm install` using Powershell to install the necessary files/packages.
+    6. In the same folder, perform `npx expo install --check` to update packages to the most stable version for the build.
+    
+  - Pre-Requisites #2 (Setting Up For Release Build)
+    1. In `ScrapApp/`, create Android prebuild using: `npx expo prebuild --clean`, which created `android` folder.
+    2. Copy `apk-build.keystore` into `android/app` from provided developer files.
+    3. Replace `build.gradle` in `android/app` with the provided developer gradle file.
+        - If you change the project, after prebuild, ensure the build gradle file is updated to include code listed in `build.gradle TO ADD.png`.
+    4. Copy the last 4 lines in `gradle.properties` from `Developer Notes` into `android/gradle.properties` file.
+        - If you change the project, after prebuild, ensure the gradle properties file is updated to include code listed in `gradle.properties TO ADD.png`.
+    5. Replace `"apiKey": "KEY"` in `app.json`  with `Maps Platform API Key`.
+    6. Replace `KEY` in `<meta-data android:name="com.google.android.geo.API_KEY" android:value="KEY"/>` in `android/app/src/main/AndroidManifest.xml` with `Maps Platform API Key`.
+        - `Maps Platform API Key` can be retireved from the Google Cloud - Scraplanta Dashboard.
+
+    - USEFUL RESOURCES FOR BUILD SETUP
+      - [[Create Keystore & Setting Up Local Files for Build]](https://docs.expo.dev/guides/local-app-production/)
+        - If you create a new keystore:
+          1. Ensure to replace `apk-build.keystore` with this new file.
+          2. Ensure to add this keystore's `SHA-1` to the `Maps Platform API Key` in Google Cloud.
+        - Key commands for this are located in `Developer Notes.txt` in developer folder.
+      - [[Creating API Key for Google Maps & Registering App in Google Cloud]](https://docs.expo.dev/versions/latest/sdk/map-view/#create-an-api-key)
   - Installation
       1. When in the ScrapApp folder, perform: `cd android`
       2. Then, perform: `./gradlew assembleRelease`
