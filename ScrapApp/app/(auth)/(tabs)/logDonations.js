@@ -99,8 +99,12 @@ const LogDonations = () => {
 
 		if (qrySnap.empty) return
 		const docs = []
+		const uniqueDonors = new Set()
 		qrySnap.forEach((doc) => {
-			docs.push({ name: doc.data().name, email: doc.data().email })
+			if (!uniqueDonors.has(doc.data().name)) {
+				uniqueDonors.add(doc.data().name)
+				docs.push({ name: doc.data().name, email: doc.data().email })
+			}
 		})
 		setDonors(docs)
 	}
